@@ -4,6 +4,7 @@
     var root = this;
 
     requirejs.config({
+        'baseUrl': './components/js2ch/sources',
         'paths': {
             'client': './client',
             'socket': './socket-chrome',
@@ -15,8 +16,8 @@
     });
 
     define([
-        'underscore'
-    ], function() {
+        'client'
+    ], function(client) {
         // TODO: 実装
         return {};
     });
