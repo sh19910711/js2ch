@@ -1,6 +1,6 @@
 {
   "name": "js2ch",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "lib/js2ch-chrome.js",
   "ignore": [
     "**/.*",
@@ -10,6 +10,7 @@
   "dependencies": {
     "jquery": "~2.0.2",
     "asyncjs": "latest",
-    "underscore": "~1.4.4"
+    "underscore": "~1.4.4",
+    "requirejs": "~2.1.6"
   }
 }
