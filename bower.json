@@ -1,6 +1,6 @@
 {
   "name": "js2ch",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "main": "lib/js2ch-chrome.js",
   "ignore": [
     "**/.*",
