@@ -4,7 +4,7 @@
     var root = this;
 
     requirejs.config({
-        'baseUrl': './components/js2ch/sources',
+        'baseUrl': './components/js2ch/sources', 
         'paths': {
             'client': './client',
             'socket': './socket-chrome',

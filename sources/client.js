@@ -4,10 +4,11 @@
     var root = this;
 
     define([
+        'http',
         'jquery'
     ], function() {
         // TODO: 実装
-        console.log('http.js');
+        console.log('@client.js: test');
         return {};
     });
 
