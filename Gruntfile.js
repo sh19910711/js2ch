@@ -8,6 +8,12 @@ module.exports = function(grunt) {
                     name: 'index-chrome',
                     mainConfigFile: './sources/index-chrome.js',
                     out: './lib/index-chrome.js',
+                    onBuildWrite: function(name, path, contents) {
+                        if ( name == 'index-chrome' ) {
+                            return contents.replace(/define\(.*'index-chrome'.*,/, 'define(');
+                        }
+                        return contents;
+                    },
                     paths: {
                         jquery: 'empty:',
                         underscore: 'empty:',
