@@ -9,7 +9,8 @@
         "lib/*-node.js",
         "package.json",
         "r.js",
-        "Gruntfile"
+        "Gruntfile.*",
+        "sources"
     ],
     "dependencies": {
         "jquery": "~2.0.2",
