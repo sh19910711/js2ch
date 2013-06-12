@@ -18,9 +18,8 @@
     define([
         'client'
     ], function(client) {
-        // TODO: 実装
         console.log('@index-chrome: test');
-        return {};
+        return client;
     });
 
 }).call(this);
