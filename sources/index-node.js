@@ -17,11 +17,9 @@
     });
 
     define([
-        'jquery',
         'client'
-    ], function(jq, client) {
-        console.log('@index-node: test');
-        return {};
+    ], function(client) {
+        return client;
     });
 
 }).call(this);
