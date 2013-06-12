@@ -1,6 +1,7 @@
 bower.json
 Gruntfile.js
 r.js
+components
 sources
 lib/*-chrome.js
-
+test-*
