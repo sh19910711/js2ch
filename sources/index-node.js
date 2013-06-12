@@ -2,13 +2,15 @@
     'use strict';
 
     var root = this;
+    console.log('@index-node.js: start');
 
     requirejs.config({
+        'baseUrl': './sources',
         'paths': {
-            'client': '../sources/client',
+            'client': './client',
             'socket': './socket-node',
             'storage': './storage-node',
-            'http': './http',
+            'http-lib': './http-lib',
             'parser': './parser',
             'logger': './logger'
         }
@@ -16,12 +18,10 @@
 
     define([
         'jquery',
-        'http'
-    ], function(jq, http) {
-        console.log('@index-node: ', http);
-        return {
-            test: '@index-node.js'
-        };
+        'client'
+    ], function(jq, client) {
+        console.log('@index-node: test');
+        return {};
     });
 
 }).call(this);

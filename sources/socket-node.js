@@ -6,7 +6,7 @@
     define([
     ], function() {
         // TODO: 実装
-        console.log('@socket-node.js: test');
+        console.log('@socket-node: test');
         return {};
     });
 

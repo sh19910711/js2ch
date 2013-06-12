@@ -6,7 +6,7 @@
     define([
     ], function() {
         // TODO: 実装
-        console.log('@parser.js: test');
+        console.log('@parser: test');
         return {};
     });
 
