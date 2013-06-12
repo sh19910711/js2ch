@@ -25,14 +25,14 @@ module.exports = function(grunt) {
 
             buildNode: {
                 options: {
-                    baseUrl: './sources',
-                    name: 'index-node',
+                    baseUrl: './',
+                    name: 'sources/index-node',
                     mainConfigFile: './sources/index-node.js',
                     out: './lib/index-node.js',
                     useStrict: true,
                     onBuildWrite: function(name, path, contents) {
-                        if ( name == 'index-node' ) {
-                            return contents.replace(/define\(.*'index-node'.*,/, 'define(');
+                        if ( name == 'sources/index-node' ) {
+                            return contents.replace(/define\(.*'sources\/index-node'.*,/, 'define(');
                         }
                         return contents;
                     },

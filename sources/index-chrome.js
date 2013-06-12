@@ -4,14 +4,13 @@
     var root = this;
 
     requirejs.config({
-        'baseUrl': './components/js2ch/sources', 
         'paths': {
-            'client': './client',
-            'socket': './socket-chrome',
-            'storage': './storage-chrome',
-            'http': './http',
-            'parser': './parser',
-            'logger': './logger'
+            'client': '../sources/client',
+            'socket': '../sources/socket-chrome',
+            'storage': '../sources/storage-chrome',
+            'http-lib': '../sources/http-lib',
+            'parser': '../sources/parser',
+            'logger': '../sources/logger'
         }
     });
 

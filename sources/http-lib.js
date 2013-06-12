@@ -8,7 +8,9 @@
     ], function() {
         // TODO: 実装
         console.log('@http-lib: test');
-        return {};
+        return {
+            hello: 'http-lib'
+        };
     });
 
 }).call(this);
