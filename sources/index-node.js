@@ -5,14 +5,14 @@
     console.log('@index-node.js: start');
 
     requirejs.config({
-        'baseUrl': './sources',
         'paths': {
-            'client': './client',
-            'socket': './socket-node',
-            'storage': './storage-node',
-            'http-lib': './http-lib',
-            'parser': './parser',
-            'logger': './logger'
+            'client': './sources/client',
+            'socket': './sources/socket-node',
+            'storage': './sources/storage-node',
+            'http-lib': './sources/http-lib',
+            'parser': './sources/parser',
+            'logger': './sources/logger',
+            'encoding': './lib/encoding'
         }
     });
 
