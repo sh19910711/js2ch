@@ -2,7 +2,6 @@
     'use strict';
 
     var root = this;
-    console.log('@index-node.js: start');
 
     requirejs.config({
         'paths': {
@@ -11,7 +10,8 @@
             'storage': './sources/storage-node',
             'http-lib': './sources/http-lib',
             'parser': './sources/parser',
-            'buffer-lib': './sources/buffer-node',
+            'buffer-lib': './sources/buffer-lib-node',
+            'util': './sources/util',
             'logger': './sources/logger',
             'encoding': './lib/encoding'
         }

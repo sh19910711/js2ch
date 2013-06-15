@@ -19,7 +19,6 @@
         proto.extend({
             // ソケットを作成する
             create: function create(type, options, callback) {
-                console.log('@Socket::create');
                 var socket = new net.Socket();
                 var socket_id = sockets.length;
                 sockets.push(socket);
@@ -39,10 +38,8 @@
         proto.extend({
             // 指定のホストに接続する
             connect: function connect(socketId, hostname, port, callback) {
-                console.log('@Socket::connect: start', socketId, hostname, port);
                 var socket = sockets[socketId];
                 socket.connect(port, hostname, function() {
-                    console.log('@Socket::connect: connected');
                     callback(0);
                 });
                 socket.resultCode = 1;
@@ -105,9 +102,7 @@
             write: function write(socketId, data, callback) {
                 var data_str = ArrayBufferToString(data);
                 var socket = sockets[socketId];
-                console.log('@Socket::write: start');
-                console.log('@Socket::write: data = ', data_str);
-                socket.write(data_str, 'UTF-8', function() {
+                socket.write(data_str, function() {
                     callback();
                 });
             }

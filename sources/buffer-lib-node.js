@@ -11,8 +11,10 @@
         var proto = _(BufferLib.prototype);
 
         proto.extend({
-            convertToString: function convertToString(buf_array) {
-                return new Buffer(encoding.convert(buf_array, 'UTF-8', 'SJIS')).toString('UTF-8');
+            convertToString: function convertToString(buf_array, callback) {
+                setTimeout(function() {
+                    callback(new Buffer(encoding.convert(buf_array, 'UTF-8', 'SJIS')).toString('UTF-8'));
+                }, 0);
             }
         });
 

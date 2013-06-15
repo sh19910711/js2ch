@@ -8,8 +8,10 @@
         'underscore',
         'socket',
         'purl',
-        'async'
-    ], function($, _, socket, purl, async) {
+        'async',
+        'util',
+        'buffer-lib'
+    ], function($, _, socket, purl, async, util, buffer_lib) {
         var BR = "\r\n";
 
         var HttpLib = function() {
@@ -61,6 +63,7 @@
 
                 // HTTPレスポンスを受け取る
                 function recieve_http_response(callback) {
+                    var http_response_array_data = [];
                     var http_response_text = '';
                     var timeout = setTimeout(read, 0);
 
@@ -70,15 +73,13 @@
                             if ( result.resultCode < 0 ) {
                                 clearTimeout(timeout);
                                 socket.destroy(socket_id);
-                                http_response = GetResponse(http_response_text);
-                                callback(null);
+                                buffer_lib.convertToString(http_response_array_data, function(converted_text) {
+                                    http_response = GetResponse(converted_text);
+                                    callback(null);
+                                });
                             } else {
-                                var fileReader = new FileReader();
-                                fileReader.onloadend = function() {
-                                    http_response_text += fileReader.result;
-                                    timeout = setTimeout(read, 0);
-                                };
-                                fileReader.readAsText(new Blob([result.data]), 'sjis');
+                                http_response_array_data = http_response_array_data.concat(result.data);
+                                timeout = setTimeout(read, 0);
                             }
                         });
                     }
@@ -177,11 +178,19 @@
 
         // 文字列をArrayBufferに変換する
         function GetBuffer(str, callback) {
-            var fileReader = new FileReader();
-            fileReader.onloadend = function() {
-                callback(fileReader.result);
-            };
-            fileReader.readAsArrayBuffer(new Blob([str]));
+            var deferred = new $.Deferred();
+            if ( ! ( callback instanceof Function ) )
+                callback = deferred.resolve;
+
+            setTimeout(function() {
+                var buf = new ArrayBuffer(str.length * 2);
+                var bufView = new Uint16Array(buf);
+                for ( var i = 0; i < str.length; ++ i )
+                    bufView[i] = str.charCodeAt(i);
+                callback(buf);
+            }, 0);
+
+            return deferred;
         }
 
         // 文字列strをtokenで分割する
@@ -215,12 +224,12 @@
 
         // HTTPレスポンスからヘッダ部を取り出す
         function GetHeaderText(http_response) {
-            var response_headers = ParseHeaderText(GetHeaderText(http_response));
-            var http_response = {
-                headers: response_headers,
-                body: GetBodyText(http_response)
-            };
-            return http_response;
+            return SplitString(http_response, BR + BR)[0];
+        }
+
+        // HTTPレスポンスからボディ部分を取り出す
+        function GetBodyText(http_response) {
+            return SplitString(http_response, BR + BR)[1];
         }
 
         // オブジェクトをクエリ用の文字列に変換する
@@ -229,6 +238,22 @@
                 return key + '=' + data[key];
             }).join('&');
         }
+
+        // HTTPレスポンステキストをオブジェクトに変換する
+        function GetResponse(http_response) {
+            var response_headers = ParseHeaderText(GetHeaderText(http_response));
+            var http_response = {
+                headers: response_headers,
+                body: GetBodyText(http_response)
+            };
+            return http_response;
+        }
+
+        // Deferredの設定
+        var keys = ['get', 'post'];
+        _(keys).each(function(key) {
+            HttpLib.prototype[key] = util.getDeferredFunc(HttpLib.prototype[key]);
+        });
 
         return new HttpLib();
     });
