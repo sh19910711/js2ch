@@ -9,8 +9,9 @@
         'http-lib',
         'storage',
         'parser',
-        'encoding'
-    ], function( $, _, http, storage, parser, encoding ) {
+        'encoding',
+        'util'
+    ], function( $, _, http, storage, parser, encoding, util ) {
 
         // 2chクライアントライブラリ
         var Client = function() {
@@ -37,7 +38,9 @@
                     _(this.HTTP_REQ_HEADERS_DEFAULT).extend({
                         'Host': hostname,
                     })
-                ).done(callback);
+                ).done(function() {
+                    callback.apply(this, arguments);
+                });
             }
         });
 
@@ -205,6 +208,12 @@
             return '/dat/' + thread_id + '.dat';
         }
 
+
+        // Deferredの設定
+        var keys = ['getThreadList', 'getSettingText', 'getResponsesFromThread', 'putResponseToThread'];
+        _(keys).each(function(key) {
+            Client.prototype[key] = util.getDeferredFunc(Client.prototype[key]);
+        });
 
         return new Client();
     });
