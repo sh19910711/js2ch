@@ -16,10 +16,20 @@
             getDeferredFunc: function getDeferredFunc(func) {
                 return function() {
                     var deferred = new $.Deferred();
-                    if ( arguments[arguments.length - 1] instanceof Function )
-                        arguments[arguments.length - 1] = deferred.resolve;
-                    else
-                        Array.prototype.push.call(arguments, deferred.resolve);
+                    var callback = arguments[arguments.length - 1];
+                    if ( callback instanceof Function ) {
+                        arguments[arguments.length - 1] = function() {
+                            if ( callback instanceof Function )
+                                callback.apply(this, arguments);
+                            deferred.resolve.apply(this, arguments);
+                        };
+                    } else {
+                        Array.prototype.push.call(arguments, function() {
+                            if ( callback instanceof Function )
+                                callback.apply(this, arguments);
+                            deferred.resolve.apply(this, arguments);
+                        });
+                    }
                     func.apply(this, arguments);
                     return deferred;
                 };

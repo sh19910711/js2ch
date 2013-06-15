@@ -86,7 +86,7 @@
                         socket.byteCount -= bytes;
                         callback({
                             resultCode: 1,
-                            data: socket.buffer.splice(0, bytes)
+                            data: new ArrayBuffer(socket.buffer.splice(0, bytes))
                         });
                     } else  {
                         callback({

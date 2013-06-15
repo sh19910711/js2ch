@@ -10,7 +10,7 @@
             'storage': '../sources/storage-chrome',
             'http-lib': '../sources/http-lib',
             'buffer-lib': '../sources/buffer-lib-chrome',
-            'util-lib': '../sources/util',
+            'util': '../sources/util',
             'parser': '../sources/parser',
             'logger': '../sources/logger'
         }

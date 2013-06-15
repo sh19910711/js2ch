@@ -72,13 +72,19 @@
                         socket.read(socket_id, 256, function(result) {
                             if ( result.resultCode < 0 ) {
                                 clearTimeout(timeout);
+                                http_response_array_data = _(http_response_array_data).map(function(v) {return v;});
                                 socket.destroy(socket_id);
                                 buffer_lib.convertToString(http_response_array_data, function(converted_text) {
                                     http_response = GetResponse(converted_text);
                                     callback(null);
                                 });
                             } else {
-                                http_response_array_data = http_response_array_data.concat(result.data);
+                                var arr = [];
+                                var u8 = new Uint8Array(result.data);
+                                _(u8).each(function(value) {
+                                    arr.push(value);
+                                });
+                                http_response_array_data = http_response_array_data.concat(arr);
                                 timeout = setTimeout(read, 0);
                             }
                         });
@@ -182,13 +188,7 @@
             if ( ! ( callback instanceof Function ) )
                 callback = deferred.resolve;
 
-            setTimeout(function() {
-                var buf = new ArrayBuffer(str.length * 2);
-                var bufView = new Uint16Array(buf);
-                for ( var i = 0; i < str.length; ++ i )
-                    bufView[i] = str.charCodeAt(i);
-                callback(buf);
-            }, 0);
+            buffer_lib.convertToBuffer(str, callback);
 
             return deferred;
         }

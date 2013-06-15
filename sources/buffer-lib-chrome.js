@@ -11,12 +11,24 @@
         var proto = _(BufferLib.prototype);
 
         proto.extend({
+            // 文字列をArrayBufferに変換する
             convertToString: function convertToString(buf_array, callback) {
                 var fileReader = new FileReader();
                 fileReader.onloadend = function() {
                     callback(fileReader.result);
                 };
-                fileReader.readAsText(new Blob([result.data]), 'sjis');
+                fileReader.readAsText(new Blob([new Uint8Array(buf_array)]), 'sjis');
+            }
+        });
+
+        proto.extend({
+            // 文字列をArrayBufferに変換する
+            convertToBuffer: function convertToBuffer(str, callback) {
+                var fileReader = new FileReader();
+                fileReader.onloadend = function() {
+                    callback(fileReader.result);
+                };
+                fileReader.readAsArrayBuffer(new Blob([str]));
             }
         });
 

@@ -5,9 +5,7 @@
 
     define([
     ], function() {
-        // TODO: 実装
-        console.log('@socket-chrome: test');
-        return {};
+        return chrome.socket;
     });
 
 }).call(this);
