@@ -17,8 +17,9 @@ module.exports = function(grunt) {
                     paths: {
                         jquery: 'empty:',
                         underscore: 'empty:',
-                        asyncjs: 'empty:',
-                        encoding: 'empty:'
+                        async: 'empty:',
+                        encoding: 'empty:',
+                        purl: 'empty:'
                     }
                 }
             },
@@ -39,8 +40,10 @@ module.exports = function(grunt) {
                     paths: {
                         jquery: 'empty:',
                         underscore: 'empty:',
-                        asyncjs: 'empty:',
-                        encoding: 'empty:'
+                        async: 'empty:',
+                        encoding: 'empty:',
+                        purl: 'empty:',
+                        net: 'empty:'
                     }
                 }
             }
