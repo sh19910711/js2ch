@@ -9,7 +9,7 @@
         'socket',
         'purl',
         'async'
-    ], function($, _, socket) {
+    ], function($, _, socket, purl, async) {
         var BR = "\r\n";
 
         var HttpLib = function() {
@@ -22,7 +22,7 @@
             // GETリクエストを送信する
             get: function get(url, http_headers_obj, callback) {
                 // CreateSocket -> SendHttpRequest -> RecieveHttpResponse
-                
+
                 var http_response = {};
                 var url_obj = $.url(url);
                 var connect_info = {
