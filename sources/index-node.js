@@ -11,6 +11,7 @@
             'storage': './sources/storage-node',
             'http-lib': './sources/http-lib',
             'parser': './sources/parser',
+            'buffer-lib': './sources/buffer-node',
             'logger': './sources/logger',
             'encoding': './lib/encoding'
         }
