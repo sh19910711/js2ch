@@ -1,21 +1,21 @@
 {
-    "name": "js2ch",
-    "version": "0.0.8",
-    "main": "lib/js2ch-chrome.js",
-    "ignore": [
-        "**/.*",
-        "node_modules",
-        "components",
-        "lib/*-node.js",
-        "package.json",
-        "r.js",
-        "Gruntfile.*",
-        "sources"
-    ],
-    "dependencies": {
-        "jquery": "~2.0.2",
-        "asyncjs": "latest",
-        "underscore": "~1.4.4",
-        "requirejs": "~2.1.6"
-    }
+  "name": "js2ch",
+  "version": "0.0.9",
+  "main": "lib/js2ch-chrome.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components",
+    "lib/*-node.js",
+    "package.json",
+    "r.js",
+    "Gruntfile.*",
+    "sources"
+  ],
+  "dependencies": {
+    "jquery": "~2.0.2",
+    "underscore": "~1.4.4",
+    "requirejs": "~2.1.6",
+    "async": "~0.2.5"
+  }
 }
