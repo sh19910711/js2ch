@@ -8,7 +8,8 @@
     "async": "~0.2.9",
     "underscore": "~1.4.4",
     "jquery": "~1.8.3",
-    "grunt-jsbeautifier": "~0.1.8"
+    "grunt-jsbeautifier": "~0.1.8",
+    "sqlite3": "~2.1.9"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
