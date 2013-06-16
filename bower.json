@@ -10,7 +10,8 @@
     "package.json",
     "r.js",
     "Gruntfile.*",
-    "sources"
+    "sources",
+    "tests"
   ],
   "dependencies": {
     "jquery": "~2.0.2",
