@@ -9,6 +9,13 @@
                 "js/background.js"
             ]
         }
-    }
+    },
+
+    "permissions": [
+        "storage",
+        {
+            "socket": ["tcp-connect:*.2ch.net:80"]
+        }
+    ]
 
 }
