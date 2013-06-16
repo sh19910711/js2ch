@@ -21,7 +21,7 @@
         "url": "git://github.com/sh19910711/js2ch.git"
     },
     "author": "Hiroyuki Sano",
-    "license": "BSD",
+    "license": "MIT",
     "readmeFilename": "README.md",
     "gitHead": "6add1cc6b443e1fd75b40670ce80f92d8c0e2245"
 }
