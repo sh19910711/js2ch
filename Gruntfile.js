@@ -1,7 +1,7 @@
 module.exports = function(grunt) {
     grunt.initConfig({
-        requirejs: {
 
+        requirejs: {
             buildChrome: {
                 options: {
                     baseUrl: './sources',
@@ -23,7 +23,6 @@ module.exports = function(grunt) {
                     }
                 }
             },
-
             buildNode: {
                 options: {
                     baseUrl: './',
@@ -47,8 +46,31 @@ module.exports = function(grunt) {
                     }
                 }
             }
+        },
+
+        jsbeautifier : {
+            files : ['./sources/*.js', './lib/js2ch-*.js', './Gruntfile.js'],
+            options : {
+                indent_size: 4,
+                indent_char: " ",
+                indent_level: 0,
+                indent_with_tabs: false,
+                preserve_newlines: true,
+                max_preserve_newlines: 10,
+                jslint_happy: false,
+                brace_style: "collapse",
+                keep_array_indentation: false,
+                keep_function_indentation: false,
+                space_before_conditional: true,
+                eval_code: false,
+                indent_case: false,
+                wrap_line_length: 80,
+                unescape_strings: false
+            }
         }
+
     });
 
     grunt.loadNpmTasks('grunt-contrib-requirejs');
+    grunt.loadNpmTasks('grunt-jsbeautifier');
 };
