@@ -11,7 +11,8 @@
     "r.js",
     "Gruntfile.*",
     "sources",
-    "tests"
+    "tests",
+    "LICENSE.*"
   ],
   "dependencies": {
     "jquery": "~2.0.2",
