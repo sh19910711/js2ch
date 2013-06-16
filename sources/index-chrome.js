@@ -8,27 +8,27 @@
  * http://opensource.org/licenses/MIT
  * =================================================== */
 (function() {
-    'use strict';
+  'use strict';
 
-    var root = this;
+  var root = this;
 
-    requirejs.config({
-        'paths': {
-            'client': '../sources/client',
-            'socket': '../sources/socket-chrome',
-            'storage': '../sources/storage-chrome',
-            'http-lib': '../sources/http-lib',
-            'buffer-lib': '../sources/buffer-lib-chrome',
-            'util': '../sources/util',
-            'parser': '../sources/parser',
-            'logger': '../sources/logger'
-        }
+  requirejs.config({
+      'paths': {
+        'client': '../sources/client',
+        'socket': '../sources/socket-chrome',
+        'storage': '../sources/storage-chrome',
+        'http-lib': '../sources/http-lib',
+        'buffer-lib': '../sources/buffer-lib-chrome',
+        'util': '../sources/util',
+        'parser': '../sources/parser',
+        'logger': '../sources/logger'
+      }
     });
 
-    define([
-        'client'
+  define([
+      'client'
     ], function(client) {
-        return client;
+      return client;
     });
 
 }).call(this);

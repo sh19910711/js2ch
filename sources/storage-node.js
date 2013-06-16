@@ -1,13 +1,12 @@
 (function() {
-    'use strict';
+  'use strict';
 
-    var root = this;
+  var root = this;
 
-    define([
-    ], function() {
-        // TODO: 実装
-        console.log('@storage-node: test');
-        return {};
-    });
+  define([], function() {
+    // TODO: 実装
+    console.log('@storage-node: test');
+    return {};
+  });
 
 }).call(this);
