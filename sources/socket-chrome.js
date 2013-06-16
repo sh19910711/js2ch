@@ -8,13 +8,12 @@
  * http://opensource.org/licenses/MIT
  * =================================================== */
 (function() {
-    'use strict';
+  'use strict';
 
-    var root = this;
+  var root = this;
 
-    define([
-    ], function() {
-        return chrome.socket;
-    });
+  define([], function() {
+    return chrome.socket;
+  });
 
 }).call(this);

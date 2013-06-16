@@ -8,15 +8,14 @@
  * http://opensource.org/licenses/MIT
  * =================================================== */
 (function() {
-    'use strict';
+  'use strict';
 
-    var root = this;
+  var root = this;
 
-    define([
-    ], function() {
-        // TODO: 実装
-        console.log('@logger: test');
-        return {};
-    });
+  define([], function() {
+    // TODO: 実装
+    console.log('@logger: test');
+    return {};
+  });
 
 }).call(this);
