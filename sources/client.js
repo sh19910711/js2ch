@@ -40,11 +40,13 @@
         var url = GetUrl(hostname, '/' + board_id + '/subject.txt');
         http.get(
           url,
-          _(this.HTTP_REQ_HEADERS_DEFAULT).extend({
+          _(this.HTTP_REQ_HEADERS_DEFAULT)
+          .extend({
             'Host': hostname,
-          })).done(function() {
-          callback.apply(this, arguments);
-        });
+          }))
+          .done(function() {
+            callback.apply(this, arguments);
+          });
       }
     });
 
@@ -54,9 +56,11 @@
         var url = GetUrl(hostname, '/' + board_id + '/SETTING.TXT');
         http.get(
           url,
-          _(this.HTTP_REQ_HEADERS_DEFAULT).extend({
+          _(this.HTTP_REQ_HEADERS_DEFAULT)
+          .extend({
             'Host': hostname
-          })).done(callback);
+          }))
+          .done(callback);
       }
     });
 
@@ -66,9 +70,11 @@
         var url = GetUrl(hostname, '/' + board_id + GetDatPath(hostname, thread_id));
         http.get(
           url,
-          _(this.HTTP_REQ_HEADERS_DEFAULT).extend({
+          _(this.HTTP_REQ_HEADERS_DEFAULT)
+          .extend({
             'Host': hostname
-          })).done(callback);
+          }))
+          .done(callback);
       }
     });
 
@@ -77,10 +83,11 @@
       putResponseToThread: function putResponseToThread(hostname, board_id, thread_id, response, callback) {
         var url = GetUrl(hostname, '/test/bbs.cgi?guid=ON');
 
-        var http_req_headers = _(this.HTTP_REQ_HEADERS_DEFAULT).extend({
-          'Host': hostname,
-          'Referer': GetUrl(hostname, '/' + board_id + '/')
-        });
+        var http_req_headers = _(this.HTTP_REQ_HEADERS_DEFAULT)
+          .extend({
+            'Host': hostname,
+            'Referer': GetUrl(hostname, '/' + board_id + '/')
+          });
 
         // 書き込みを行う
 
@@ -95,9 +102,10 @@
               deferreds.push(RecieveCookies(http_response.headers['Set-Cookie']));
 
             // 各処理が終わったらputResponseToThreadとしての結果を返す
-            $.when.apply(null, deferreds).done(function() {
-              callback(http_response);
-            });
+            $.when.apply(null, deferreds)
+              .done(function() {
+                callback(http_response);
+              });
           }
 
           // HTTPレスポンスヘッダからCookieを取り出す
@@ -107,18 +115,20 @@
             // Set-Cookieヘッダを解析する
             function ParseSetCookie() {
               // 分割する
-              _(set_cookies.split(';')).each(function(set_cookie) {
-                var list = util.splitString(set_cookie, '=');
-                var key = $.trim(list[0]);
-                var value = $.trim(list[1]);
+              _(set_cookies.split(';'))
+                .each(function(set_cookie) {
+                  var list = util.splitString(set_cookie, '=');
+                  var key = $.trim(list[0]);
+                  var value = $.trim(list[1]);
 
-                if (key === 'expires' || key === 'path')
-                  return;
+                  if (key === 'expires' || key === 'path')
+                    return;
 
-                var obj = {};
-                obj[key] = value;
-                _(cookies).extend(obj);
-              });
+                  var obj = {};
+                  obj[key] = value;
+                  _(cookies)
+                    .extend(obj);
+                });
 
               // 忍法帖用のCookieを持っていなかったら作成する
               if (typeof cookies['HAP'] === 'undefined')
@@ -133,27 +143,35 @@
             var cookies = {};
 
             if (Array.isArray(set_cookies))
-              return $.when.apply(null, _(set_cookies).map(RecieveCookies));
+              return $.when.apply(null, _(set_cookies)
+                .map(RecieveCookies));
 
             return $.when.apply(null, [
-              storage.get('cookies').done(function(items) {
+              storage.get('cookies')
+              .done(function(items) {
                 // 保存済みのCookieを取得する
-                _(cookies).extend(items.cookies);
+                _(cookies)
+                  .extend(items.cookies);
               })
-            ]).done(ParseSetCookie);
+            ])
+              .done(ParseSetCookie);
           }
 
           // 書き込み内容などをSJISに変換する
-          var converted_response = _(response).clone();
-          _(converted_response).each(function(value, key) {
-            converted_response[key] = ConvertToSJIS(value);
-          });
+          var converted_response = _(response)
+            .clone();
+          _(converted_response)
+            .each(function(value, key) {
+              converted_response[key] = ConvertToSJIS(value);
+            });
 
           // 書き込み内容などをパーセントエンコーディングでエスケープする
-          var escaped_response = _(converted_response).clone();
-          _(escaped_response).each(function(value, key) {
-            escaped_response[key] = EscapeSJIS(value);
-          });
+          var escaped_response = _(converted_response)
+            .clone();
+          _(escaped_response)
+            .each(function(value, key) {
+              escaped_response[key] = EscapeSJIS(value);
+            });
 
           // 準備ができたら書き込む
           // TODO: 利用規約などを確認させるための処理が組めるような流れもつくる
@@ -168,31 +186,36 @@
               'mail': escaped_response.mail,
               'MESSAGE': escaped_response.body,
               'yuki': 'akari'
-            }).done(RecieveResponse);
+            })
+            .done(RecieveResponse);
         }
 
         // CookieのHTTPリクエストヘッダを取得する
 
         function GetCookieHeader(cookies) {
           var keys = _.keys(cookies);
-          var cookies_header_terms = _(keys).map(function(key) {
-            return key + '=' + cookies[key];
-          });
+          var cookies_header_terms = _(keys)
+            .map(function(key) {
+              return key + '=' + cookies[key];
+            });
           return cookies_header_terms.join('; ');
         }
 
 
         $.when.apply(null, [
-          storage.get('cookies').done(function(items) {
+          storage.get('cookies')
+          .done(function(items) {
             if (typeof items.cookies !== 'undefined') {
-              _(http_req_headers).extend({
-                'Cookie': GetCookieHeader(items.cookies)
-              });
+              _(http_req_headers)
+                .extend({
+                  'Cookie': GetCookieHeader(items.cookies)
+                });
             }
           })
-        ]).done(function() {
-          Write(callback);
-        });
+        ])
+          .done(function() {
+            Write(callback);
+          });
       }
     });
 
@@ -218,29 +241,36 @@
     // 与えられた文字列をSJISに変換する
 
     function EscapeSJIS(str) {
-      return _(str).map(function(c) {
-        return '%' + c.charCodeAt().toString(16).toUpperCase();
-      }).join('');
+      return _(str)
+        .map(function(c) {
+          return '%' + c.charCodeAt()
+            .toString(16)
+            .toUpperCase();
+        })
+        .join('');
     }
 
     // 文字列を配列に変換する
 
     function GetArray(str) {
       var res = [];
-      _(str.split('')).each(function(c) {
-        res.push(c.charCodeAt());
-      });
+      _(str.split(''))
+        .each(function(c) {
+          res.push(c.charCodeAt());
+        });
       return res;
     }
 
 
     // Deferredの設定
     var keys = ['getThreadList', 'getSettingText', 'getResponsesFromThread', 'putResponseToThread'];
-    _(keys).each(function(key) {
-      Client.prototype[key] = util.getDeferredFunc(Client.prototype[key]);
-    });
+    _(keys)
+      .each(function(key) {
+        Client.prototype[key] = util.getDeferredFunc(Client.prototype[key]);
+      });
 
     return new Client();
   });
 
-}).call(this);
+})
+  .call(this);

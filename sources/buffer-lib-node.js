@@ -23,7 +23,8 @@
       // ArrayBufferを文字列に変換する
       convertToString: function convertToString(buf_array, callback) {
         setTimeout(function() {
-          callback(new Buffer(encoding.convert(buf_array, 'UTF-8', 'SJIS')).toString('UTF-8'));
+          callback(new Buffer(encoding.convert(buf_array, 'UTF-8', 'SJIS'))
+            .toString('UTF-8'));
         }, 0);
       }
     });
@@ -54,4 +55,5 @@
     return new BufferLib();
   });
 
-}).call(this);
+})
+  .call(this);

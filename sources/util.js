@@ -25,7 +25,8 @@
                   callback.apply(this, arguments);
                 deferred.resolve.apply(this, arguments);
               };
-            } else {
+            }
+            else {
               args.push(function() {
                 if (callback instanceof Function)
                   callback.apply(this, arguments);
@@ -50,4 +51,5 @@
     return new Util();
   });
 
-}).call(this);
+})
+  .call(this);

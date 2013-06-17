@@ -26,4 +26,5 @@
 
     return new Formatter();
   });
-}).call(this);
+})
+  .call(this);

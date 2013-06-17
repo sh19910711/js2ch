@@ -58,19 +58,22 @@
 
 
     var keys = ['log', 'debug', 'info', 'warn', 'error'];
-    _(keys).each(function(key) {
-      var func = Logger.prototype[key];
-      Logger.prototype[key] = function() {
-        var args = Array.prototype.slice.apply(arguments);
-        console.log(args);
-        args = _(args).map(function(arg) {
-          return formatter.format(arg);
-        });
-        func.apply(this, args);
-      };
-    });
+    _(keys)
+      .each(function(key) {
+        var func = Logger.prototype[key];
+        Logger.prototype[key] = function() {
+          var args = Array.prototype.slice.apply(arguments);
+          console.log(args);
+          args = _(args)
+            .map(function(arg) {
+              return formatter.format(arg);
+            });
+          func.apply(this, args);
+        };
+      });
 
     return new Logger();
   });
 
-}).call(this);
+})
+  .call(this);

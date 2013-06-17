@@ -37,7 +37,8 @@
             callbacks.fire();
             db.close();
           });
-        } else {
+        }
+        else {
           callbacks.fire();
         }
       });
@@ -60,33 +61,42 @@
         // keysは文字列か配列かオブジェクト
         if (typeof keys === 'string') {
           keys = [keys];
-          _(keys).each(function(key) {
-            default_values[key] = undefined;
-          });
-        } else if (Array.isArray(keys)) {
-          _(keys).each(function(key) {
-            default_values[key] = undefined;
-          })
-        } else if (typeof keys === 'object') {
-          default_values = _(keys).clone();
+          _(keys)
+            .each(function(key) {
+              default_values[key] = undefined;
+            });
+        }
+        else if (Array.isArray(keys)) {
+          _(keys)
+            .each(function(key) {
+              default_values[key] = undefined;
+            })
+        }
+        else if (typeof keys === 'object') {
+          default_values = _(keys)
+            .clone();
           keys = _.keys(keys);
         }
 
         // ハッシュテーブルに登録しておく
-        _(keys).each(function(key) {
-          hash_table[key] = 0;
-        });
+        _(keys)
+          .each(function(key) {
+            hash_table[key] = 0;
+          });
 
         // アイテムを取得する
         var db = new sqlite.Database(STORAGE_TARGET);
         db.all('SELECT key,value FROM ' + TABLE_NAME, function(error, rows) {
-          var res = _(default_values).clone();
-          var filtered = _(rows).filter(function(item) {
-            return typeof hash_table[item.key] !== 'undefined';
-          });
-          _(filtered).each(function(item) {
-            res[item.key] = JSON.parse(item.value);
-          });
+          var res = _(default_values)
+            .clone();
+          var filtered = _(rows)
+            .filter(function(item) {
+              return typeof hash_table[item.key] !== 'undefined';
+            });
+          _(filtered)
+            .each(function(item) {
+              res[item.key] = JSON.parse(item.value);
+            });
           db.close();
           callback(res);
         });
@@ -104,9 +114,10 @@
         // 値を文字列に変換しておく
         var serialized = {};
         var keys = _.keys(items);
-        _(keys).each(function(key) {
-          serialized[key] = JSON.stringify(items[key]);
-        });
+        _(keys)
+          .each(function(key) {
+            serialized[key] = JSON.stringify(items[key]);
+          });
 
         var db = new sqlite.Database(STORAGE_TARGET);
         db.serialize(function() {
@@ -115,34 +126,37 @@
           (function() {
             var deferred = new $.Deferred();
             var stmt = db.prepare('UPDATE ' + TABLE_NAME + ' SET value = ? WHERE key = ?');
-            _(serialized).each(function(value, key) {
-              stmt.run(value, key, function() {
-                deferred.resolve();
+            _(serialized)
+              .each(function(value, key) {
+                stmt.run(value, key, function() {
+                  deferred.resolve();
+                });
               });
-            });
             stmt.finalize();
             deferreds.push(deferred);
           })();
 
           // 存在しないキーはINSERT
           (function() {
-            _(serialized).each(function(value, key) {
-              var deferred = new $.Deferred();
-              db.get('SELECT * FROM ' + TABLE_NAME + ' WHERE key = ' + key, function(error, row) {
-                var stmt = db.prepare('INSERT INTO ' + TABLE_NAME + ' VALUES(?,?)');
-                stmt.run(key, value, function() {
-                  stmt.finalize();
-                  deferred.resolve();
+            _(serialized)
+              .each(function(value, key) {
+                var deferred = new $.Deferred();
+                db.get('SELECT * FROM ' + TABLE_NAME + ' WHERE key = ' + key, function(error, row) {
+                  var stmt = db.prepare('INSERT INTO ' + TABLE_NAME + ' VALUES(?,?)');
+                  stmt.run(key, value, function() {
+                    stmt.finalize();
+                    deferred.resolve();
+                  });
                 });
+                deferreds.push(deferred);
               });
-              deferreds.push(deferred);
-            });
           })();
 
-          $.when.apply(null, deferreds).done(function() {
-            db.close();
-            callback();
-          });
+          $.when.apply(null, deferreds)
+            .done(function() {
+              db.close();
+              callback();
+            });
         });
 
       }
@@ -163,18 +177,20 @@
         var db = new sqlite.Database(STORAGE_TARGET);
         var stmt = db.prepare('DELETE FROM ' + TABLE_NAME + ' WHERE key = ?');
         var deferreds = [];
-        _(keys).each(function(key) {
-          var deferred = new $.Deferred();
-          stmt.run(key, function(error, row) {
-            deferred.resolve();
+        _(keys)
+          .each(function(key) {
+            var deferred = new $.Deferred();
+            stmt.run(key, function(error, row) {
+              deferred.resolve();
+            });
+            deferreds.push(deferred);
           });
-          deferreds.push(deferred);
-        });
-        $.when.apply(null, deferreds).done(function() {
-          stmt.finalize();
-          db.close();
-          callback();
-        });
+        $.when.apply(null, deferreds)
+          .done(function() {
+            stmt.finalize();
+            db.close();
+            callback();
+          });
       }
     });
 
@@ -197,11 +213,13 @@
 
     // Deferredの設定
     var keys = ['get', 'set', 'remove', 'clear'];
-    _(keys).each(function(key) {
-      Storage.prototype[key] = util.getDeferredFunc(Storage.prototype[key]);
-    });
+    _(keys)
+      .each(function(key) {
+        Storage.prototype[key] = util.getDeferredFunc(Storage.prototype[key]);
+      });
 
     return new Storage();
   });
 
-}).call(this);
+})
+  .call(this);
