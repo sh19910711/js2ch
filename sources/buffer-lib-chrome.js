@@ -12,8 +12,9 @@
 
   define([
       'underscore',
-      'encoding'
-    ], function(_, encoding) {
+      'encoding',
+      'logger'
+    ], function(_, encoding, logger) {
       var BufferLib = function() {};
 
       BufferLib.prototype = {};
