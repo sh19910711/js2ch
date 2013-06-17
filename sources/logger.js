@@ -50,7 +50,7 @@
         });
 
       proto.extend({
-        // エラー出力
+          // エラー出力
           error: function error() {
             console.error.apply(console, arguments);
           }
