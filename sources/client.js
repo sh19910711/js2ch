@@ -111,8 +111,8 @@
                 // Set-Cookieヘッダを解析する
                 function ParseSetCookie() {
                   // 分割する
-                  _(set_cookies.split(';')).each(function() {
-                    var list = SplitString(set_cookie, '=');
+                  _(set_cookies.split(';')).each(function(set_cookie) {
+                    var list = util.splitString(set_cookie, '=');
                     var key = $.trim(list[0]);
                     var value = $.trim(list[1]);
 
@@ -149,34 +149,30 @@
 
               // 書き込み内容などをSJISに変換する
               var converted_response = _(response).clone();
-              converted_response = _(converted_response).map(function(value) {
-                return ConvertToSJIS(value);
+              _(converted_response).each(function(value, key) {
+                converted_response[key] = ConvertToSJIS(value);
               });
 
               // 書き込み内容などをパーセントエンコーディングでエスケープする
               var escaped_response = _(converted_response).clone();
-              var deferreds = _(_.keys(escaped_response)).map(function(key) {
-                return EscapeSJIS(escaped_response[key]).done(function(escaped_text) {
-                  escaped_response[key] = escaped_text;
-                });
+              _(escaped_response).each(function(value, key) {
+                escaped_response[key] = EscapeSJIS(value);
               });
 
               // 準備ができたら書き込む
-              $.when.apply(null, deferreds).done(function() {
-                // TODO: 利用規約などを確認させるための処理が組めるような流れもつくる
-                http.put(
-                  url,
-                  http_req_headers, {
-                    'bbs': board_id,
-                    'key': thread_id,
-                    'time': 1,
-                    'submit': ConvertToSJIS('上記全てを承諾して書き込む'),
-                    'FROM': escaped_response.name,
-                    'mail': escaped_response.mail,
-                    'MESSAGE': escaped_response.body,
-                    'yuki': 'akari'
-                  }).done(RecieveResponse);
-              });
+              // TODO: 利用規約などを確認させるための処理が組めるような流れもつくる
+              http.post(
+                url,
+                http_req_headers, {
+                  'bbs': board_id,
+                  'key': thread_id,
+                  'time': 1,
+                  'submit': ConvertToSJIS('上記全てを承諾して書き込む'),
+                  'FROM': escaped_response.name,
+                  'mail': escaped_response.mail,
+                  'MESSAGE': escaped_response.body,
+                  'yuki': 'akari'
+                }).done(RecieveResponse);
             }
 
             // CookieのHTTPリクエストヘッダを取得する
@@ -215,6 +211,30 @@
 
       function GetDatPath(hostname, thread_id) {
         return '/dat/' + thread_id + '.dat';
+      }
+
+      // 与えられた文字列をSJISに変換する
+
+      function ConvertToSJIS(str) {
+        return encoding.codeToString(encoding.convert(GetArray(str), 'SJIS', 'AUTO'));
+      }
+
+      // 与えられた文字列をSJISに変換する
+
+      function EscapeSJIS(str) {
+        return _(str).map(function(c) {
+          return '%' + c.charCodeAt().toString(16).toUpperCase();
+        }).join('');
+      }
+
+      // 文字列を配列に変換する
+
+      function GetArray(str) {
+        var res = [];
+        _(str.split('')).each(function(c) {
+          res.push(c.charCodeAt());
+        });
+        return res;
       }
 
 

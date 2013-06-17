@@ -143,46 +143,58 @@
                 var path = connect_info.path;
                 var query = ConvertToQueryString(data);
 
-                if (connect_info.query != '')
-                  path += '?' + connect_info.query;
+                buffer_lib.getByteLength(query, after_get_byte_length);
 
-                http_headers.push('POST ' + path + ' HTTP/1.1' + BR);
-                _(_.keys(http_headers_obj)).each(function(key) {
-                  http_headers.push(key + ': ' + http_headers_obj[key] + BR);
-                });
-                http_headers.push('Connect-Length: ' + (new Blob([query])).size + BR);
-                http_headers.push('Connection: close' + BR);
-                http_headers.push(BR);
-                http_headers.push(query);
+                function after_get_byte_length(query_length) {
+                  if (connect_info.query != '')
+                    path += '?' + connect_info.query;
 
-                var http_headers_text = http_headers.join('');
-                GetBuffer(http_headers_text).done(function(send_buf) {
-                  socket.write(socket_id, send_buf, function() {
-                    callback(null);
+                  http_headers.push('POST ' + path + ' HTTP/1.1' + BR);
+                  _(_.keys(http_headers_obj)).each(function(key) {
+                    http_headers.push(key + ': ' + http_headers_obj[key] + BR);
                   });
-                });
+                  http_headers.push('Content-Length: ' + query_length + BR);
+                  http_headers.push('Connection: close' + BR);
+                  http_headers.push(BR);
+                  http_headers.push(query);
+
+                  var http_headers_text = http_headers.join('');
+                  GetBuffer(http_headers_text).done(function(send_buf) {
+                    socket.write(socket_id, send_buf, function() {
+                      callback(null);
+                    });
+                  });
+                }
               });
             }
 
-            // HTTPレスポンスを受け取る
-
             function recieve_http_response(callback) {
+              var http_response_array_data = [];
               var http_response_text = '';
               var timeout = setTimeout(read, 0);
+
+              // 読み取り
 
               function read() {
                 socket.read(socket_id, 256, function(result) {
                   if (result.resultCode < 0) {
                     clearTimeout(timeout);
+                    http_response_array_data = _(http_response_array_data).map(function(v) {
+                      return v;
+                    });
                     socket.destroy(socket_id);
-                    http_response = GetResponse(http_response_text);
-                    callback(null);
+                    buffer_lib.convertToString(http_response_array_data, function(converted_text) {
+                      http_response = GetResponse(converted_text);
+                      callback(null);
+                    });
                   } else {
-                    var fileReader = new FileReader();
-                    fileReader.onloadend = function() {
-                      http_response_text += fileReader.result;
-                      timeout = setTimeout(read, 0);
-                    };
+                    var arr = [];
+                    var u8 = new Uint8Array(result.data);
+                    _(u8).each(function(value) {
+                      arr.push(value);
+                    });
+                    http_response_array_data = http_response_array_data.concat(arr);
+                    timeout = setTimeout(read, 0);
                   }
                 });
               }
@@ -211,13 +223,6 @@
         return deferred;
       }
 
-      // 文字列strをtokenで分割する
-
-      function SplitString(str, token) {
-        var x = str.indexOf(token);
-        return [str.substring(0, x), str.substring(x + token.length)];
-      }
-
       // HTTPレスポンスのヘッダ部をオブジェクトにする
 
       function ParseHeaderText(header_text) {
@@ -228,7 +233,7 @@
 
         var lines = http_headers.slice(1);
         var terms = lines.map(function(line) {
-          return SplitString(line, ':').map($.trim);
+          return util.splitString(line, ':').map($.trim);
         });
         var response_headers = {
           'HTTP-Version': status_line[0],
@@ -245,13 +250,13 @@
       // HTTPレスポンスからヘッダ部を取り出す
 
       function GetHeaderText(http_response) {
-        return SplitString(http_response, BR + BR)[0];
+        return util.splitString(http_response, BR + BR)[0];
       }
 
       // HTTPレスポンスからボディ部分を取り出す
 
       function GetBodyText(http_response) {
-        return SplitString(http_response, BR + BR)[1];
+        return util.splitString(http_response, BR + BR)[1];
       }
 
       // オブジェクトをクエリ用の文字列に変換する

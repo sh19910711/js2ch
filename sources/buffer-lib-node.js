@@ -40,6 +40,16 @@
           }
         });
 
+      proto.extend({
+          // 文字列のバイト数を求める
+          getByteLength: function getByteLength(str, callback) {
+            console.log('str: ', str);
+            setTimeout(function() {
+              callback(Buffer.byteLength(str, 'sjis'));
+            }, 0);
+          }
+        });
+
       return new BufferLib();
     });
 
