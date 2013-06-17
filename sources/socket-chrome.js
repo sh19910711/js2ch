@@ -16,4 +16,5 @@
     return chrome.socket;
   });
 
-}).call(this);
+})
+  .call(this);

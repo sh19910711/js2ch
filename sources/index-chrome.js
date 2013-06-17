@@ -13,22 +13,24 @@
   var root = this;
 
   requirejs.config({
-      'paths': {
-        'client': '../sources/client',
-        'socket': '../sources/socket-chrome',
-        'storage': '../sources/storage-chrome',
-        'http-lib': '../sources/http-lib',
-        'buffer-lib': '../sources/buffer-lib-chrome',
-        'util': '../sources/util',
-        'parser': '../sources/parser',
-        'logger': '../sources/logger'
-      }
-    });
+    'paths': {
+      'client': '../sources/client',
+      'socket': '../sources/socket-chrome',
+      'storage': '../sources/storage-chrome',
+      'http-lib': '../sources/http-lib',
+      'buffer-lib': '../sources/buffer-lib-chrome',
+      'util': '../sources/util',
+      'parser': '../sources/parser',
+      'logger': '../sources/logger',
+      'formatter': '../sources/formatter'
+    }
+  });
 
   define([
-      'client'
-    ], function(client) {
-      return client;
-    });
+    'client'
+  ], function(client) {
+    return client;
+  });
 
-}).call(this);
+})
+  .call(this);
