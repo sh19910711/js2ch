@@ -11,7 +11,8 @@
 
   define([
       'underscore',
-      'encoding'
+      'encoding',
+      'logger'
     ], function(_, encoding) {
       var BufferLib = function() {};
 

@@ -15,8 +15,9 @@
   define([
       'underscore',
       'net',
-      'encoding'
-    ], function(_, net, encoding) {
+      'encoding',
+      'logger'
+    ], function(_, net, encoding, logger) {
       var sockets = [];
 
       var Socket = function() {};

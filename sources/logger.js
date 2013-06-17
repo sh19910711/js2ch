@@ -13,49 +13,64 @@
   var root = this;
 
   define([
-    'underscore'
-  ], function(_) {
-    var Logger = function() {
-    };
+      'underscore',
+      'formatter'
+    ], function(_, formatter) {
+      var Logger = function() {};
 
-    Logger.prototype = {};
-    var proto = _(Logger.prototype);
+      Logger.prototype = {};
+      var proto = _(Logger.prototype);
 
-    proto.extend({
-      // ログ出力
-      log: function log() {
-        console.log.apply(console, arguments);
-      }
+      proto.extend({
+          // ログ出力
+          log: function log() {
+            console.log.apply(console, arguments);
+          }
+        });
+
+      proto.extend({
+          // デバッグ出力
+          debug: function debug() {
+            console.debug.apply(console, arguments);
+          }
+        });
+
+      proto.extend({
+          // 情報出力
+          info: function info() {
+            console.info.apply(console, arguments);
+          }
+        });
+
+      proto.extend({
+          // 警告を出力
+          warn: function warn() {
+            console.warn.apply(console, arguments);
+          }
+        });
+
+      proto.extend({
+          // エラー出力
+          error: function error() {
+            console.error.apply(console, arguments);
+          }
+        });
+
+
+      var keys = ['log', 'debug', 'info', 'warn', 'error'];
+      _(keys).each(function(key) {
+        var func = Logger.prototype[key];
+        Logger.prototype[key] = function() {
+          var args = Array.prototype.slice.apply(arguments);
+          console.log(args);
+          args = _(args).map(function(arg) {
+            return formatter.format(arg);
+          });
+          func.apply(this, args);
+        };
+      });
+
+      return new Logger();
     });
-
-    proto.extend({
-      // デバッグ出力
-      debug: function debug() {
-        console.debug.apply(console, arguments);
-      }
-    });
-
-    proto.extend({
-      // 情報出力
-      info: function info() {
-        console.info.apply(console, arguments);
-      }
-    });
-
-    proto.extend({
-      // 警告を出力
-      warn: function warn() {
-        console.warn.apply(console, arguments);
-      }
-    });
-
-    proto.extend({
-      error: function error() {
-        console.error.apply(console, arguments);
-      }
-    });
-
-    return new Logger();
-  });
 
 }).call(this);

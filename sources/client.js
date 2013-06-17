@@ -19,8 +19,9 @@
       'storage',
       'parser',
       'encoding',
-      'util'
-    ], function($, _, http, storage, parser, encoding, util) {
+      'util',
+      'logger'
+    ], function($, _, http, storage, parser, encoding, util, logger) {
 
       // 2chクライアントライブラリ
       var Client = function() {

@@ -22,6 +22,7 @@
         'buffer-lib': './sources/buffer-lib-node',
         'util': './sources/util',
         'logger': './sources/logger',
+        'formatter': './sources/formatter',
         'encoding': './lib/encoding'
       }
     });

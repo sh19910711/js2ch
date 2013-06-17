@@ -19,8 +19,9 @@
       'purl',
       'async',
       'util',
-      'buffer-lib'
-    ], function($, _, socket, purl, async, util, buffer_lib) {
+      'buffer-lib',
+      'logger'
+    ], function($, _, socket, purl, async, util, buffer_lib, logger) {
       var BR = "\r\n";
 
       var HttpLib = function() {};
