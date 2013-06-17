@@ -73,7 +73,7 @@
               url,
               _(this.HTTP_REQ_HEADERS_DEFAULT).extend({
                   'Host': hostname
-                }));
+                })).done(callback);
           }
         });
 
