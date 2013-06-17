@@ -12,7 +12,7 @@
       // on memory (test)
       var sqlite = sqlite3.verbose();
       var TABLE_NAME = 'items';
-      var STORAGE_TARGET = 'test-table';
+      var STORAGE_TARGET = 'js2ch.db';
       var callbacks = new $.Callbacks('once');
       var fired = false;
 
