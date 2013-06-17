@@ -1,42 +1,53 @@
 (function() {
-    'use strict'
+  'use strict'
 
-    define([
-        'jquery',
-        'underscore'
+  define([
+      'jquery',
+      'underscore'
     ], function($, _) {
-        var Util = function() {
-        };
+      var Util = function() {};
 
-        Util.prototype = {};
-        var proto = _(Util.prototype);
+      Util.prototype = {};
+      var proto = _(Util.prototype);
 
-        proto.extend({
-            // 与えられた関数をDeferredを返すように変更した関数を返す
-            getDeferredFunc: function getDeferredFunc(func) {
-                return function() {
-                    var deferred = new $.Deferred();
-                    var callback = arguments[arguments.length - 1];
-                    if ( callback instanceof Function ) {
-                        arguments[arguments.length - 1] = function() {
-                            if ( callback instanceof Function )
-                                callback.apply(this, arguments);
-                            deferred.resolve.apply(this, arguments);
-                        };
-                    } else {
-                        Array.prototype.push.call(arguments, function() {
-                            if ( callback instanceof Function )
-                                callback.apply(this, arguments);
-                            deferred.resolve.apply(this, arguments);
-                        });
-                    }
-                    func.apply(this, arguments);
-                    return deferred;
-                };
-            }
+      proto.extend({
+          // 与えられた関数をDeferredを返すように変更した関数を返す
+          getDeferredFunc: function getDeferredFunc(func) {
+            return function() {
+              var self = this;
+              var deferred = new $.Deferred();
+              var callback = arguments[arguments.length - 1];
+              var args = Array.prototype.slice.apply(arguments);
+              setTimeout(function() {
+                if (callback instanceof Function) {
+                  args[args.length - 1] = function() {
+                    if (callback instanceof Function)
+                      callback.apply(this, arguments);
+                    deferred.resolve.apply(this, arguments);
+                  };
+                } else {
+                  args.push(function() {
+                    if (callback instanceof Function)
+                      callback.apply(this, arguments);
+                    deferred.resolve.apply(this, arguments);
+                  });
+                }
+                func.apply(self, args);
+              }, 0);
+              return deferred;
+            };
+          }
         });
 
-        return new Util();
+      proto.extend({
+          // 文字列strをtokenで分割する
+          splitString: function splitString(str, token) {
+            var x = str.indexOf(token);
+            return [str.substring(0, x), str.substring(x + token.length)];
+          }
+        });
+
+      return new Util();
     });
 
 }).call(this);
