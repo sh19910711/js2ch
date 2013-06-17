@@ -48,6 +48,14 @@
       }
     });
 
+    proto.extend({
+      // 文字列が空だったらtrue
+      checkEmptyString: function checkEmptyString(str) {
+        return $.trim(str)
+          .length === 0;
+      }
+    });
+
     return new Util();
   });
 

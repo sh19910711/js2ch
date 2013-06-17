@@ -15,31 +15,52 @@
   define([
     'underscore',
     'jquery',
-    'logger'
-  ], function(_, $, logger) {
+    'logger',
+    'util'
+  ], function(_, $, logger, util) {
     // 各種データの構文解析用ライブラリ
-    var Parser = function() {};
+    var Parser = function() {
+      this.token = '<>';
+    };
 
     Parser.prototype = {};
     var proto = _(Parser.prototype);
 
     proto.extend({
-      // SUBJECT.TXTのデータをオブジェクトに変換する
-      parseSubjectText: function parseSubjectText(str) {
-        logger.log('@Parser#parseSubjectText: str = ', str);
-      }
-    });
-
-    proto.extend({
       // スレッド一覧をオブジェクトの配列に変換する
       parseThreadList: function parseThreadList(str) {
-        logger.log('@Parser#parseThreadList: str = ', str);
+
+        function get_filename(str) {
+          return $.trim(str);
+        }
+
+        function get_subject(str) {
+          return $.trim(str.match(/(.*)\([0-9]+\)$/)[1]);
+        }
+
+        function get_responses(str) {
+          return parseInt(str.match(/.*\(([0-9]+)\)$/)[1], 10);
+        }
+
+        function get_thread_info(line) {
+          var splitted = util.splitString(line, this.token);
+          return {
+            filename: get_filename(splitted[0]),
+            subject: get_subject(splitted[1]),
+            responses: get_responses(splitted[1])
+          };
+        }
+
+        return _(str.split('\n'))
+          .reject(util.checkEmptyString)
+          .map(get_thread_info.bind(this));
       }
     });
 
     proto.extend({
       // スレッドの書き込み一覧をオブジェクトの配列に変換する
       parseResponsesFromThread: function parseResponsesFromThread(str) {
+
         function get_name(str) {
           var res = {};
           str = $.trim(str);
@@ -76,22 +97,21 @@
           return $.trim(str);
         }
 
+        function get_response(line, response_number) {
+          var terms = line.split(this.token);
+          return {
+            number: response_number + 1,
+            name: get_name(terms[0]),
+            mail: get_mail(terms[1]),
+            info: get_info(terms[2]),
+            body: get_body(terms[3]),
+            subject: get_subject(terms[4])
+          };
+        }
+
         var res = _(str.split('\n'))
-          .filter(function(line) {
-            return $.trim(line)
-              .length > 0;
-          })
-          .map(function(line, response_number) {
-            var terms = line.split('<>');
-            return {
-              number: response_number,
-              name: get_name(terms[0]),
-              mail: get_mail(terms[1]),
-              info: get_info(terms[2]),
-              body: get_body(terms[3]),
-              subject: get_subject(terms[4])
-            };
-          });
+          .reject(util.checkEmptyString)
+          .map(get_response.bind(this));
 
         return res;
       }
