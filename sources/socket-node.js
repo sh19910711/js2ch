@@ -58,9 +58,10 @@
         socket.byteCount = 0;
         socket.finished = false;
         socket.on('data', function(chunk) {
-          var array_data = _(chunk).map(function(v) {
-            return v;
-          });
+          var array_data = _(chunk)
+            .map(function(v) {
+              return v;
+            });
           socket.buffer = socket.buffer.concat(array_data);
           socket.byteCount += array_data.length;
         });
@@ -92,14 +93,16 @@
               resultCode: 1,
               data: socket.buffer.splice(0, bytes)
             });
-          } else if (socket.byteCount > 0) {
+          }
+          else if (socket.byteCount > 0) {
             var bytes = socket.byteCount;
             socket.byteCount -= bytes;
             callback({
               resultCode: 1,
               data: new ArrayBuffer(socket.buffer.splice(0, bytes))
             });
-          } else {
+          }
+          else {
             callback({
               resultCode: -1
             });
@@ -126,4 +129,5 @@
     return new Socket();
   });
 
-}).call(this);
+})
+  .call(this);

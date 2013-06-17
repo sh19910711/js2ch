@@ -54,11 +54,13 @@
 
     // Deferred設定
     var keys = ["get", "set", "remove", "clear"];
-    _(keys).each(function(key) {
-      Storage.prototype[key] = util.getDeferredFunc(Storage.prototype[key]);
-    });
+    _(keys)
+      .each(function(key) {
+        Storage.prototype[key] = util.getDeferredFunc(Storage.prototype[key]);
+      });
 
     return new Storage();
   });
 
-}).call(this);
+})
+  .call(this);

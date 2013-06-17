@@ -46,7 +46,8 @@
       // 文字列のバイト数を求める
       getByteLength: function getByteLength(str, callback) {
         setTimeout(function() {
-          callback(new Blob([str]).size);
+          callback(new Blob([str])
+            .size);
         }, 0);
       }
     });
@@ -54,4 +55,5 @@
     return new BufferLib();
   });
 
-}).call(this);
+})
+  .call(this);

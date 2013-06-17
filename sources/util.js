@@ -25,7 +25,8 @@
                   callback.apply(this, arguments);
                 deferred.resolve.apply(this, arguments);
               };
-            } else {
+            }
+            else {
               args.push(function() {
                 if (callback instanceof Function)
                   callback.apply(this, arguments);
@@ -47,7 +48,16 @@
       }
     });
 
+    proto.extend({
+      // 文字列が空だったらtrue
+      checkEmptyString: function checkEmptyString(str) {
+        return $.trim(str)
+          .length === 0;
+      }
+    });
+
     return new Util();
   });
 
-}).call(this);
+})
+  .call(this);

@@ -57,18 +57,20 @@
           socket.connect(socket_id, connect_info.host, 80, function() {
             var http_headers = [];
             http_headers.push('GET ' + connect_info.path + ' HTTP/1.0' + BR);
-            _(_.keys(http_headers_obj)).each(function(key) {
-              http_headers.push(key + ': ' + http_headers_obj[key] + BR);
-            });
+            _(_.keys(http_headers_obj))
+              .each(function(key) {
+                http_headers.push(key + ': ' + http_headers_obj[key] + BR);
+              });
             http_headers.push('Connection: close' + BR);
             http_headers.push(BR);
 
             var http_headers_text = http_headers.join('');
-            GetBuffer(http_headers_text).done(function(send_buf) {
-              socket.write(socket_id, send_buf, function() {
-                callback(null);
+            GetBuffer(http_headers_text)
+              .done(function(send_buf) {
+                socket.write(socket_id, send_buf, function() {
+                  callback(null);
+                });
               });
-            });
           });
         }
 
@@ -85,20 +87,23 @@
             socket.read(socket_id, 256, function(result) {
               if (result.resultCode < 0) {
                 clearTimeout(timeout);
-                http_response_array_data = _(http_response_array_data).map(function(v) {
-                  return v;
-                });
+                http_response_array_data = _(http_response_array_data)
+                  .map(function(v) {
+                    return v;
+                  });
                 socket.destroy(socket_id);
                 buffer_lib.convertToString(http_response_array_data, function(converted_text) {
                   http_response = GetResponse(converted_text);
                   callback(null);
                 });
-              } else {
+              }
+              else {
                 var arr = [];
                 var u8 = new Uint8Array(result.data);
-                _(u8).each(function(value) {
-                  arr.push(value);
-                });
+                _(u8)
+                  .each(function(value) {
+                    arr.push(value);
+                  });
                 http_response_array_data = http_response_array_data.concat(arr);
                 timeout = setTimeout(read, 0);
               }
@@ -151,20 +156,22 @@
                 path += '?' + connect_info.query;
 
               http_headers.push('POST ' + path + ' HTTP/1.1' + BR);
-              _(_.keys(http_headers_obj)).each(function(key) {
-                http_headers.push(key + ': ' + http_headers_obj[key] + BR);
-              });
+              _(_.keys(http_headers_obj))
+                .each(function(key) {
+                  http_headers.push(key + ': ' + http_headers_obj[key] + BR);
+                });
               http_headers.push('Content-Length: ' + query_length + BR);
               http_headers.push('Connection: close' + BR);
               http_headers.push(BR);
               http_headers.push(query);
 
               var http_headers_text = http_headers.join('');
-              GetBuffer(http_headers_text).done(function(send_buf) {
-                socket.write(socket_id, send_buf, function() {
-                  callback(null);
+              GetBuffer(http_headers_text)
+                .done(function(send_buf) {
+                  socket.write(socket_id, send_buf, function() {
+                    callback(null);
+                  });
                 });
-              });
             }
           });
         }
@@ -180,20 +187,23 @@
             socket.read(socket_id, 256, function(result) {
               if (result.resultCode < 0) {
                 clearTimeout(timeout);
-                http_response_array_data = _(http_response_array_data).map(function(v) {
-                  return v;
-                });
+                http_response_array_data = _(http_response_array_data)
+                  .map(function(v) {
+                    return v;
+                  });
                 socket.destroy(socket_id);
                 buffer_lib.convertToString(http_response_array_data, function(converted_text) {
                   http_response = GetResponse(converted_text);
                   callback(null);
                 });
-              } else {
+              }
+              else {
                 var arr = [];
                 var u8 = new Uint8Array(result.data);
-                _(u8).each(function(value) {
-                  arr.push(value);
-                });
+                _(u8)
+                  .each(function(value) {
+                    arr.push(value);
+                  });
                 http_response_array_data = http_response_array_data.concat(arr);
                 timeout = setTimeout(read, 0);
               }
@@ -234,7 +244,8 @@
 
       var lines = http_headers.slice(1);
       var terms = lines.map(function(line) {
-        return util.splitString(line, ':').map($.trim);
+        return util.splitString(line, ':')
+          .map($.trim);
       });
       var response_headers = {
         'HTTP-Version': status_line[0],
@@ -263,9 +274,11 @@
     // オブジェクトをクエリ用の文字列に変換する
 
     function ConvertToQueryString(data) {
-      return _(_.keys(data)).map(function(key) {
-        return key + '=' + data[key];
-      }).join('&');
+      return _(_.keys(data))
+        .map(function(key) {
+          return key + '=' + data[key];
+        })
+        .join('&');
     }
 
     // HTTPレスポンステキストをオブジェクトに変換する
@@ -281,11 +294,13 @@
 
     // Deferredの設定
     var keys = ['get', 'post'];
-    _(keys).each(function(key) {
-      HttpLib.prototype[key] = util.getDeferredFunc(HttpLib.prototype[key]);
-    });
+    _(keys)
+      .each(function(key) {
+        HttpLib.prototype[key] = util.getDeferredFunc(HttpLib.prototype[key]);
+      });
 
     return new HttpLib();
   });
 
-}).call(this);
+})
+  .call(this);
