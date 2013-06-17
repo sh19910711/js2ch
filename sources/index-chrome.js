@@ -21,7 +21,8 @@
         'buffer-lib': '../sources/buffer-lib-chrome',
         'util': '../sources/util',
         'parser': '../sources/parser',
-        'logger': '../sources/logger'
+        'logger': '../sources/logger',
+        'formatter': '../sources/formatter'
       }
     });
 

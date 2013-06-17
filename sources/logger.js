@@ -13,8 +13,9 @@
   var root = this;
 
   define([
-      'underscore'
-    ], function(_) {
+      'underscore',
+      'formatter'
+    ], function(_, formatter) {
       var Logger = function() {};
 
       Logger.prototype = {};
@@ -49,10 +50,25 @@
         });
 
       proto.extend({
+        // エラー出力
           error: function error() {
             console.error.apply(console, arguments);
           }
         });
+
+
+      var keys = ['log', 'debug', 'info', 'warn', 'error'];
+      _(keys).each(function(key) {
+        var func = Logger.prototype[key];
+        Logger.prototype[key] = function() {
+          var args = Array.prototype.slice.apply(arguments);
+          console.log(args);
+          args = _(args).map(function(arg) {
+            return formatter.format(arg);
+          });
+          func.apply(this, args);
+        };
+      });
 
       return new Logger();
     });
