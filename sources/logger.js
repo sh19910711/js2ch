@@ -12,10 +12,50 @@
 
   var root = this;
 
-  define([], function() {
-    // TODO: 実装
-    console.log('@logger: test');
-    return {};
+  define([
+    'underscore'
+  ], function(_) {
+    var Logger = function() {
+    };
+
+    Logger.prototype = {};
+    var proto = _(Logger.prototype);
+
+    proto.extend({
+      // ログ出力
+      log: function log() {
+        console.log.apply(console, arguments);
+      }
+    });
+
+    proto.extend({
+      // デバッグ出力
+      debug: function debug() {
+        console.debug.apply(console, arguments);
+      }
+    });
+
+    proto.extend({
+      // 情報出力
+      info: function info() {
+        console.info.apply(console, arguments);
+      }
+    });
+
+    proto.extend({
+      // 警告を出力
+      warn: function warn() {
+        console.warn.apply(console, arguments);
+      }
+    });
+
+    proto.extend({
+      error: function error() {
+        console.error.apply(console, arguments);
+      }
+    });
+
+    return new Logger();
   });
 
 }).call(this);
