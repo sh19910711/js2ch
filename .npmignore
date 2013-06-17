@@ -6,3 +6,4 @@ sources
 lib/*-chrome.js
 test-*
 *.db
+tasks

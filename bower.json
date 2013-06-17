@@ -12,7 +12,8 @@
     "Gruntfile.*",
     "sources",
     "tests",
-    "LICENSE.*"
+    "LICENSE.*",
+    "tasks"
   ],
   "dependencies": {
     "jquery": "~2.0.2",
