@@ -12,7 +12,9 @@
 
   var root = this;
 
-  define([], function() {
+  define([
+    'underscore'
+  ], function(_) {
     // 各種データの構文解析用ライブラリ
     var Parser = function() {};
 
