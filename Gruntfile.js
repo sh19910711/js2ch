@@ -42,7 +42,8 @@ module.exports = function(grunt) {
               async: 'empty:',
               encoding: 'empty:',
               purl: 'empty:',
-              net: 'empty:'
+              net: 'empty:',
+              sqlite3: 'empty:'
             }
           }
         }
