@@ -9,21 +9,21 @@
  * =================================================== */
 (function() {
   define([
-      'underscore'
-    ], function(_) {
-      var Formatter = function() {};
+    'underscore'
+  ], function(_) {
+    var Formatter = function() {};
 
-      Formatter.prototype = {};
-      var proto = _(Formatter.prototype);
+    Formatter.prototype = {};
+    var proto = _(Formatter.prototype);
 
-      proto.extend({
-          // 与えられたオブジェクトを何らかの形に整える（デバッグ出力などで利用）
-          format: function format(obj) {
-            // TODO: 種類に合わせて分岐、普通のオブジェクトのときはそのまま返す
-            return obj;
-          }
-        });
-
-      return new Formatter();
+    proto.extend({
+      // 与えられたオブジェクトを何らかの形に整える（デバッグ出力などで利用）
+      format: function format(obj) {
+        // TODO: 種類に合わせて分岐、普通のオブジェクトのときはそのまま返す
+        return obj;
+      }
     });
+
+    return new Formatter();
+  });
 }).call(this);

@@ -19,6 +19,7 @@
     "jquery": "~2.0.2",
     "underscore": "~1.4.4",
     "requirejs": "~2.1.6",
-    "async": "~0.2.5"
+    "async": "~0.2.5",
+    "backbone": "~1.0.0"
   }
 }
