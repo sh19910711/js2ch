@@ -63,7 +63,6 @@
         var func = Logger.prototype[key];
         Logger.prototype[key] = function() {
           var args = Array.prototype.slice.apply(arguments);
-          console.log(args);
           args = _(args)
             .map(function(arg) {
               return formatter.format(arg);

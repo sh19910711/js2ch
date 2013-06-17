@@ -44,8 +44,8 @@
           .extend({
             'Host': hostname,
           }))
-          .done(function() {
-            callback.apply(this, arguments);
+          .done(function(http_response) {
+            callback(parser.parseThreadList(http_response.body));
           });
       }
     });
@@ -60,7 +60,9 @@
           .extend({
             'Host': hostname
           }))
-          .done(callback);
+          .done(function(http_response) {
+            callback(parser.parseSettingText(http_response.body));
+          });
       }
     });
 
@@ -74,7 +76,9 @@
           .extend({
             'Host': hostname
           }))
-          .done(callback);
+          .done(function(http_response) {
+            callback(parser.parseResponsesFromThread(http_response.body));
+          });
       }
     });
 
