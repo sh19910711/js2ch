@@ -34,12 +34,6 @@
       var proto = _(Client.prototype);
 
       proto.extend({
-          testHoge: function() {
-            console.log('@hoge: http = ', http);
-          }
-        });
-
-      proto.extend({
           // スレッド一覧を取得する
           getThreadList: function getThreadList(hostname, board_id, callback) {
             var url = GetUrl(hostname, '/' + board_id + '/subject.txt');
