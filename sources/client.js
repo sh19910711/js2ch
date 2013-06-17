@@ -15,13 +15,14 @@
   define([
     'jquery',
     'underscore',
+    'backbone',
     'http-lib',
     'storage',
     'parser',
     'encoding',
     'util',
     'logger'
-  ], function($, _, http, storage, parser, encoding, util, logger) {
+  ], function($, _, Backbone, http, storage, parser, encoding, util, logger) {
 
     // 2chクライアントライブラリ
     var Client = function() {

@@ -17,6 +17,7 @@ module.exports = function(grunt) {
           paths: {
             jquery: 'empty:',
             underscore: 'empty:',
+            backbone: 'empty:',
             async: 'empty:',
             encoding: 'empty:',
             purl: 'empty:'
@@ -39,6 +40,7 @@ module.exports = function(grunt) {
           paths: {
             jquery: 'empty:',
             underscore: 'empty:',
+            backbone: 'empty:',
             async: 'empty:',
             encoding: 'empty:',
             purl: 'empty:',
