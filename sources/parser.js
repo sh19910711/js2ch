@@ -13,9 +13,26 @@
   var root = this;
 
   define([], function() {
-    // TODO: 実装
-    console.log('@parser: test');
-    return {};
+    // 各種データの構文解析用ライブラリ
+    var Parser = function() {
+    };
+
+    Parser.prototype = {};
+    var proto = _(Parser.prototype);
+
+    proto.extend({
+      // SUBJECT.TXTのデータをオブジェクトに変換する
+      parseSubjectText: function parseSubjectText(str) {
+      }
+    });
+
+    proto.extend({
+      // スレッドの書き込み一覧をオブジェクトの配列に変換する
+      parseThreadList: function parseThreadList(str) {
+      }
+    });
+
+    return new Parser();
   });
 
 }).call(this);
