@@ -14,21 +14,7 @@
       };
     });
 
-    describe('#create', function() {
-      it('ソケットを作成するたびにソケットの番号が増えていくことを確認する', function(done) {
-        requirejs(['socket'], function(socket) {
-          socket.create('tcp', {}, function(socket_info) {
-            socket_info.should.have.property('socketId');
-            socket_info.socketId.should.be.equal(0);
-            socket.create('tcp', {}, function(socket_info) {
-              socket_info.should.have.property('socketId');
-              socket_info.socketId.should.be.equal(1);
-            });
-            done.call();
-          });
-        });
-      });
-
+    describe('#create & #read & #write', function(done) {
       it('HTTP通信のテスト', function(done) {
         requirejs([
           'underscore',
@@ -137,6 +123,21 @@
             ]
           )
           deferred.done(call_done);
+        });
+      });
+    });
+
+    describe('#create', function() {
+      it('ソケットを作成するたびにソケットの番号が増えていくことを確認する', function(done) {
+        requirejs(['socket'], function(socket) {
+          socket.create('tcp', {}, function(socket_info) {
+            socket_info.should.have.property('socketId');
+            socket.create('tcp', {}, function(next_socket_info) {
+              next_socket_info.should.have.property('socketId');
+              next_socket_info.socketId.should.be.equal(socket_info.socketId + 1);
+            });
+            done.call();
+          });
         });
       });
     });
