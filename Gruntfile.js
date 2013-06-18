@@ -52,7 +52,7 @@ module.exports = function(grunt) {
     },
 
     jsbeautifier: {
-      files: ['./sources/*.js', './lib/js2ch-*.js', './Gruntfile.js'],
+      files: ['./sources/*.js', './lib/js2ch-*.js', './Gruntfile.js', 'tests/test-node/**/*.js'],
       options: {
         indent_size: 2,
         indent_char: ' ',
@@ -70,11 +70,50 @@ module.exports = function(grunt) {
         unescape_strings: false,
         break_chained_methods: true
       }
+    },
+
+    watch: {
+      'test-issue-3': {
+        files: ['./sources/http-lib.js', './tests/test-node/issues/test-3.js'],
+        tasks: ['test-issue-3']
+      },
+      'test-issue-4': {
+        files: ['./sources/socket-node.js', './tests/test-node/issues/test-4.js'],
+        tasks: ['test-issue-4']
+      }
     }
 
   });
 
-  grunt.loadTasks('tasks');
+  var registered_test_tasks = [];
+  var register_test_task = function register_test_task(testname, filepath) {
+    registered_test_tasks.push(testname);
+    grunt.registerTask(testname, function() {
+      var done = this.async();
+      var command_list = [
+        'mocha',
+        '--reporter list',
+        filepath
+      ];
+      var command = command_list.join(' ');
+
+      require('child_process')
+        .exec(command, function(error, stdout, stderr) {
+          grunt.log.write(stdout);
+          grunt.log.write(stderr);
+          done();
+        });
+    });
+  };
+
+  register_test_task('test-socket-lib', './tests/test-node/test-socket.js');
+  register_test_task('test-issue-3', './tests/test-node/issues/test-3.js');
+  register_test_task('test-issue-4', './tests/test-node/issues/test-4.js');
+  grunt.registerTask('test', registered_test_tasks);
+  grunt.registerTask('build', ['requirejs']);
+
   grunt.loadNpmTasks('grunt-contrib-requirejs');
-  // grunt.loadNpmTasks('grunt-jsbeautifier');
+  grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-jsbeautifier');
+
 };

@@ -2,5 +2,5 @@ components
 node_modules
 **/.*
 
-test-*
+./test-*
 **/*.db
