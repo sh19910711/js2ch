@@ -2,7 +2,11 @@ module.exports = function(grunt) {
 
   var _ = require('underscore');
 
-  var testname_list = ['test-socket.js', 'test-http-lib.js'];
+  var testname_list = [
+    'test-socket.js',
+    'test-http-lib.js',
+    'issues/test-3.js'
+  ];
 
   _(testname_list)
     .each(function(testname) {
@@ -10,13 +14,15 @@ module.exports = function(grunt) {
         var done = this.async();
         var command_list = [
           'mocha',
+          '--reporter list',
           testname
         ]
         var command = command_list.join(' ');
         require('child_process')
-          .exec(command, function(error, stdout) {
+          .exec(command, function(error, stdout, stderr) {
             grunt.log.write(stdout);
-            done(error);
+            grunt.log.write(stderr);
+            done();
           });
       });
     });
