@@ -52,7 +52,7 @@ module.exports = function(grunt) {
     },
 
     jsbeautifier: {
-      files: ['./sources/*.js', './lib/js2ch-*.js', './Gruntfile.js'],
+      files: ['./sources/*.js', './lib/js2ch-*.js', './Gruntfile.js', 'tests/test-node/**/*.js'],
       options: {
         indent_size: 2,
         indent_char: ' ',
