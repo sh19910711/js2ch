@@ -1,6 +1,6 @@
 module.exports = function(grunt) {
 
-  grunt.registerTask('test', function() {
+  grunt.registerTask('test-node', function() {
     var done = this.async();
     var command_list = [
       'mocha',
