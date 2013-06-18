@@ -96,7 +96,7 @@ module.exports = function(grunt) {
         filepath
       ];
       var command = command_list.join(' ');
-      
+
       require('child_process')
         .exec(command, function(error, stdout, stderr) {
           grunt.log.write(stdout);
@@ -107,7 +107,6 @@ module.exports = function(grunt) {
   };
 
   register_test_task('test-socket-lib', './tests/test-node/test-socket.js');
-  register_test_task('test-http-lib', './tests/test-node/test-http-lib.js');
   register_test_task('test-issue-3', './tests/test-node/issues/test-3.js');
   register_test_task('test-issue-4', './tests/test-node/issues/test-4.js');
   grunt.registerTask('test', registered_test_tasks);
