@@ -25,7 +25,8 @@
           'http-lib'
         ], function(http) {
           http.get('http://localhost:8654/test', {}).done(function(res) {
-            console.error(res);
+            res.headers['Status-Code'].should.be.equal('200');
+            res.headers['Content-Type'].should.be.equal('text/plain');
             res.body.should.be.equal('test');
             done();
           });
