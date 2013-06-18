@@ -23,6 +23,7 @@
     'logger'
   ], function($, _, socket, purl, async, util, buffer_lib, logger) {
     var BR = "\r\n";
+    var DEFAULT_HTTP_PORT = 80;
 
     var HttpLib = function() {};
 
@@ -38,7 +39,8 @@
         var url_obj = $.url(url);
         var connect_info = {
           host: url_obj.attr('host'),
-          path: url_obj.attr('path')
+          path: url_obj.attr('path'),
+          port: parseInt(url_obj.attr('port') || DEFAULT_HTTP_PORT, 10)
         };
         var socket_id;
 
@@ -54,7 +56,7 @@
         // HTTPリクエストを送る
 
         function send_http_request(callback) {
-          socket.connect(socket_id, connect_info.host, 80, function() {
+          socket.connect(socket_id, connect_info.host, connect_info.port, function() {
             var http_headers = [];
             http_headers.push('GET ' + connect_info.path + ' HTTP/1.0' + BR);
             _(_.keys(http_headers_obj))
@@ -128,7 +130,8 @@
         var connect_info = {
           host: url_obj.attr('host'),
           path: url_obj.attr('path'),
-          query: url_obj.attr('query')
+          query: url_obj.attr('query'),
+          port: url_obj.attr('port') || DEFAULT_HTTP_PORT
         };
         var socket_id;
 
@@ -144,7 +147,7 @@
         // HTTPリクエストを送る
 
         function send_http_request(callback) {
-          socket.connect(socket_id, connect_info.host, 80, function() {
+          socket.connect(socket_id, connect_info.host, connect_info, function() {
             var http_headers = [];
             var path = connect_info.path;
             var query = ConvertToQueryString(data);
@@ -283,11 +286,11 @@
 
     // HTTPレスポンステキストをオブジェクトに変換する
 
-    function GetResponse(http_response) {
-      var response_headers = ParseHeaderText(GetHeaderText(http_response));
+    function GetResponse(http_response_text) {
+      var response_headers = ParseHeaderText(GetHeaderText(http_response_text));
       var http_response = {
         headers: response_headers,
-        body: GetBodyText(http_response)
+        body: GetBodyText(http_response_text)
       };
       return http_response;
     }

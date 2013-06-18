@@ -70,10 +70,45 @@ module.exports = function(grunt) {
         unescape_strings: false,
         break_chained_methods: true
       }
+    },
+
+    watch: {
+      'test-issue-3': {
+        files: ['./sources/http-lib.js', './tests/test-node/issues/test-3.js'],
+        tasks: ['test-issue-3']
+      }
     }
 
   });
 
+  var registered_test_tasks = [];
+  var register_test_task = function register_test_task(testname, filepath) {
+    registered_test_tasks.push(testname);
+    grunt.registerTask(testname, function() {
+      var done = this.async();
+      var command_list = [
+        'mocha',
+        '--reporter list',
+        filepath
+      ];
+      var command = command_list.join(' ');
+      
+      require('child_process')
+        .exec(command, function(error, stdout, stderr) {
+          grunt.log.write(stdout);
+          grunt.log.write(stderr);
+          done();
+        });
+    });
+  };
+
+  register_test_task('test-socket-lib', './tests/test-node/test-socket.js');
+  register_test_task('test-http-lib', './tests/test-node/test-http-lib.js');
+  register_test_task('test-issue-3', './tests/test-node/issues/test-3.js');
+  grunt.registerTask('test', registered_test_tasks);
+
   grunt.loadNpmTasks('grunt-contrib-requirejs');
+  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-jsbeautifier');
+
 };
