@@ -76,6 +76,10 @@ module.exports = function(grunt) {
       'test-issue-3': {
         files: ['./sources/http-lib.js', './tests/test-node/issues/test-3.js'],
         tasks: ['test-issue-3']
+      },
+      'test-issue-4': {
+        files: ['./sources/socket-node.js', './tests/test-node/issues/test-4.js'],
+        tasks: ['test-issue-4']
       }
     }
 
@@ -105,6 +109,7 @@ module.exports = function(grunt) {
   register_test_task('test-socket-lib', './tests/test-node/test-socket.js');
   register_test_task('test-http-lib', './tests/test-node/test-http-lib.js');
   register_test_task('test-issue-3', './tests/test-node/issues/test-3.js');
+  register_test_task('test-issue-4', './tests/test-node/issues/test-4.js');
   grunt.registerTask('test', registered_test_tasks);
 
   grunt.loadNpmTasks('grunt-contrib-requirejs');
