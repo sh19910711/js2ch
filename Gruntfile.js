@@ -74,7 +74,6 @@ module.exports = function(grunt) {
 
   });
 
-  grunt.loadTasks('tasks');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
-  // grunt.loadNpmTasks('grunt-jsbeautifier');
+  grunt.loadNpmTasks('grunt-jsbeautifier');
 };
