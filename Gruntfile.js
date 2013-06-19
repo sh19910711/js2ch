@@ -106,6 +106,23 @@ module.exports = function(grunt) {
     });
   };
 
+  grunt.registerTask('jsdoc', function() {
+    var done = this.async();
+    var command_list = [
+      'jsdoc',
+      './sources',
+      './lib/js2ch-*'
+    ];
+    var command = command_list.join(' ');
+
+    require('child_process')
+      .exec(command, function(error, stdout, stderr) {
+        grunt.log.write(stdout);
+        grunt.log.write(stderr);
+        done();
+      });
+  });
+
   register_test_task('test-socket-lib', './tests/test-node/test-socket.js');
   register_test_task('test-issue-3', './tests/test-node/issues/test-3.js');
   register_test_task('test-issue-4', './tests/test-node/issues/test-4.js');
