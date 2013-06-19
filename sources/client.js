@@ -7,6 +7,10 @@
  * Licensed under MIT License.
  * http://opensource.org/licenses/MIT
  * =================================================== */
+/**
+ * @fileOverview 2ch専用ブラウザ・クライアント用のライブラリ
+ * @author Hiroyuki Sano
+ */
 (function() {
   'use strict';
 
@@ -24,8 +28,15 @@
     'logger'
   ], function($, _, Backbone, http, storage, parser, encoding, util, logger) {
 
-    // 2chクライアントライブラリ
+    /**
+     * @constructor Client
+     */
     var Client = function() {
+      /**
+       * @description HTTPリクエスト時に渡すヘッダのリスト
+       * @memberof Client
+       *
+       */
       this.HTTP_REQ_HEADERS_DEFAULT = {
         'User-Agent': 'Monazilla/1.00'
       };
@@ -35,7 +46,17 @@
     var proto = _(Client.prototype);
 
     proto.extend({
-      // スレッド一覧を取得する
+      /**
+       * @description スレッド一覧を取得する
+       * @memberof Client
+       *
+       * @param {String} hostname
+       * ホスト名
+       * @param {String} board_id
+       * 板ID
+       * @param {Client#getThreadList-callback} callback
+       * スレッド一覧取得後、callback(Array) として呼び出される。
+       */
       getThreadList: function getThreadList(hostname, board_id, callback) {
         var url = GetUrl(hostname, '/' + board_id + '/subject.txt');
         http.get(
@@ -50,8 +71,25 @@
       }
     });
 
+    /**
+     * @description スレッド一覧取得後、callback(Array)として呼び出される
+     * @callback Client#getThreadList-callback
+     * @param {Array} thread_list
+     * スレッド情報の配列
+     */
+
     proto.extend({
-      // SETTING.TXTを取得する
+      /**
+       * @description [未実装] SETTING.TXTを取得する
+       * @memberof Client
+       *
+       * @param {String} hostname
+       * ホスト名
+       * @param {String} board_id
+       * 板ID
+       * @param {Client#getSettingText-callback} callback
+       * 情報取得後 callback(Object) として呼び出される
+       */
       getSettingText: function getSettingText(hostname, board_id, callback) {
         var url = GetUrl(hostname, '/' + board_id + '/SETTING.TXT');
         http.get(
@@ -66,8 +104,27 @@
       }
     });
 
+    /**
+     * @description 情報取得後 callback(Object)として呼び出される
+     * @callback Client#getSettingText-callback
+     * @param {Object} settings
+     * 板の設定情報
+     */
+
     proto.extend({
-      // スレッドの書き込みを取得する
+      /**
+       * @description スレッドの書き込みを取得する
+       * @memberof Client
+       *
+       * @param {String} hostname
+       * ホスト名
+       * @param {String} board_id
+       * 板ID
+       * @param {String} thread_id
+       * スレッドID
+       * @param {Client#getResponsesFromThread-callback} callback
+       * 書き込み一覧を取得後 callback(Array) として呼び出される
+       */
       getResponsesFromThread: function getResponsesFromThread(hostname, board_id, thread_id, callback) {
         var url = GetUrl(hostname, '/' + board_id + GetDatPath(hostname, thread_id));
         http.get(
@@ -82,8 +139,31 @@
       }
     });
 
+    /**
+     * @description 書き込み一覧を取得後 callback(Array) として呼び出される
+     * @callback Client#getResponsesFromThread-callback
+     *
+     * @param {Array} responses
+     * スレッドに書き込まれたレスのリスト
+     */
+
     proto.extend({
       // スレッドに書き込む
+      /**
+       * @description スレッドに書き込みを行う
+       * @memberof Client
+       *
+       * @param {String} hostname
+       * ホスト名
+       * @param {String} board_id
+       * 板ID
+       * @param {String} thread_id
+       * スレッドID
+       * @param {Object} response
+       * 書き込み内容
+       * @param {Client#putResponseToThread-callback} callback
+       * 書き込み完了後 callback(Object) として呼び出される
+       */
       putResponseToThread: function putResponseToThread(hostname, board_id, thread_id, response, callback) {
         var url = GetUrl(hostname, '/test/bbs.cgi?guid=ON');
 
@@ -222,6 +302,14 @@
           });
       }
     });
+
+    /**
+     * @description 書き込み完了後 callback(Object) として呼び出される
+     * @callback Client#putResponseToThread-callback
+     *
+     * @param {Object} http_response
+     * HTTPレスポンス
+     */
 
 
     // ホスト名とパスを繋げたURLを返す
