@@ -7,6 +7,10 @@
  * Licensed under MIT License.
  * http://opensource.org/licenses/MIT
  * =================================================== */
+/**
+ * @fileOverview 各種データの構文解析用ライブラリ
+ * @author Hiroyuki Sano
+ */
 (function() {
   'use strict';
 
@@ -18,8 +22,14 @@
     'logger',
     'util'
   ], function(_, $, logger, util) {
-    // 各種データの構文解析用ライブラリ
+    /**
+     * @constructor Parser
+     */
     var Parser = function() {
+      /**
+       * @description 2chのデータ分割用トークン
+       * @memberof Parser
+       */
       this.token = '<>';
     };
 
@@ -27,7 +37,15 @@
     var proto = _(Parser.prototype);
 
     proto.extend({
-      // スレッド一覧をオブジェクトの配列に変換する
+      /**
+       * @description スレッド一覧をオブジェクトの配列に変換する
+       * @memberof Parser
+       *
+       * @param {String} str
+       * subject.txtなどのスレッド一覧のデータ
+       * @return {Array}
+       * スレッド一覧をオブジェクトに変換した配列
+       */
       parseThreadList: function parseThreadList(str) {
 
         function get_filename(str) {
@@ -58,7 +76,15 @@
     });
 
     proto.extend({
-      // スレッドの書き込み一覧をオブジェクトの配列に変換する
+      /**
+       * @description スレッドの書き込み一覧をオブジェクトの配列に変換する
+       * @memberof Parser
+       *
+       * @param {String} str
+       * datファイルなどに含まれる書き込み一覧のデータ
+       * @return {Array}
+       * 書き込み一覧をオブジェクトに変換した配列
+       */
       parseResponsesFromThread: function parseResponsesFromThread(str) {
 
         function get_name(str) {
