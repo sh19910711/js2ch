@@ -361,8 +361,7 @@
         Client.prototype[key] = util.getDeferredFunc(Client.prototype[key]);
       });
 
-    return new Client();
+    return Client;
   });
 
-})
-  .call(this);
+})();

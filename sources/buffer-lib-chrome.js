@@ -84,8 +84,7 @@
       }
     });
 
-    return new BufferLibChrome();
+    return BufferLibChrome;
   });
 
-})
-  .call(this);
+})();

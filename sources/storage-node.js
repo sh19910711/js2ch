@@ -275,8 +275,7 @@
         StorageNode.prototype[key] = util.getDeferredFunc(StorageNode.prototype[key]);
       });
 
-    return new StorageNode();
+    return StorageNode;
   });
 
-})
-  .call(this);
+})();

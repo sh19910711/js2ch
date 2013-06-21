@@ -347,8 +347,7 @@
         HttpLib.prototype[key] = util.getDeferredFunc(HttpLib.prototype[key]);
       });
 
-    return new HttpLib();
+    return HttpLib;
   });
 
-})
-  .call(this);
+})();

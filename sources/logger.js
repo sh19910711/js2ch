@@ -94,8 +94,7 @@
         };
       });
 
-    return new Logger();
+    return Logger;
   });
 
-})
-  .call(this);
+})();

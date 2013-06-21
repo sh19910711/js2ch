@@ -96,8 +96,7 @@
       }
     });
 
-    return new Util();
+    return Util;
   });
 
-})
-  .call(this);
+})();

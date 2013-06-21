@@ -157,7 +157,7 @@
      * @callback SocketChrome#write-callback
      */
 
-    return new SocketChrome();
+    return SocketChrome;
   });
 
 })();

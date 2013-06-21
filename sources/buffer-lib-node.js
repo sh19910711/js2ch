@@ -83,8 +83,7 @@
       }
     });
 
-    return new BufferLib();
+    return BufferLib;
   });
 
-})
-  .call(this);
+})();

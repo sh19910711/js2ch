@@ -119,8 +119,7 @@
         StorageChrome.prototype[key] = util.getDeferredFunc(StorageChrome.prototype[key]);
       });
 
-    return new StorageChrome();
+    return StorageChrome;
   });
 
-})
-  .call(this);
+})();

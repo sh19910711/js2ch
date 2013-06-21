@@ -219,7 +219,7 @@
       return String.fromCharCode.apply(null, new Uint16Array(buf));
     }
 
-    return new SocketNode();
+    return SocketNode;
   });
 
 })();
