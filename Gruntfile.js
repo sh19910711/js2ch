@@ -80,6 +80,10 @@ module.exports = function(grunt) {
       'test-issue-4': {
         files: ['./sources/socket-node.js', './tests/unit-tests/issues/test-4.js'],
         tasks: ['test-issue-4']
+      },
+      'enhancement': {
+        files: ['./sources/*.js'],
+        tasks: ['enhancement']
       }
     }
 
@@ -127,6 +131,7 @@ module.exports = function(grunt) {
   register_test_task('test-socket-lib', './tests/unit-tests/test-socket.js');
   register_test_task('test-issue-3', './tests/unit-tests/issues/test-3.js');
   register_test_task('test-issue-4', './tests/unit-tests/issues/test-4.js');
+  grunt.registerTask('enhancement', ['doc', 'test']);
   grunt.registerTask('test', registered_test_tasks);
   grunt.registerTask('build', ['jsbeautifier', 'requirejs']);
   grunt.registerTask('doc', ['jsbeautifier', 'jsdoc']);
