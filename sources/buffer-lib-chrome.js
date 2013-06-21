@@ -20,7 +20,7 @@
     'logger'
   ], function(_, encoding, logger) {
     /**
-     * @constructor
+     * @constructor BufferLibChrome
      */
     var BufferLibChrome = function() {};
 
