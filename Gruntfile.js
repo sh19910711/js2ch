@@ -52,7 +52,7 @@ module.exports = function(grunt) {
     },
 
     jsbeautifier: {
-      files: ['./sources/*.js', './lib/js2ch-*.js', './Gruntfile.js', 'tests/test-node/**/*.js'],
+      files: ['./sources/*.js', './lib/js2ch-*.js', './Gruntfile.js', 'tests/unit-tests/**/*.js'],
       options: {
         indent_size: 2,
         indent_char: ' ',
@@ -74,11 +74,11 @@ module.exports = function(grunt) {
 
     watch: {
       'test-issue-3': {
-        files: ['./sources/http-lib.js', './tests/test-node/issues/test-3.js'],
+        files: ['./sources/http-lib.js', './tests/unit-tests/issues/test-3.js'],
         tasks: ['test-issue-3']
       },
       'test-issue-4': {
-        files: ['./sources/socket-node.js', './tests/test-node/issues/test-4.js'],
+        files: ['./sources/socket-node.js', './tests/unit-tests/issues/test-4.js'],
         tasks: ['test-issue-4']
       }
     }
@@ -124,9 +124,9 @@ module.exports = function(grunt) {
   });
 
 
-  register_test_task('test-socket-lib', './tests/test-node/test-socket.js');
-  register_test_task('test-issue-3', './tests/test-node/issues/test-3.js');
-  register_test_task('test-issue-4', './tests/test-node/issues/test-4.js');
+  register_test_task('test-socket-lib', './tests/unit-tests/test-socket.js');
+  register_test_task('test-issue-3', './tests/unit-tests/issues/test-3.js');
+  register_test_task('test-issue-4', './tests/unit-tests/issues/test-4.js');
   grunt.registerTask('test', registered_test_tasks);
   grunt.registerTask('build', ['jsbeautifier', 'requirejs']);
   grunt.registerTask('doc', ['jsbeautifier', 'jsdoc']);
