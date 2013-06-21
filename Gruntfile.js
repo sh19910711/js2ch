@@ -1,6 +1,9 @@
 module.exports = function(grunt) {
-  grunt.initConfig({
 
+  var _ = require('underscore');
+  var initConfig = {};
+
+  _(initConfig).extend({
     requirejs: {
       buildChrome: {
         options: {
@@ -89,10 +92,14 @@ module.exports = function(grunt) {
 
   });
 
+  // テスト用のタスクを登録する
   var registered_test_tasks = [];
   var register_test_task = function register_test_task(testname, filepath) {
-    registered_test_tasks.push(testname);
-    grunt.registerTask(testname, function() {
+    registered_test_tasks.push({
+      testname: testname,
+      filepath: filepath
+    });
+    grunt.registerTask(testname, function func() {
       var done = this.async();
       var command_list = [
         'mocha',
@@ -105,11 +112,24 @@ module.exports = function(grunt) {
       require('child_process')
         .exec(command, function(error, stdout, stderr) {
           grunt.log.write(stdout);
-          done();
+          done(error);
         });
     });
   };
 
+  // 並列実行（未使用）
+  _(initConfig).extend({
+    parallel: {
+      tests: {
+        options: {
+          grunt: true
+        },
+        tasks: registered_test_tasks
+      }
+    }
+  });
+
+  // jsdocを実行する
   grunt.registerTask('jsdoc', function() {
     var done = this.async();
     var command_list = [
@@ -127,17 +147,68 @@ module.exports = function(grunt) {
       });
   });
 
+  // すべてのテストを実行する
+  grunt.registerTask('all-tests', function() {
+    var done = this.async();
+    var command_list = [
+      'mocha',
+      '--reporter tap',
+      '--ui bdd'
+    ];
+    var mocha_command = command_list.join(' ');
 
+    var files = _(registered_test_tasks).map(function(testtask) {
+      return testtask.filepath
+    });
+
+    var $ = require('jquery');
+    var result_code = null;
+
+    var deferreds = _(files).map(function(filepath) {
+      var deferred = new $.Deferred();
+      require('child_process')
+      .exec(mocha_command + ' ' + filepath, function(error, stdout, stderr) {
+        console.log(filepath);
+        grunt.log.write(stdout);
+        if ( error ) {
+          result_code = error;
+        }
+        deferred.resolve(error);
+      });
+      return deferred;
+    });
+
+    $.when.apply(null, deferreds).done(function() {
+      done(result_code);
+    });
+  });
+
+  // mock用http serverを走らせる
+  grunt.registerTask('run-test-servers', function() {
+    this.async();
+    var server = require('./tests/mocks/http-server-1').createHttpServer(8654);
+    var server = require('./tests/mocks/http-server-1').createHttpServer(80);
+  });
+
+  // テスト用のタスクを登録する
   register_test_task('test-socket-node', './tests/unit-tests/test-socket-node.js');
+  register_test_task('test-socket-chrome', './tests/unit-tests/test-socket-chrome.js');
   register_test_task('test-issue-3', './tests/unit-tests/issues/test-3.js');
   register_test_task('test-issue-4', './tests/unit-tests/issues/test-4.js');
+
+  // 基本的な操作の登録
   grunt.registerTask('enhancement', ['doc', 'test']);
-  grunt.registerTask('test', registered_test_tasks);
+  grunt.registerTask('test', ['all-tests']);
   grunt.registerTask('build', ['jsbeautifier', 'requirejs']);
   grunt.registerTask('doc', ['jsbeautifier', 'jsdoc']);
 
+  // pluginの登録
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-jsbeautifier');
+  grunt.loadNpmTasks('grunt-parallel');
+
+  // 設定を反映する
+  grunt.initConfig(initConfig);
 
 };

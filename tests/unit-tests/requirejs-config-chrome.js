@@ -8,8 +8,8 @@
       paths: {
         'formatter': './sources/formatter',
         'logger': './sources/logger',
-        'socket': './sources/socket-node',
-        'buffer-lib': './sources/buffer-lib-node',
+        'socket': './sources/socket-chrome',
+        'buffer-lib': './sources/buffer-lib-chrome',
         'http-lib': './sources/http-lib',
         'util': './sources/util',
         'encoding': './lib/encoding',
@@ -20,6 +20,9 @@
     global.window = {
       jQuery: jQuery
     };
+    global.chrome = require('./chrome-api-mock');
+    global.FileReader = require('./filereader-mock');
+    global.Blob = require('./blob-mock');
     return requirejs;
   })
     .call();

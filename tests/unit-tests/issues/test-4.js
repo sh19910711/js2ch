@@ -6,16 +6,6 @@
   describe('Socket', function() {
     before(function() {
       global.requirejs = require('../requirejs-config-node');
-
-      // local server
-      var express = require('express');
-      var app = express();
-      app.get('/test', function(req, res) {
-        res.setHeader('Content-Type', 'text/plain');
-        res.setHeader('Content-Length', 4);
-        res.end('test');
-      });
-      app.listen(8654);
     });
 
     // "socket#readで最後に残ったデータが受信できない"
@@ -34,12 +24,12 @@
         });
       });
 
-      it('http://www.google.co.jp/humans.txtを取得する', function(done) {
+      it('http://localhost/humans.txtを取得する', function(done) {
         requirejs([
           'http-lib'
         ], function(http) {
           var deferred = http.get(
-            'http://www.google.co.jp/humans.txt', {}
+            'http://localhost/humans.txt', {}
           );
           deferred.done(function(response) {
             var expected = "Google is built by a large team of engineers, designers, researchers, robots, and others in many different sites across the globe. It is updated continuously, and built with more tools and technologies than we can shake a stick at. If you'd like to help us out, see google.com/jobs.\n";
@@ -49,12 +39,12 @@
         });
       });
 
-      it('http://www.google.co.jp:80/humans.txtを取得する', function(done) {
+      it('http://localhost:80/humans.txtを取得する', function(done) {
         requirejs([
           'http-lib'
         ], function(http) {
           var deferred = http.get(
-            'http://www.google.co.jp:80/humans.txt', {}
+            'http://localhost:80/humans.txt', {}
           );
           deferred.done(function(response) {
             var expected = "Google is built by a large team of engineers, designers, researchers, robots, and others in many different sites across the globe. It is updated continuously, and built with more tools and technologies than we can shake a stick at. If you'd like to help us out, see google.com/jobs.\n";

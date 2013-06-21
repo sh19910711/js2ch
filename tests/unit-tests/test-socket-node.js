@@ -106,7 +106,7 @@
             };
 
             var check_status_200 = function check_status_200(http_response_text) {
-              var status_line = 'HTTP/1.0 200 OK';
+              var status_line = 'HTTP/1.1 200 OK';
               var len = status_line.length;
               var response_status_line = http_response_text.split('\r\n')[0];
               status_line.should.equal(response_status_line);
@@ -119,7 +119,7 @@
             var deferred = $.when.apply(
               null, [
                 http_get(
-                  'http://www.google.co.jp/robots.txt'
+                  'http://localhost/robots.txt'
                 )
                 .done(check_status_200)
               ]
