@@ -3,94 +3,95 @@ module.exports = function(grunt) {
   var _ = require('underscore');
   var initConfig = {};
 
-  _(initConfig).extend({
-    requirejs: {
-      buildChrome: {
-        options: {
-          baseUrl: './sources',
-          name: 'index-chrome',
-          mainConfigFile: './sources/index-chrome.js',
-          out: './lib/index-chrome.js',
-          onBuildWrite: function(name, path, contents) {
-            if (name == 'index-chrome') {
-              return contents.replace(/define\(.*'index-chrome'.*,/, 'define(');
+  _(initConfig)
+    .extend({
+      requirejs: {
+        buildChrome: {
+          options: {
+            baseUrl: './sources',
+            name: 'index-chrome',
+            mainConfigFile: './sources/index-chrome.js',
+            out: './lib/index-chrome.js',
+            onBuildWrite: function(name, path, contents) {
+              if (name == 'index-chrome') {
+                return contents.replace(/define\(.*'index-chrome'.*,/, 'define(');
+              }
+              return contents;
+            },
+            paths: {
+              jquery: 'empty:',
+              underscore: 'empty:',
+              backbone: 'empty:',
+              async: 'empty:',
+              encoding: 'empty:',
+              purl: 'empty:'
             }
-            return contents;
-          },
-          paths: {
-            jquery: 'empty:',
-            underscore: 'empty:',
-            backbone: 'empty:',
-            async: 'empty:',
-            encoding: 'empty:',
-            purl: 'empty:'
+          }
+        },
+        buildNode: {
+          options: {
+            baseUrl: './',
+            name: 'sources/index-node',
+            mainConfigFile: './sources/index-node.js',
+            out: './lib/index-node.js',
+            useStrict: true,
+            onBuildWrite: function(name, path, contents) {
+              if (name == 'sources/index-node') {
+                return contents.replace(/define\(.*'sources\/index-node'.*,/, 'define(');
+              }
+              return contents;
+            },
+            paths: {
+              jquery: 'empty:',
+              underscore: 'empty:',
+              backbone: 'empty:',
+              async: 'empty:',
+              encoding: 'empty:',
+              purl: 'empty:',
+              net: 'empty:',
+              sqlite3: 'empty:'
+            }
           }
         }
       },
-      buildNode: {
+
+      jsbeautifier: {
+        files: ['./sources/*.js', './lib/js2ch-*.js', './Gruntfile.js', 'tests/unit-tests/**/*.js'],
         options: {
-          baseUrl: './',
-          name: 'sources/index-node',
-          mainConfigFile: './sources/index-node.js',
-          out: './lib/index-node.js',
-          useStrict: true,
-          onBuildWrite: function(name, path, contents) {
-            if (name == 'sources/index-node') {
-              return contents.replace(/define\(.*'sources\/index-node'.*,/, 'define(');
-            }
-            return contents;
-          },
-          paths: {
-            jquery: 'empty:',
-            underscore: 'empty:',
-            backbone: 'empty:',
-            async: 'empty:',
-            encoding: 'empty:',
-            purl: 'empty:',
-            net: 'empty:',
-            sqlite3: 'empty:'
-          }
+          indent_size: 2,
+          indent_char: ' ',
+          indent_level: 0,
+          indent_with_tabs: false,
+          brace_style: 'end-expand',
+          preserve_newlines: true,
+          max_preserve_newlines: 10,
+          jslint_happy: false,
+          keep_array_indentation: false,
+          keep_function_indentation: false,
+          space_before_conditional: true,
+          eval_code: false,
+          indent_case: false,
+          unescape_strings: false,
+          break_chained_methods: true
+        }
+      },
+
+      watch: {
+        'test-issue-3': {
+          files: ['./sources/http-lib.js', './tests/unit-tests/issues/test-3.js'],
+          tasks: ['test-issue-3']
+        },
+        'test-issue-4': {
+          files: ['./sources/socket-node.js', './tests/unit-tests/issues/test-4.js'],
+          tasks: ['test-issue-4']
+        },
+        'enhancement': {
+          files: ['./sources/*.js'],
+          tasks: ['enhancement']
         }
       }
-    },
 
-    jsbeautifier: {
-      files: ['./sources/*.js', './lib/js2ch-*.js', './Gruntfile.js', 'tests/unit-tests/**/*.js'],
-      options: {
-        indent_size: 2,
-        indent_char: ' ',
-        indent_level: 0,
-        indent_with_tabs: false,
-        brace_style: 'end-expand',
-        preserve_newlines: true,
-        max_preserve_newlines: 10,
-        jslint_happy: false,
-        keep_array_indentation: false,
-        keep_function_indentation: false,
-        space_before_conditional: true,
-        eval_code: false,
-        indent_case: false,
-        unescape_strings: false,
-        break_chained_methods: true
-      }
-    },
-
-    watch: {
-      'test-issue-3': {
-        files: ['./sources/http-lib.js', './tests/unit-tests/issues/test-3.js'],
-        tasks: ['test-issue-3']
-      },
-      'test-issue-4': {
-        files: ['./sources/socket-node.js', './tests/unit-tests/issues/test-4.js'],
-        tasks: ['test-issue-4']
-      },
-      'enhancement': {
-        files: ['./sources/*.js'],
-        tasks: ['enhancement']
-      }
-    }
-
-  });
+    });
 
   // テスト用のタスクを登録する
   var registered_test_tasks = [];
@@ -118,16 +119,17 @@ module.exports = function(grunt) {
   };
 
   // 並列実行（未使用）
-  _(initConfig).extend({
-    parallel: {
-      tests: {
-        options: {
-          grunt: true
-        },
-        tasks: registered_test_tasks
+  _(initConfig)
+    .extend({
+      parallel: {
+        tests: {
+          options: {
+            grunt: true
+          },
+          tasks: registered_test_tasks
+        }
       }
-    }
-  });
+    });
 
   // jsdocを実行する
   grunt.registerTask('jsdoc', function() {
@@ -157,37 +159,42 @@ module.exports = function(grunt) {
     ];
     var mocha_command = command_list.join(' ');
 
-    var files = _(registered_test_tasks).map(function(testtask) {
-      return testtask.filepath
-    });
+    var files = _(registered_test_tasks)
+      .map(function(testtask) {
+        return testtask.filepath
+      });
 
     var $ = require('jquery');
     var result_code = null;
 
-    var deferreds = _(files).map(function(filepath) {
-      var deferred = new $.Deferred();
-      require('child_process')
-      .exec(mocha_command + ' ' + filepath, function(error, stdout, stderr) {
-        console.log(filepath);
-        grunt.log.write(stdout);
-        if ( error ) {
-          result_code = error;
-        }
-        deferred.resolve(error);
+    var deferreds = _(files)
+      .map(function(filepath) {
+        var deferred = new $.Deferred();
+        require('child_process')
+          .exec(mocha_command + ' ' + filepath, function(error, stdout, stderr) {
+            console.log('file: ' + filepath);
+            grunt.log.write(stdout);
+            if (error) {
+              result_code = error;
+            }
+            deferred.resolve(error);
+          });
+        return deferred;
       });
-      return deferred;
-    });
 
-    $.when.apply(null, deferreds).done(function() {
-      done(result_code);
-    });
+    $.when.apply(null, deferreds)
+      .done(function() {
+        done(result_code);
+      });
   });
 
   // mock用http serverを走らせる
   grunt.registerTask('run-test-servers', function() {
     this.async();
-    var server = require('./tests/mocks/http-server-1').createHttpServer(8654);
-    var server = require('./tests/mocks/http-server-1').createHttpServer(80);
+    var server = require('./tests/mocks/http-server-1')
+      .createHttpServer(8654);
+    var server = require('./tests/mocks/http-server-1')
+      .createHttpServer(80);
   });
 
   // テスト用のタスクを登録する
