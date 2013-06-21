@@ -32,7 +32,7 @@
     /**
      * @constructor StorageNode
      */
-    var Storage = function() {
+    var StorageNode = function() {
       // テーブルを作成する
       // （作成が済むまで他の操作はcallbacksにストックしておく）
       var db = new sqlite.Database(STORAGE_TARGET);
@@ -50,8 +50,8 @@
       });
     };
 
-    Storage.prototype = {};
-    var proto = _(Storage.prototype);
+    StorageNode.prototype = {};
+    var proto = _(StorageNode.prototype);
 
     proto.extend({
       /**
@@ -272,10 +272,10 @@
     var keys = ['get', 'set', 'remove', 'clear'];
     _(keys)
       .each(function(key) {
-        Storage.prototype[key] = util.getDeferredFunc(Storage.prototype[key]);
+        StorageNode.prototype[key] = util.getDeferredFunc(StorageNode.prototype[key]);
       });
 
-    return new Storage();
+    return new StorageNode();
   });
 
 })

@@ -26,10 +26,10 @@
     /**
      * @constructor StorageChrome
      */
-    var Storage = function() {};
+    var StorageChrome = function() {};
 
-    Storage.prototype = {};
-    var proto = _(Storage.prototype);
+    StorageChrome.prototype = {};
+    var proto = _(StorageChrome.prototype);
 
     proto.extend({
       /**
@@ -116,10 +116,10 @@
     var keys = ["get", "set", "remove", "clear"];
     _(keys)
       .each(function(key) {
-        Storage.prototype[key] = util.getDeferredFunc(Storage.prototype[key]);
+        StorageChrome.prototype[key] = util.getDeferredFunc(StorageChrome.prototype[key]);
       });
 
-    return new Storage();
+    return new StorageChrome();
   });
 
 })
