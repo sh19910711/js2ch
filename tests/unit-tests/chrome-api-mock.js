@@ -11,5 +11,13 @@
       socket: requirejs('./sources/socket-node')
     });
 
+  // storage.localはnodeのものを使いまわす
+  _(chrome)
+    .extend({
+      storage: {
+        local: requirejs('./sources/storage-node')
+      }
+    });
+
   module.exports = chrome;
 })();

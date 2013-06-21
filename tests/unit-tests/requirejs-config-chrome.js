@@ -11,6 +11,7 @@
         'socket': './sources/socket-chrome',
         'buffer-lib': './sources/buffer-lib-chrome',
         'http-lib': './sources/http-lib',
+        'storage': './sources/storage-chrome',
         'util': './sources/util',
         'encoding': './lib/encoding',
         'purl': './lib/purl'
