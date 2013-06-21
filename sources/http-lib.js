@@ -50,7 +50,7 @@
        * HTTPレスポンスが帰ってきたら callback(Object) として呼び出される
        */
       get: function get(url, http_headers_obj, callback) {
-        // CreateSocket -> SendHttpRequest -> RecieveHttpResponse
+        // CreateSocket -> SendHttpRequest -> ReceiveHttpResponse
 
         var http_response = {};
         var url_obj = $.url(url);
@@ -95,7 +95,7 @@
 
         // HTTPレスポンスを受け取る
 
-        function recieve_http_response(callback) {
+        function receive_http_response(callback) {
           var http_response_array_data = [];
           var http_response_text = '';
           var timeout = setTimeout(read, 0);
@@ -133,7 +133,7 @@
         async.series([
           create_socket,
           send_http_request,
-          recieve_http_response
+          receive_http_response
         ], function() {
           callback(http_response);
         });
@@ -217,7 +217,7 @@
           });
         }
 
-        function recieve_http_response(callback) {
+        function receive_http_response(callback) {
           var http_response_array_data = [];
           var http_response_text = '';
           var timeout = setTimeout(read, 0);
@@ -255,7 +255,7 @@
         async.series([
           create_socket,
           send_http_request,
-          recieve_http_response
+          receive_http_response
         ], function() {
           callback(http_response);
         });
