@@ -88,6 +88,10 @@ module.exports = function(grunt) {
         'enhancement': {
           files: ['./sources/**/*.js', './tests/**/*.js'],
           tasks: ['enhancement']
+        },
+        'testing': {
+          files: ['./tests/**/*.js'],
+          tasks: ['testing']
         }
       }
 
@@ -191,10 +195,12 @@ module.exports = function(grunt) {
   // mock用http serverを走らせる
   grunt.registerTask('run-test-servers', function() {
     this.async();
-    var server = require('./tests/mocks/http-server-1')
+    require('./tests/mocks/http-server-1')
       .createHttpServer(8654);
-    var server = require('./tests/mocks/http-server-1')
+    require('./tests/mocks/http-server-1')
       .createHttpServer(80);
+    require('./tests/mocks/2ch-server')
+      .createServer(8080);
   });
 
   // テスト用のタスクを登録する
@@ -204,9 +210,12 @@ module.exports = function(grunt) {
   register_test_task('test-issue-4', './tests/unit-tests/issues/test-4.js');
   register_test_task('test-storage-node', './tests/unit-tests/test-storage-node.js');
   register_test_task('test-storage-chrome', './tests/unit-tests/test-storage-chrome.js');
+  register_test_task('test-client', './tests/unit-tests/test-client.js');
+  register_test_task('test-parser', './tests/unit-tests/test-parser.js');
 
   // 基本的な操作の登録
   grunt.registerTask('enhancement', ['doc', 'test']);
+  grunt.registerTask('testing', ['test']);
   grunt.registerTask('test', ['all-tests']);
   grunt.registerTask('build', ['jsbeautifier', 'requirejs']);
   grunt.registerTask('doc', ['jsbeautifier', 'jsdoc']);

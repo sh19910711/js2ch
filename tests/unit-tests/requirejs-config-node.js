@@ -12,6 +12,8 @@
         'buffer-lib': './sources/buffer-lib-node',
         'http-lib': './sources/http-lib',
         'storage': './sources/storage-node',
+        'parser': './sources/parser',
+        'client': './sources/client',
         'util': './sources/util',
         'encoding': './lib/encoding',
         'purl': './lib/purl'
