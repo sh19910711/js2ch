@@ -23,10 +23,9 @@
      */
     var Util = function() {};
 
-    Util.prototype = {};
-    var proto = _(Util.prototype);
+    var _util = _(Util);
 
-    proto.extend({
+    _util.extend({
       /**
        * @description
        * 与えられた関数をDeferredを返すように変更した関数を返す
@@ -64,7 +63,7 @@
       }
     });
 
-    proto.extend({
+    _util.extend({
       /**
        * @description 与えられた文字列をtokenで分割する
        * @memberof Util
@@ -81,7 +80,7 @@
       }
     });
 
-    proto.extend({
+    _util.extend({
       /**
        * @description 文字列が空かどうかを調べる
        * @memberof Util
