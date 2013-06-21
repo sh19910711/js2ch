@@ -27,10 +27,10 @@
     /**
      * @constructor SocketNode
      */
-    var Socket = function() {};
+    var SocketNode = function() {};
 
-    Socket.prototype = {};
-    var proto = _(Socket.prototype);
+    SocketNode.prototype = {};
+    var proto = _(SocketNode.prototype);
 
     proto.extend({
       // ソケットを作成する
@@ -219,8 +219,7 @@
       return String.fromCharCode.apply(null, new Uint16Array(buf));
     }
 
-    return new Socket();
+    return new SocketNode();
   });
 
-})
-  .call(this);
+})();
