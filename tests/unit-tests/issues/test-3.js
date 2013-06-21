@@ -5,7 +5,7 @@
 
   describe('HttpLib', function() {
     before(function() {
-      global.requirejs = require('../requirejs-config');
+      global.requirejs = require('../requirejs-config-node');
 
       // local server
       var express = require('express');

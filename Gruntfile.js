@@ -96,7 +96,8 @@ module.exports = function(grunt) {
       var done = this.async();
       var command_list = [
         'mocha',
-        '--reporter list',
+        '--reporter tap',
+        '--ui bdd',
         filepath
       ];
       var command = command_list.join(' ');
@@ -104,7 +105,6 @@ module.exports = function(grunt) {
       require('child_process')
         .exec(command, function(error, stdout, stderr) {
           grunt.log.write(stdout);
-          grunt.log.write(stderr);
           done();
         });
     });
@@ -128,7 +128,7 @@ module.exports = function(grunt) {
   });
 
 
-  register_test_task('test-socket-lib', './tests/unit-tests/test-socket.js');
+  register_test_task('test-socket-node', './tests/unit-tests/test-socket-node.js');
   register_test_task('test-issue-3', './tests/unit-tests/issues/test-3.js');
   register_test_task('test-issue-4', './tests/unit-tests/issues/test-4.js');
   grunt.registerTask('enhancement', ['doc', 'test']);
