@@ -26,7 +26,11 @@
     'encoding',
     'util',
     'logger'
-  ], function($, _, Backbone, http, storage, parser, encoding, util, logger) {
+  ], function($, _, Backbone, HttpLib, Storage, Parser, encoding, util, Logger) {
+    var http = new HttpLib();
+    var storage = new Storage();
+    var parser = new Parser();
+    var logger = new Logger();
 
     /**
      * @constructor Client
