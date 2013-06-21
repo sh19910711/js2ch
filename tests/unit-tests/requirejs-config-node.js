@@ -11,6 +11,7 @@
         'socket': './sources/socket-node',
         'buffer-lib': './sources/buffer-lib-node',
         'http-lib': './sources/http-lib',
+        'storage': './sources/storage-node',
         'util': './sources/util',
         'encoding': './lib/encoding',
         'purl': './lib/purl'

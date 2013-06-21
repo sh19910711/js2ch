@@ -12,23 +12,25 @@
 
     describe('experiments', function() {
 
-      it('setしてgetできることを確認(String)', function() {
+      it('setしてgetできることを確認(String)', function(done) {
         requirejs([
           'storage'
         ], function(storage) {
+          console.log(storage);
           storage.clear(function() {
             storage.set({
               'value': 'value 1'
             }, function() {
               storage.get('value', function(items) {
                 items.value.should.be.equal('value 1');
+                done();
               });
             });
           });
         });
       });
 
-      it('setしてgetできることを確認(Array)', function() {
+      it('setしてgetできることを確認(Array)', function(done) {
         requirejs([
           'storage'
         ], function(storage) {
@@ -38,13 +40,14 @@
             }, function() {
               storage.get(['value'], function(items) {
                 items.value.should.be.equal('value 1');
+                done();
               });
             });
           });
         });
       });
 
-      it('setしてgetできることを確認(Object)', function() {
+      it('setしてgetできることを確認(Object)', function(done) {
         requirejs([
           'storage'
         ], function(storage) {
@@ -56,13 +59,14 @@
                 'value': 'hoge'
               }, function(items) {
                 items.value.should.be.equal('value 1');
+                done();
               });
             });
           });
         });
       });
 
-      it('removeできているか確認', function() {
+      it('removeできているか確認', function(done) {
         requirejs([
           'storage'
         ], function(storage) {
@@ -72,12 +76,13 @@
             }, function() {
               storage.remove('value', function() {
                 storage.get('value', function(items) {
-                  (typeof items.value)
-                    .should.be.equal('undefined');
+                  var t = typeof items.value;
+                  t.should.be.equal('undefined');
                   storage.get({
                     'value': 'default'
-                  }, function() {
+                  }, function(items) {
                     items.value.should.be.equal('default');
+                    done();
                   });
                 });
               })
@@ -86,7 +91,7 @@
         });
       });
 
-      it('clearできているか確認', function() {
+      it('clearできているか確認', function(done) {
         requirejs([
           'storage'
         ], function(storage) {
@@ -96,12 +101,13 @@
             }, function() {
               storage.clear(function() {
                 storage.get('value', function(items) {
-                  (typeof items.value)
-                    .should.be.equal('undefined');
+                  var t = typeof items.value;
+                  t.should.be.equal('undefined');
                   storage.get({
                     'value': 'default'
-                  }, function() {
+                  }, function(items) {
                     items.value.should.be.equal('default');
+                    done();
                   });
                 });
               })
