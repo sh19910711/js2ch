@@ -199,10 +199,10 @@
 
     proto.extend({
       /**
-       * @description すべてのデータを削除する
+       * @description 指定したデータを削除する
        * @memberof StorageNode
        *
-       * @param {StorageNode#clear-callback} callback
+       * @param {StorageNode#remove-callback} callback
        * 削除後 callback() として呼び出される
        */
       remove: function remove(keys, callback) {
