@@ -86,7 +86,7 @@ module.exports = function(grunt) {
           tasks: ['test-issue-4']
         },
         'enhancement': {
-          files: ['./sources/*.js'],
+          files: ['./sources/**/*.js', './tests/**/*.js'],
           tasks: ['enhancement']
         }
       }
@@ -202,6 +202,7 @@ module.exports = function(grunt) {
   register_test_task('test-socket-chrome', './tests/unit-tests/test-socket-chrome.js');
   register_test_task('test-issue-3', './tests/unit-tests/issues/test-3.js');
   register_test_task('test-issue-4', './tests/unit-tests/issues/test-4.js');
+  register_test_task('test-storage-node', './tests/unit-tests/test-storage-node.js');
 
   // 基本的な操作の登録
   grunt.registerTask('enhancement', ['doc', 'test']);
