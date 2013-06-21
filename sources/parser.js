@@ -143,8 +143,7 @@
       }
     });
 
-    return new Parser();
+    return Parser;
   });
 
-})
-  .call(this);
+})();

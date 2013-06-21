@@ -32,5 +32,4 @@
     return client;
   });
 
-})
-  .call(this);
+})();

@@ -15,8 +15,8 @@
       it('setしてgetできることを確認(String)', function(done) {
         requirejs([
           'storage'
-        ], function(storage) {
-          console.log(storage);
+        ], function(Storage) {
+          var storage = new Storage();
           storage.clear(function() {
             storage.set({
               'value': 'value 1'
@@ -33,7 +33,8 @@
       it('setしてgetできることを確認(Array)', function(done) {
         requirejs([
           'storage'
-        ], function(storage) {
+        ], function(Storage) {
+          var storage = new Storage();
           storage.clear(function() {
             storage.set({
               'value': 'value 1'
@@ -50,7 +51,8 @@
       it('setしてgetできることを確認(Object)', function(done) {
         requirejs([
           'storage'
-        ], function(storage) {
+        ], function(Storage) {
+          var storage = new Storage();
           storage.clear(function() {
             storage.set({
               'value': 'value 1'
@@ -69,7 +71,8 @@
       it('removeできているか確認', function(done) {
         requirejs([
           'storage'
-        ], function(storage) {
+        ], function(Storage) {
+          var storage = new Storage();
           storage.clear(function() {
             storage.set({
               'value': 'value 1'
@@ -94,7 +97,8 @@
       it('clearできているか確認', function(done) {
         requirejs([
           'storage'
-        ], function(storage) {
+        ], function(Storage) {
+          var storage = new Storage();
           storage.clear(function() {
             storage.set({
               'value': 'value 1'

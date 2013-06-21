@@ -25,7 +25,11 @@
     'util',
     'buffer-lib',
     'logger'
-  ], function($, _, socket, purl, async, util, buffer_lib, logger) {
+  ], function($, _, Socket, purl, async, util, BufferLib, Logger) {
+    var socket = new Socket();
+    var buffer_lib = new BufferLib();
+    var logger = new Logger();
+
     var BR = "\r\n";
     var DEFAULT_HTTP_PORT = 80;
 
@@ -347,8 +351,7 @@
         HttpLib.prototype[key] = util.getDeferredFunc(HttpLib.prototype[key]);
       });
 
-    return new HttpLib();
+    return HttpLib;
   });
 
-})
-  .call(this);
+})();

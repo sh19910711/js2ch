@@ -33,5 +33,4 @@
     return client;
   });
 
-})
-  .call(this);
+})();

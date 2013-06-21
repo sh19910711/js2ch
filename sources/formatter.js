@@ -39,7 +39,6 @@
       }
     });
 
-    return new Formatter();
+    return Formatter;
   });
-})
-  .call(this);
+})();

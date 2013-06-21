@@ -16,7 +16,9 @@
         requirejs([
           'underscore',
           'parser'
-        ], function(_, parser) {
+        ], function(_, Parser) {
+          var parser = new Parser();
+
           var thread_list = [
             'test1.dat<>test1 (1)',
             'test2.dat<>test2 (2)',
@@ -49,7 +51,9 @@
       requirejs([
         'underscore',
         'parser'
-      ], function(_, parser) {
+      ], function(_, Parser) {
+        var parser = new Parser();
+
         var response_list = [
           'test-name<>test-mail<>test-info<>test-body<>test-subject\n'
         ];

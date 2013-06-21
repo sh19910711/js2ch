@@ -17,8 +17,9 @@
   var root = this;
 
   define([
-    'underscore'
-  ], function(_) {
+    'underscore',
+    'util'
+  ], function(_, util) {
 
     var socket = chrome.socket;
 
@@ -157,7 +158,14 @@
      * @callback SocketChrome#write-callback
      */
 
-    return new SocketChrome();
+    // Deferred設定
+    var keys = ['connect', 'create', 'read', 'write'];
+    _(keys)
+      .each(function(key) {
+        SocketChrome.prototype[key] = util.getDeferredFunc(SocketChrome.prototype[key]);
+      });
+
+    return SocketChrome;
   });
 
 })();

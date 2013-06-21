@@ -16,7 +16,8 @@
         it('Client#getThreadList', function(done) {
           requirejs([
             'client'
-          ], function(client) {
+          ], function(Client) {
+            var client = new Client();
             client.getThreadList('localhost:8080', 'news4vip', function(thread_list) {
               thread_list.length.should.be.equal(170);
               done();
