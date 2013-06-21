@@ -147,6 +147,25 @@
           });
         });
       });
+
+      describe('#create(deferred)', function() {
+        it('ソケットを作成するたびにソケットの番号が増えていくことを確認する', function(done) {
+          requirejs(['socket'], function(Socket) {
+            var socket = new Socket();
+            socket.create('tcp', {})
+              .done(function(socket_info) {
+                socket_info.should.have.property('socketId');
+                socket.create('tcp', {})
+                  .done(function(next_socket_info) {
+                    next_socket_info.should.have.property('socketId');
+                    next_socket_info.socketId.should.be.equal(socket_info.socketId + 1);
+                  });
+                done.call();
+              });
+          });
+        });
+      });
+
     });
   });
 

@@ -20,8 +20,9 @@
     'underscore',
     'net',
     'encoding',
-    'logger'
-  ], function(_, net, encoding, logger) {
+    'logger',
+    'util'
+  ], function(_, net, encoding, logger, util) {
     var sockets = [];
 
     /**
@@ -218,6 +219,13 @@
     function ArrayBufferToString(buf) {
       return String.fromCharCode.apply(null, new Uint16Array(buf));
     }
+
+    // Deferred設定
+    var keys = ['connect', 'create', 'read', 'write'];
+    _(keys)
+      .each(function(key) {
+        SocketNode.prototype[key] = util.getDeferredFunc(SocketNode.prototype[key]);
+      });
 
     return SocketNode;
   });
