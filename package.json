@@ -1,6 +1,6 @@
 {
   "name": "js2ch",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "JavaScript 2ch-client library",
   "main": "./lib/js2ch-node",
   "dependencies": {
@@ -17,10 +17,11 @@
     "grunt-jsbeautifier": "~0.1.9",
     "should": "~1.2.2",
     "express": "~3.2.6",
-    "grunt-contrib-watch": "~0.4.4"
+    "grunt-contrib-watch": "~0.4.4",
+    "grunt-parallel": "~0.2.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "grunt test"
   },
   "repository": {
     "type": "git",

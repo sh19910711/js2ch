@@ -7,6 +7,10 @@
  * Licensed under MIT License.
  * http://opensource.org/licenses/MIT
  * =================================================== */
+/**
+ * @fileOverview HTTP通信関連の操作を行うライブラリ
+ * @author Hiroyuki Sano
+ */
 (function() {
   'use strict';
 
@@ -25,15 +29,28 @@
     var BR = "\r\n";
     var DEFAULT_HTTP_PORT = 80;
 
+    /**
+     * @constructor HttpLib
+     */
     var HttpLib = function() {};
 
     HttpLib.prototype = {};
     var proto = _(HttpLib.prototype);
 
     proto.extend({
-      // GETリクエストを送信する
+      /**
+       * @description GETリクエストを行う
+       * @memberof HttpLib
+       *
+       * @param {String} url
+       * GETリクエストを行うURL
+       * @param {Object} http_headers_obj
+       * HTTPリクエストヘッダーの設定
+       * @param {HttpLib#get-callback} callback
+       * HTTPレスポンスが帰ってきたら callback(Object) として呼び出される
+       */
       get: function get(url, http_headers_obj, callback) {
-        // CreateSocket -> SendHttpRequest -> RecieveHttpResponse
+        // CreateSocket -> SendHttpRequest -> ReceiveHttpResponse
 
         var http_response = {};
         var url_obj = $.url(url);
@@ -78,7 +95,7 @@
 
         // HTTPレスポンスを受け取る
 
-        function recieve_http_response(callback) {
+        function receive_http_response(callback) {
           var http_response_array_data = [];
           var http_response_text = '';
           var timeout = setTimeout(read, 0);
@@ -116,14 +133,35 @@
         async.series([
           create_socket,
           send_http_request,
-          recieve_http_response
+          receive_http_response
         ], function() {
           callback(http_response);
         });
       }
     });
 
+    /**
+     * @description GETリクエスト送信後, HTTPレスポンスが帰ってきたら callback(Object) として呼び出される
+     * @callback HttpLib#get-callback
+     *
+     * @param {Object} http_response
+     * HeaderとBodyに分けて返す
+     */
+
     proto.extend({
+      /**
+       * @description 指定したURLにPOSTリクエストを行う
+       * @memberof HttpLib
+       *
+       * @param {String} url
+       * POSTリクエストを行うURL
+       * @param {Object} http_headers_obj
+       * HTTPリクエストヘッダ
+       * @param {Object} data
+       * クエリ
+       * @param {HttpLib#post-callback} callback
+       * HTTPレスポンスが返ってきたら callback(Object) として呼び出される
+       */
       post: function post(url, http_headers_obj, data, callback) {
         var http_response = {};
         var url_obj = $.url(url);
@@ -179,7 +217,7 @@
           });
         }
 
-        function recieve_http_response(callback) {
+        function receive_http_response(callback) {
           var http_response_array_data = [];
           var http_response_text = '';
           var timeout = setTimeout(read, 0);
@@ -217,13 +255,20 @@
         async.series([
           create_socket,
           send_http_request,
-          recieve_http_response
+          receive_http_response
         ], function() {
           callback(http_response);
         });
       }
     });
 
+    /**
+     * @description POSTリクエスト送信後、HTTPレスポンスが返ってきたら callback(Object)として呼び出される
+     * @callback HttpLib#post-callback
+     *
+     * @param {Object} http_response
+     * HTTPレスポンスのHeaderとBody
+     */
 
     // 文字列をArrayBufferに変換する
 

@@ -7,6 +7,10 @@
  * Licensed under MIT License.
  * http://opensource.org/licenses/MIT
  * =================================================== */
+/**
+ * @fileOverview ログ管理用ライブラリ
+ * @author Hiroyuki Sano
+ */
 (function() {
   'use strict';
 
@@ -16,47 +20,66 @@
     'underscore',
     'formatter'
   ], function(_, formatter) {
+    /**
+     * @constructor Logger
+     */
     var Logger = function() {};
 
     Logger.prototype = {};
     var proto = _(Logger.prototype);
 
     proto.extend({
-      // ログ出力
+      /**
+       * @description ログ出力を行う
+       * @memberof Logger
+       */
       log: function log() {
         console.log.apply(console, arguments);
       }
     });
 
     proto.extend({
-      // デバッグ出力
+      /**
+       * @description デバッグ出力を行う
+       * @memberof Logger
+       */
       debug: function debug() {
         console.debug.apply(console, arguments);
       }
     });
 
     proto.extend({
-      // 情報出力
+      /**
+       * @description 情報を出力する
+       * @memberof Logger
+       */
       info: function info() {
         console.info.apply(console, arguments);
       }
     });
 
     proto.extend({
-      // 警告を出力
+      /**
+       * @description 警告を出力する
+       * @memberof Logger
+       */
       warn: function warn() {
         console.warn.apply(console, arguments);
       }
     });
 
     proto.extend({
-      // エラー出力
+      /**
+       * @description エラー出力を行う
+       * @memberof Logger
+       */
       error: function error() {
         console.error.apply(console, arguments);
       }
     });
 
 
+    // 各出力の前にFormatter#formatを行いデータを整える
     var keys = ['log', 'debug', 'info', 'warn', 'error'];
     _(keys)
       .each(function(key) {

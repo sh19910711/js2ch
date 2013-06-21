@@ -7,6 +7,10 @@
  * Licensed under MIT License.
  * http://opensource.org/licenses/MIT
  * =================================================== */
+/**
+ * @fileOverview Node.js用のストレージ操作用ライブラリ
+ * @author Hiroyuki Sano
+ */
 (function() {
   'use strict';
 
@@ -25,8 +29,10 @@
     var callbacks = new $.Callbacks('once');
     var fired = false;
 
-    // ストレージ操作用のクラス
-    var Storage = function() {
+    /**
+     * @constructor StorageNode
+     */
+    var StorageNode = function() {
       // テーブルを作成する
       // （作成が済むまで他の操作はcallbacksにストックしておく）
       var db = new sqlite.Database(STORAGE_TARGET);
@@ -44,11 +50,19 @@
       });
     };
 
-    Storage.prototype = {};
-    var proto = _(Storage.prototype);
+    StorageNode.prototype = {};
+    var proto = _(StorageNode.prototype);
 
     proto.extend({
-      // 与えられたキーに紐付けられたデータを取得する
+      /**
+       * @description 指定したキーを持つアイテムを取得する
+       * @memberof StorageNode
+       *
+       * @param {String|Array|Object} keys
+       * 取得するアイテムのキー
+       * @param {StorageNode#get-callback} callback
+       * アイテム取得後 callback(Object) として呼び出される
+       */
       get: function get(keys, callback) {
         if (!callbacks.fired()) {
           callbacks.add(get.bind(this, keys, callback));
@@ -103,8 +117,24 @@
       }
     });
 
+    /**
+     * @description アイテム取得後 callback(Object) として呼び出される
+     * @callback StorageNode#get-callback
+     *
+     * @param {Object} items
+     * 取得されたアイテム
+     */
+
     proto.extend({
-      // 与えたデータを保存する
+      /**
+       * @description アイテムを設定する
+       * @memberof StorageNode
+       *
+       * @param {Object} items
+       * ストレージに追加するアイテムの情報
+       * @param {StorageNode#set-callback} callback
+       * アイテム設定後 callback() として呼び出される
+       */
       set: function set(items, callback) {
         if (!callbacks.fired()) {
           callbacks.add(set.bind(this, items, callback));
@@ -162,8 +192,19 @@
       }
     });
 
+    /**
+     * @description アイテム設定後 callback() として呼び出される
+     * @callback StorageNode#set-callback
+     */
+
     proto.extend({
-      // 与えられたキーに紐付けられたデータを削除する
+      /**
+       * @description 指定したデータを削除する
+       * @memberof StorageNode
+       *
+       * @param {StorageNode#remove-callback} callback
+       * 削除後 callback() として呼び出される
+       */
       remove: function remove(keys, callback) {
         if (!callbacks.fired()) {
           callbacks.add(remove.bind(this, keys, callback));
@@ -194,8 +235,19 @@
       }
     });
 
+    /**
+     * @description アイテム削除後 callback() として呼び出される
+     * @callback StorageNode#remove-callback
+     */
+
     proto.extend({
-      // すべてのデータを削除する
+      /**
+       * @description すべてのデータを削除する
+       * @memberof StorageNode
+       *
+       * @param {StorageNode#clear-callback} callback
+       * 削除後 callback() として呼び出される
+       */
       clear: function clear(callback) {
         if (!callbacks.fired()) {
           callbacks.add(clear.bind(this, callback));
@@ -211,14 +263,19 @@
       }
     });
 
+    /**
+     * @description 削除完了後 callback() として呼び出される
+     * @callback StorageNode#clear-callback
+     */
+
     // Deferredの設定
     var keys = ['get', 'set', 'remove', 'clear'];
     _(keys)
       .each(function(key) {
-        Storage.prototype[key] = util.getDeferredFunc(Storage.prototype[key]);
+        StorageNode.prototype[key] = util.getDeferredFunc(StorageNode.prototype[key]);
       });
 
-    return new Storage();
+    return new StorageNode();
   });
 
 })

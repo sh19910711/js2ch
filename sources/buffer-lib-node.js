@@ -7,6 +7,10 @@
  * Licensed under MIT License.
  * http://opensource.org/licenses/MIT
  * =================================================== */
+/**
+ * @fileOverview Node.js用のバッファ操作ライブラリ
+ * @author Hiroyuki Sano
+ **/
 (function() {
 
   define([
@@ -14,13 +18,24 @@
     'encoding',
     'logger'
   ], function(_, encoding) {
+    /**
+     * @constructor BufferLibNode
+     */
     var BufferLib = function() {};
 
     BufferLib.prototype = {};
     var proto = _(BufferLib.prototype);
 
     proto.extend({
-      // ArrayBufferを文字列に変換する
+      /**
+       * @description Bufferを文字列に変換する
+       * @memberof BufferLibNode
+       *
+       * @param {Buffer} buf_array
+       * 文字列に変換するBuffer
+       * @param {Function} callback
+       * 処理完了後に callback(String) として呼び出される
+       */
       convertToString: function convertToString(buf_array, callback) {
         setTimeout(function() {
           callback(new Buffer(encoding.convert(buf_array, 'UTF-8', 'SJIS'))
@@ -30,7 +45,15 @@
     });
 
     proto.extend({
-      // 文字列をArrayBufferに変換する
+      /**
+       * @description 文字列をArrayBUfferに変換する
+       * @memberof BufferLibNode
+       *
+       * @param {String} str
+       * ArrayBufferに変換する文字列
+       * @param {Function} callback
+       * 処理完了後に callback(ArrayBuffer) として呼び出される
+       */
       convertToBuffer: function convertToBuffer(str, callback) {
         setTimeout(function() {
           var buf = new ArrayBuffer(str.length * 2);
@@ -43,7 +66,15 @@
     });
 
     proto.extend({
-      // 文字列のバイト数を求める
+      /**
+       * @description 文字列のバイト数を求める
+       * @memberof BufferLibNode
+       *
+       * @param {String} str
+       * バイト数を求める文字列
+       * @param {Function} callback
+       * 処理完了後に callback(Number) として呼び出される
+       */
       getByteLength: function getByteLength(str, callback) {
         console.log('str: ', str);
         setTimeout(function() {
