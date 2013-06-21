@@ -20,21 +20,17 @@
     'logger'
   ], function(_, encoding, logger) {
     /**
-     * @class BufferLib
-     */
-
-    /**
      * @constructor
      */
-    var BufferLib = function() {};
+    var BufferLibChrome = function() {};
 
-    BufferLib.prototype = {};
-    var proto = _(BufferLib.prototype);
+    BufferLibChrome.prototype = {};
+    var proto = _(BufferLibChrome.prototype);
 
     proto.extend({
       /**
        * @description ArrayBufferを文字列に変換する
-       * @memberof BufferLib
+       * @memberof BufferLibChrome
        *
        * @param {ArrayBuffer} buf_array
        * 文字列に変換するArrayBuffer
@@ -53,7 +49,7 @@
     proto.extend({
       /**
        * @description 文字列をArrayBufferに変換する
-       * @memberof BufferLib
+       * @memberof BufferLibChrome
        *
        * @param {String} str
        * ArrayBufferに変換する文字列
@@ -73,7 +69,7 @@
       // 文字列のバイト数を求める
       /**
        * @description 文字列のバイト数を求める
-       * @memberof BufferLib
+       * @memberof BufferLibChrome
        *
        * @param {String} str
        * バイト数を求めたい文字列
@@ -88,7 +84,7 @@
       }
     });
 
-    return new BufferLib();
+    return new BufferLibChrome();
   });
 
 })
