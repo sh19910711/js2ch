@@ -16,8 +16,9 @@
         requirejs([
           'storage'
         ], function(Storage) {
-          var storage = new Storage();
-          console.log(storage);
+          var storage = new Storage({
+            target: 'test-storage-node-1.db'
+          });
           storage.clear(function() {
             storage.set({
               'value': 'value 1'
@@ -35,7 +36,9 @@
         requirejs([
           'storage'
         ], function(Storage) {
-          var storage = new Storage();
+          var storage = new Storage({
+            target: 'test-storage-node-2.db'
+          });
           storage.clear(function() {
             storage.set({
               'value': 'value 1'
@@ -53,7 +56,9 @@
         requirejs([
           'storage'
         ], function(Storage) {
-          var storage = new Storage();
+          var storage = new Storage({
+            target: 'test-storage-node-3.db'
+          });
           storage.clear(function() {
             storage.set({
               'value': 'value 1'
@@ -73,7 +78,9 @@
         requirejs([
           'storage'
         ], function(Storage) {
-          var storage = new Storage();
+          var storage = new Storage({
+            target: 'test-storage-node-4.db'
+          });
           storage.clear(function() {
             storage.set({
               'value': 'value 1'
@@ -99,7 +106,9 @@
         requirejs([
           'storage'
         ], function(Storage) {
-          var storage = new Storage();
+          var storage = new Storage({
+            target: 'test-storage-node-5.db'
+          });
           storage.clear(function() {
             storage.set({
               'value': 'value 1'

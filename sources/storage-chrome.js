@@ -26,7 +26,7 @@
     /**
      * @constructor StorageChrome
      */
-    var StorageChrome = function() {};
+    var StorageChrome = function(options) {};
 
     StorageChrome.prototype = {};
     var proto = _(StorageChrome.prototype);

@@ -163,7 +163,8 @@ module.exports = function(grunt) {
     var command_list = [
       'mocha',
       '--reporter tap',
-      '--ui bdd'
+      '--ui bdd',
+      '--timeout 5000'
     ];
     var mocha_command = command_list.join(' ');
 
@@ -223,6 +224,7 @@ module.exports = function(grunt) {
   register_test_task('test-storage-chrome', './tests/unit-tests/test-storage-chrome.js');
   register_test_task('test-client', './tests/unit-tests/test-client.js');
   register_test_task('test-parser', './tests/unit-tests/test-parser.js');
+  register_test_task('test-cookie-manager', './tests/unit-tests/test-cookie-manager.js');
 
   // 基本的な操作の登録
   grunt.registerTask('enhancement', ['delay-tasks', 'jsbeautifier', 'doc', 'test']);
