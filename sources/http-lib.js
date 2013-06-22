@@ -189,7 +189,7 @@
         // HTTPリクエストを送る
 
         function send_http_request(callback) {
-          socket.connect(socket_id, connect_info.host, connect_info, function() {
+          socket.connect(socket_id, connect_info.host, connect_info.port, function() {
             var http_headers = [];
             var path = connect_info.path;
             var query = ConvertToQueryString(data);
