@@ -28,7 +28,16 @@
     /**
      * @constructor SocketNode
      */
-    var SocketNode = function() {};
+    var SocketNode = function(callback_context) {
+      callback_context = callback_context || this;
+
+      // Deferred設定
+      var keys = ['connect', 'create', 'read', 'write'];
+      _(keys)
+        .each(function(key) {
+          this[key] = UtilLib.getDeferredFunc(this[key], this, callback_context);
+        }, this);
+    };
 
     SocketNode.prototype = {};
     var proto = _(SocketNode.prototype);
@@ -219,13 +228,6 @@
     function ArrayBufferToString(buf) {
       return String.fromCharCode.apply(null, new Uint16Array(buf));
     }
-
-    // Deferred設定
-    var keys = ['connect', 'create', 'read', 'write'];
-    _(keys)
-      .each(function(key) {
-        SocketNode.prototype[key] = UtilLib.getDeferredFunc(SocketNode.prototype[key]);
-      });
 
     return SocketNode;
   });

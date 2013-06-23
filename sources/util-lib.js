@@ -33,31 +33,41 @@
        *
        * @param {Function} func
        * 変更する関数
+       * @param {Function} inner_context
+       * funcのcontext
+       * @param {Function} callback_context
+       * callback関数のcontext
        * @return {Function}
        */
-      getDeferredFunc: function getDeferredFunc(func) {
+      getDeferredFunc: function getDeferredFunc(func, inner_context, callback_context) {
         return function() {
-          var self = this;
+          inner_context = this || inner_context;
+          callback_context = callback_context || inner_context;
+
           var deferred = new $.Deferred();
           var callback = arguments[arguments.length - 1];
           var args = Array.prototype.slice.apply(arguments);
-          setTimeout(function() {
-            if (callback instanceof Function) {
-              args[args.length - 1] = function() {
-                if (callback instanceof Function)
-                  callback.apply(this, arguments);
-                deferred.resolve.apply(this, arguments);
-              };
-            }
-            else {
-              args.push(function() {
-                if (callback instanceof Function)
-                  callback.apply(this, arguments);
-                deferred.resolve.apply(this, arguments);
-              });
-            }
-            func.apply(self, args);
-          }, 0);
+
+          // callback関数とpromise#done関数を呼び出すための関数を
+          // 元の関数のcallbackに登録する
+          if (callback instanceof Function) {
+            args[args.length - 1] = function() {
+              if (callback instanceof Function)
+                callback.apply(callback_context, arguments);
+              deferred.resolveWith(callback_context, arguments);
+            };
+          }
+          else {
+            args.push(function() {
+              if (callback instanceof Function)
+                callback.apply(callback_context, arguments);
+              deferred.resolveWith(callback_context, arguments);
+            });
+          }
+
+          // Deferredする前の関数を呼び出す
+          func.apply(inner_context, args);
+
           return deferred;
         };
       }

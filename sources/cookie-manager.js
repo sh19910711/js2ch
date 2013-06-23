@@ -25,8 +25,16 @@
     /**
      * @constructor CookieManager
      */
-    var CookieManager = function(options) {
-      this.storage = new Storage((options && options.storage) || {});
+    var CookieManager = function(options, callback_context) {
+      callback_context = callback_context || this;
+      this.storage = new Storage((options && options.storage) || {}, this);
+
+      // Deferred設定
+      var keys = ['clear', 'getCookieHeader', 'setCookieHeader', 'set'];
+      _(keys)
+        .each(function(key) {
+          this[key] = UtilLib.getDeferredFunc(this[key], this, callback_context);
+        }, this);
     };
 
     CookieManager.prototype = {};
@@ -40,9 +48,10 @@
        * @param {CookieManager#clear-callback} callback
        */
       clear: function clear(callback) {
-        this.storage.clear(function() {
-          callback();
-        });
+        this.storage.clear()
+          .done(function() {
+            callback();
+          });
       }
     });
 
@@ -129,7 +138,7 @@
               'cookies': items.cookies
             });
             promise.done(callback);
-          }.bind(this));
+          });
       }
     });
 
@@ -226,13 +235,6 @@
      * @callback CookieManager#set-callback
      */
 
-
-    // Deferred設定
-    var keys = ['clear', 'getCookieHeader', 'setCookieHeader', 'set'];
-    _(keys)
-      .each(function(key) {
-        CookieManager.prototype[key] = UtilLib.getDeferredFunc(CookieManager.prototype[key]);
-      });
 
     return CookieManager;
   });

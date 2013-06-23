@@ -26,7 +26,16 @@
     /**
      * @constructor SocketChrome
      */
-    var SocketChrome = function() {};
+    var SocketChrome = function(callback_context) {
+      callback_context = callback_context || this;
+
+      // Deferred設定
+      var keys = ['connect', 'create', 'read', 'write'];
+      _(keys)
+        .each(function(key) {
+          this[key] = UtilLib.getDeferredFunc(this[key], this, callback_context);
+        }, this);
+    };
 
     SocketChrome.prototype = {};
     var proto = _(SocketChrome.prototype);
@@ -157,13 +166,6 @@
      * @description ソケットへの書き込み後に callback() として呼び出される
      * @callback SocketChrome#write-callback
      */
-
-    // Deferred設定
-    var keys = ['connect', 'create', 'read', 'write'];
-    _(keys)
-      .each(function(key) {
-        SocketChrome.prototype[key] = UtilLib.getDeferredFunc(SocketChrome.prototype[key]);
-      });
 
     return SocketChrome;
   });

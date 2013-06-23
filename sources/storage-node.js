@@ -29,7 +29,9 @@
     /**
      * @constructor StorageNode
      */
-    var StorageNode = function(options) {
+    var StorageNode = function(options, callback_context) {
+      callback_context = callback_context || this;
+
       var self = this;
       self.callbacks = new $.Callbacks('once');
       self.target = (options && options.target) || STORAGE_TARGET;
@@ -50,6 +52,14 @@
           self.callbacks.fire();
         }
       });
+
+      // Deferred設定
+      var keys = ["get", "set", "remove", "clear"];
+      _(keys)
+        .each(function(key) {
+          this[key] = UtilLib.getDeferredFunc(this[key], this, callback_context);
+        }, this);
+
     };
 
     StorageNode.prototype = {};
@@ -67,6 +77,7 @@
        */
       get: function get(keys, callback) {
         if (!this.callbacks.fired()) {
+          // 初期化処理を済ませてから実行する
           this.callbacks.add(get.bind(this, keys, callback));
           return;
         }
@@ -269,13 +280,6 @@
      * @description 削除完了後 callback() として呼び出される
      * @callback StorageNode#clear-callback
      */
-
-    // Deferredの設定
-    var keys = ['get', 'set', 'remove', 'clear'];
-    _(keys)
-      .each(function(key) {
-        StorageNode.prototype[key] = UtilLib.getDeferredFunc(StorageNode.prototype[key]);
-      });
 
     return StorageNode;
   });
