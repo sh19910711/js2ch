@@ -21,9 +21,9 @@
     global.window = {
       jQuery: jQuery
     };
-    global.chrome = require('./chrome-api-mock');
-    global.FileReader = require('./filereader-mock');
-    global.Blob = require('./blob-mock');
+    global.chrome = require('./mock-chrome-api');
+    global.FileReader = require('./mock-filereader');
+    global.Blob = require('./mock-blob');
     return requirejs;
   })
     .call();
