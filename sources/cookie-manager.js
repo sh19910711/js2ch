@@ -66,7 +66,10 @@
         var url_obj = $.url(url);
         var host = url_obj.attr('host');
         var port = url_obj.attr('port') || 80;
-        var path = url_obj.attr('path');
+        var path = url_obj.attr('path') || '/';
+
+        if (!/\/$/.test(path))
+          path += '/';
 
         this.storage.get('cookies')
           .done(function(items) {
@@ -84,7 +87,7 @@
               });
 
             // ヘッダ用の文字列に変換する
-            var http_header_text = _(items.cookies)
+            var http_header_text = _(cookies)
               .map(function(cookie) {
                 return cookie.key + '=' + cookie.value
               })
@@ -148,7 +151,7 @@
        * @param {CookieManager#setCookieHeader-callback} callback
        * 保存完了後、callback() として呼び出される
        */
-      setCookieHeader: function set(url, http_response_headers, callback) {
+      setCookieHeader: function setCookieHeader(url, http_response_headers, callback) {
 
         // Set-Cookieヘッダを取り出す
         var cookies = _(http_response_headers.split('\r\n'))
@@ -196,13 +199,16 @@
             var url_obj = $.url(url);
             var host = url_obj.attr('host');
             var port = url_obj.attr('port') || 80;
-            var path = url_obj.attr('path');
+            var path = url_obj.attr('path') || '/';
 
             if (typeof attributes.domain === 'undefined')
               attributes.domain = host;
 
             if (typeof attributes.path === 'undefined')
               attributes.path = path;
+
+            if (!/\/$/.test(attributes.path))
+              attributes.path += '/';
 
             _(cookie_obj)
               .extend(attributes);
