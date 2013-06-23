@@ -339,6 +339,7 @@
       var response_headers = ParseHeaderText(GetHeaderText(http_response_text));
       var http_response = {
         headers: response_headers,
+        headers_source: GetHeaderText(http_response_text),
         body: GetBodyText(http_response_text)
       };
       return http_response;

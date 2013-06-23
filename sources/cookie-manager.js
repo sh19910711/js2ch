@@ -26,7 +26,7 @@
      * @constructor CookieManager
      */
     var CookieManager = function(options) {
-      this.storage = new Storage(options.storage || {});
+      this.storage = new Storage((options && options.storage) || {});
     };
 
     CookieManager.prototype = {};
@@ -84,13 +84,12 @@
               });
 
             // ヘッダ用の文字列に変換する
-            var http_header_text = _(cookies)
+            var http_header_text = _(items.cookies)
               .map(function(cookie) {
                 return cookie.key + '=' + cookie.value
               })
               .join('; ');
 
-            console.log('HTTP Header Text = ', http_header_text);
             callback('Cookie: ' + http_header_text);
           });
       }
@@ -120,13 +119,12 @@
         // ストレージに保存する
         this.storage.get('cookies')
           .done(function(items) {
-            if (typeof items !== 'object')
-              items = {};
-            _(items)
-              .extend(cookies);
+            if (!Array.isArray(items.cookies))
+              items.cookies = [];
+            items.cookies = items.cookies.concat(cookies);
             var promise = this.storage.set({
-              'cookies': items
-            })
+              'cookies': items.cookies
+            });
             promise.done(callback);
           }.bind(this));
       }
