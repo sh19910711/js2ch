@@ -21,8 +21,8 @@
     'net',
     'encoding',
     'logger',
-    'util'
-  ], function(_, net, encoding, logger, util) {
+    'util-lib'
+  ], function(_, net, encoding, logger, UtilLib) {
     var sockets = [];
 
     /**
@@ -224,7 +224,7 @@
     var keys = ['connect', 'create', 'read', 'write'];
     _(keys)
       .each(function(key) {
-        SocketNode.prototype[key] = util.getDeferredFunc(SocketNode.prototype[key]);
+        SocketNode.prototype[key] = UtilLib.getDeferredFunc(SocketNode.prototype[key]);
       });
 
     return SocketNode;

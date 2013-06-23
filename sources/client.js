@@ -24,9 +24,9 @@
     'cookie-manager',
     'parser',
     'encoding',
-    'util',
+    'util-lib',
     'logger'
-  ], function($, _, Backbone, HttpLib, CookieManager, Parser, encoding, util, Logger) {
+  ], function($, _, Backbone, HttpLib, CookieManager, Parser, encoding, UtilLib, Logger) {
     var http = new HttpLib();
     var parser = new Parser();
     var logger = new Logger();
@@ -308,7 +308,7 @@
     var keys = ['getThreadList', 'getSettingText', 'getResponsesFromThread', 'putResponseToThread'];
     _(keys)
       .each(function(key) {
-        Client.prototype[key] = util.getDeferredFunc(Client.prototype[key]);
+        Client.prototype[key] = UtilLib.getDeferredFunc(Client.prototype[key]);
       });
 
     return Client;

@@ -20,8 +20,8 @@
     'underscore',
     'jquery',
     'logger',
-    'util'
-  ], function(_, $, logger, util) {
+    'util-lib'
+  ], function(_, $, logger, UtilLib) {
     /**
      * @constructor Parser
      */
@@ -61,7 +61,7 @@
         }
 
         function get_thread_info(line) {
-          var splitted = util.splitString(line, this.token);
+          var splitted = UtilLib.splitString(line, this.token);
           return {
             filename: get_filename(splitted[0]),
             subject: get_subject(splitted[1]),
@@ -70,7 +70,7 @@
         }
 
         return _(str.split('\n'))
-          .reject(util.checkEmptyString)
+          .reject(UtilLib.checkEmptyString)
           .map(get_thread_info.bind(this));
       }
     });
@@ -136,7 +136,7 @@
         }
 
         var res = _(str.split('\n'))
-          .reject(util.checkEmptyString)
+          .reject(UtilLib.checkEmptyString)
           .map(get_response.bind(this));
 
         return res;

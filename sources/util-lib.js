@@ -19,17 +19,17 @@
     'underscore'
   ], function($, _) {
     /**
-     * @constructor Util
+     * @constructor UtilLib
      */
-    var Util = function() {};
+    var UtilLib = function() {};
 
-    var _util = _(Util);
+    var _util_lib = _(UtilLib);
 
-    _util.extend({
+    _util_lib.extend({
       /**
        * @description
        * 与えられた関数をDeferredを返すように変更した関数を返す
-       * @memberof Util
+       * @memberof UtilLib
        *
        * @param {Function} func
        * 変更する関数
@@ -63,10 +63,10 @@
       }
     });
 
-    _util.extend({
+    _util_lib.extend({
       /**
        * @description 与えられた文字列をtokenで分割する
-       * @memberof Util
+       * @memberof UtilLib
        *
        * @param {String} str
        * 分割する文字列
@@ -80,10 +80,10 @@
       }
     });
 
-    _util.extend({
+    _util_lib.extend({
       /**
        * @description 文字列が空かどうかを調べる
-       * @memberof Util
+       * @memberof UtilLib
        *
        * @param {String} str
        * 空かどうかを調べる文字列
@@ -95,7 +95,7 @@
       }
     });
 
-    return Util;
+    return UtilLib;
   });
 
 })();

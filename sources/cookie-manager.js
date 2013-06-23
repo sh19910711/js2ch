@@ -18,9 +18,9 @@
     'underscore',
     'jquery',
     'storage',
-    'util',
+    'util-lib',
     'purl'
-  ], function(_, $, Storage, util, purl_dummy) {
+  ], function(_, $, Storage, UtilLib, purl_dummy) {
 
     /**
      * @constructor CookieManager
@@ -166,7 +166,7 @@
               .map($.trim);
 
             // split_listから先頭の要素を取り出す
-            var cookie_pair = util.splitString(split_list.splice(0, 1)[0], '=');
+            var cookie_pair = UtilLib.splitString(split_list.splice(0, 1)[0], '=');
             var cookie_obj = {
               key: cookie_pair[0],
               value: cookie_pair[1]
@@ -175,7 +175,7 @@
             // Cookieの属性情報を取得する
             var attributes = _(split_list)
               .reduce(function(obj_sum, line) {
-                var split_list = util.splitString(line, '=');
+                var split_list = UtilLib.splitString(line, '=');
                 var attribute_name = split_list[0];
                 var attribute_value = split_list[1];
                 var obj = {};
@@ -231,7 +231,7 @@
     var keys = ['clear', 'getCookieHeader', 'setCookieHeader', 'set'];
     _(keys)
       .each(function(key) {
-        CookieManager.prototype[key] = util.getDeferredFunc(CookieManager.prototype[key]);
+        CookieManager.prototype[key] = UtilLib.getDeferredFunc(CookieManager.prototype[key]);
       });
 
     return CookieManager;

@@ -18,8 +18,8 @@
 
   define([
     'underscore',
-    'util'
-  ], function(_, util) {
+    'util-lib'
+  ], function(_, UtilLib) {
 
     var socket = chrome.socket;
 
@@ -162,7 +162,7 @@
     var keys = ['connect', 'create', 'read', 'write'];
     _(keys)
       .each(function(key) {
-        SocketChrome.prototype[key] = util.getDeferredFunc(SocketChrome.prototype[key]);
+        SocketChrome.prototype[key] = UtilLib.getDeferredFunc(SocketChrome.prototype[key]);
       });
 
     return SocketChrome;
