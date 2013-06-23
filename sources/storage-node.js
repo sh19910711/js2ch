@@ -23,29 +23,31 @@
     'sqlite3'
   ], function(_, $, util, sqlite3) {
     // on memory (test)
-    var sqlite = sqlite3.verbose();
     var TABLE_NAME = 'items';
     var STORAGE_TARGET = 'js2ch.db';
-    var callbacks = new $.Callbacks('once');
-    var fired = false;
 
     /**
      * @constructor StorageNode
      */
-    var StorageNode = function() {
+    var StorageNode = function(options) {
+      var self = this;
+      self.callbacks = new $.Callbacks('once');
+      self.target = (options && options.target) || STORAGE_TARGET;
+
       // テーブルを作成する
       // （作成が済むまで他の操作はcallbacksにストックしておく）
-      var db = new sqlite.Database(STORAGE_TARGET);
+      this.sqlite = sqlite3.verbose();
+      var db = new this.sqlite.Database(self.target);
       db.get('SELECT COUNT(*) FROM sqlite_master WHERE type=\'table\' and name=\'' + TABLE_NAME + '\'', function(error, row) {
         var result = row['COUNT(*)'];
         if (result === 0) {
           db.run('CREATE TABLE ' + TABLE_NAME + ' (key, value)', function() {
-            callbacks.fire();
+            self.callbacks.fire();
             db.close();
           });
         }
         else {
-          callbacks.fire();
+          self.callbacks.fire();
         }
       });
     };
@@ -64,8 +66,8 @@
        * アイテム取得後 callback(Object) として呼び出される
        */
       get: function get(keys, callback) {
-        if (!callbacks.fired()) {
-          callbacks.add(get.bind(this, keys, callback));
+        if (!this.callbacks.fired()) {
+          this.callbacks.add(get.bind(this, keys, callback));
           return;
         }
 
@@ -99,7 +101,7 @@
           });
 
         // アイテムを取得する
-        var db = new sqlite.Database(STORAGE_TARGET);
+        var db = new this.sqlite.Database(STORAGE_TARGET);
         db.all('SELECT key,value FROM ' + TABLE_NAME, function(error, rows) {
           var res = _(default_values)
             .clone();
@@ -136,8 +138,8 @@
        * アイテム設定後 callback() として呼び出される
        */
       set: function set(items, callback) {
-        if (!callbacks.fired()) {
-          callbacks.add(set.bind(this, items, callback));
+        if (!this.callbacks.fired()) {
+          this.callbacks.add(set.bind(this, items, callback));
           return;
         }
 
@@ -149,7 +151,7 @@
             serialized[key] = JSON.stringify(items[key]);
           });
 
-        var db = new sqlite.Database(STORAGE_TARGET);
+        var db = new this.sqlite.Database(STORAGE_TARGET);
         db.serialize(function() {
           var deferreds = [];
           // UPDATE
@@ -206,8 +208,8 @@
        * 削除後 callback() として呼び出される
        */
       remove: function remove(keys, callback) {
-        if (!callbacks.fired()) {
-          callbacks.add(remove.bind(this, keys, callback));
+        if (!this.callbacks.fired()) {
+          this.callbacks.add(remove.bind(this, keys, callback));
           return;
         }
 
@@ -215,7 +217,7 @@
           keys = [keys];
 
         // アイテムを削除する
-        var db = new sqlite.Database(STORAGE_TARGET);
+        var db = new this.sqlite.Database(STORAGE_TARGET);
         var stmt = db.prepare('DELETE FROM ' + TABLE_NAME + ' WHERE key = ?');
         var deferreds = [];
         _(keys)
@@ -249,13 +251,13 @@
        * 削除後 callback() として呼び出される
        */
       clear: function clear(callback) {
-        if (!callbacks.fired()) {
-          callbacks.add(clear.bind(this, callback));
+        if (!this.callbacks.fired()) {
+          this.callbacks.add(clear.bind(this, callback));
           return;
         }
 
         // アイテムを削除する
-        var db = new sqlite.Database(STORAGE_TARGET);
+        var db = new this.sqlite.Database(STORAGE_TARGET);
         db.run('DELETE FROM ' + TABLE_NAME, function() {
           db.close();
           callback();
@@ -275,8 +277,7 @@
         StorageNode.prototype[key] = util.getDeferredFunc(StorageNode.prototype[key]);
       });
 
-    return new StorageNode();
+    return StorageNode;
   });
 
-})
-  .call(this);
+})();

@@ -22,6 +22,7 @@
       'util': '../sources/util',
       'parser': '../sources/parser',
       'logger': '../sources/logger',
+      'cookie-manager': '../sources/cookie-manager',
       'formatter': '../sources/formatter'
     }
   });
@@ -32,5 +33,4 @@
     return client;
   });
 
-})
-  .call(this);
+})();

@@ -20,7 +20,7 @@
     'logger'
   ], function(_, encoding, logger) {
     /**
-     * @constructor
+     * @constructor BufferLibChrome
      */
     var BufferLibChrome = function() {};
 
@@ -84,8 +84,7 @@
       }
     });
 
-    return new BufferLibChrome();
+    return BufferLibChrome;
   });
 
-})
-  .call(this);
+})();

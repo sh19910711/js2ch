@@ -92,6 +92,10 @@ module.exports = function(grunt) {
         'testing': {
           files: ['./tests/**/*.js'],
           tasks: ['testing']
+        },
+        'implement': {
+          files: ['./sources/**/*.js', './tests/**/*.js'],
+          tasks: ['implement']
         }
       }
 
@@ -159,7 +163,8 @@ module.exports = function(grunt) {
     var command_list = [
       'mocha',
       '--reporter tap',
-      '--ui bdd'
+      '--ui bdd',
+      '--timeout 5000'
     ];
     var mocha_command = command_list.join(' ');
 
@@ -203,6 +208,13 @@ module.exports = function(grunt) {
       .createServer(8080);
   });
 
+  grunt.registerTask('delay-tasks', function() {
+    var done = this.async();
+    setTimeout(function() {
+      done();
+    }, 1000);
+  });
+
   // テスト用のタスクを登録する
   register_test_task('test-socket-node', './tests/unit-tests/test-socket-node.js');
   register_test_task('test-socket-chrome', './tests/unit-tests/test-socket-chrome.js');
@@ -212,10 +224,14 @@ module.exports = function(grunt) {
   register_test_task('test-storage-chrome', './tests/unit-tests/test-storage-chrome.js');
   register_test_task('test-client', './tests/unit-tests/test-client.js');
   register_test_task('test-parser', './tests/unit-tests/test-parser.js');
+  register_test_task('test-cookie-manager', './tests/unit-tests/test-cookie-manager.js');
 
   // 基本的な操作の登録
-  grunt.registerTask('enhancement', ['doc', 'test']);
-  grunt.registerTask('testing', ['test']);
+  grunt.registerTask('enhancement', ['delay-tasks', 'jsbeautifier', 'doc', 'test']);
+  grunt.registerTask('testing', ['delay-tasks', 'jsbeautifier', 'test']);
+  grunt.registerTask('implement', ['delay-tasks', 'jsbeautifier', 'test']);
+  grunt.registerTask('document', ['delay-tasks', 'jsbeautifier', 'doc']);
+
   grunt.registerTask('test', ['all-tests']);
   grunt.registerTask('build', ['jsbeautifier', 'requirejs']);
   grunt.registerTask('doc', ['jsbeautifier', 'jsdoc']);

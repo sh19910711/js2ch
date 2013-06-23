@@ -13,7 +13,8 @@
       it('http://localhost:8654/testを取得する', function(done) {
         requirejs([
           'http-lib'
-        ], function(http) {
+        ], function(HttpLib) {
+          var http = new HttpLib();
           http.get('http://localhost:8654/test', {})
             .done(function(res) {
               res.headers['Status-Code'].should.be.equal('200');
@@ -27,7 +28,8 @@
       it('http://localhost/humans.txtを取得する', function(done) {
         requirejs([
           'http-lib'
-        ], function(http) {
+        ], function(HttpLib) {
+          var http = new HttpLib();
           var deferred = http.get(
             'http://localhost/humans.txt', {}
           );
@@ -42,7 +44,8 @@
       it('http://localhost:80/humans.txtを取得する', function(done) {
         requirejs([
           'http-lib'
-        ], function(http) {
+        ], function(HttpLib) {
+          var http = new HttpLib();
           var deferred = http.get(
             'http://localhost:80/humans.txt', {}
           );

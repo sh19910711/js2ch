@@ -26,7 +26,7 @@
     /**
      * @constructor StorageChrome
      */
-    var StorageChrome = function() {};
+    var StorageChrome = function(options) {};
 
     StorageChrome.prototype = {};
     var proto = _(StorageChrome.prototype);
@@ -119,8 +119,7 @@
         StorageChrome.prototype[key] = util.getDeferredFunc(StorageChrome.prototype[key]);
       });
 
-    return new StorageChrome();
+    return StorageChrome;
   });
 
-})
-  .call(this);
+})();

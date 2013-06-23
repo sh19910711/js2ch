@@ -21,6 +21,7 @@
       'parser': './sources/parser',
       'buffer-lib': './sources/buffer-lib-node',
       'util': './sources/util',
+      'cookie-manager': './sources/cookie-manager',
       'logger': './sources/logger',
       'formatter': './sources/formatter',
       'encoding': './lib/encoding'
@@ -33,5 +34,4 @@
     return client;
   });
 
-})
-  .call(this);
+})();

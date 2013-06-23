@@ -25,7 +25,10 @@
             'buffer-lib',
             'async',
             'purl'
-          ], function(_, $, socket, buffer_lib, asyncjs, purl_dummy) {
+          ], function(_, $, Socket, BufferLib, asyncjs, purl_dummy) {
+            var socket = new Socket();
+            var buffer_lib = new BufferLib();
+
             var http_get = function http_get(url) {
               var deferred = new $.Deferred();
               var url_obj = $.url(url);
@@ -131,7 +134,8 @@
 
       describe('#create', function() {
         it('ソケットを作成するたびにソケットの番号が増えていくことを確認する', function(done) {
-          requirejs(['socket'], function(socket) {
+          requirejs(['socket'], function(Socket) {
+            var socket = new Socket();
             socket.create('tcp', {}, function(socket_info) {
               socket_info.should.have.property('socketId');
               socket.create('tcp', {}, function(next_socket_info) {
@@ -143,8 +147,26 @@
           });
         });
       });
+
+      describe('#create(deferred)', function() {
+        it('ソケットを作成するたびにソケットの番号が増えていくことを確認する', function(done) {
+          requirejs(['socket'], function(Socket) {
+            var socket = new Socket();
+            socket.create('tcp', {})
+              .done(function(socket_info) {
+                socket_info.should.have.property('socketId');
+                socket.create('tcp', {})
+                  .done(function(next_socket_info) {
+                    next_socket_info.should.have.property('socketId');
+                    next_socket_info.socketId.should.be.equal(socket_info.socketId + 1);
+                  });
+                done.call();
+              });
+          });
+        });
+      });
+
     });
   });
 
-})
-  .call(this);
+})();

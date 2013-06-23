@@ -25,7 +25,11 @@
     'util',
     'buffer-lib',
     'logger'
-  ], function($, _, socket, purl, async, util, buffer_lib, logger) {
+  ], function($, _, Socket, purl, async, util, BufferLib, Logger) {
+    var socket = new Socket();
+    var buffer_lib = new BufferLib();
+    var logger = new Logger();
+
     var BR = "\r\n";
     var DEFAULT_HTTP_PORT = 80;
 
@@ -185,7 +189,7 @@
         // HTTPリクエストを送る
 
         function send_http_request(callback) {
-          socket.connect(socket_id, connect_info.host, connect_info, function() {
+          socket.connect(socket_id, connect_info.host, connect_info.port, function() {
             var http_headers = [];
             var path = connect_info.path;
             var query = ConvertToQueryString(data);
@@ -335,6 +339,7 @@
       var response_headers = ParseHeaderText(GetHeaderText(http_response_text));
       var http_response = {
         headers: response_headers,
+        headers_source: GetHeaderText(http_response_text),
         body: GetBodyText(http_response_text)
       };
       return http_response;
@@ -347,8 +352,7 @@
         HttpLib.prototype[key] = util.getDeferredFunc(HttpLib.prototype[key]);
       });
 
-    return new HttpLib();
+    return HttpLib;
   });
 
-})
-  .call(this);
+})();
