@@ -21,16 +21,16 @@
     'underscore',
     'backbone',
     'http-lib',
-    'storage',
+    'cookie-manager',
     'parser',
     'encoding',
     'util',
     'logger'
-  ], function($, _, Backbone, HttpLib, Storage, Parser, encoding, util, Logger) {
+  ], function($, _, Backbone, HttpLib, CookieManager, Parser, encoding, util, Logger) {
     var http = new HttpLib();
-    var storage = new Storage();
     var parser = new Parser();
     var logger = new Logger();
+    var cookie_manager = new CookieManager();
 
     /**
      * @constructor Client
@@ -180,69 +180,22 @@
         // 書き込みを行う
 
         function Write(callback) {
+          console.log('@write: start');
 
           // 書き込み送信後にHTTPレスポンスヘッダを受け取る
+
           function RecieveResponse(http_response) {
             var deferreds = [];
 
             // HTTPレスポンスヘッダにSet-Cookieがある場合の処理
             if (typeof http_response.headers['Set-Cookie'] !== 'undefined')
-              deferreds.push(RecieveCookies(http_response.headers['Set-Cookie']));
+              deferreds.push(cookie_manager.setCookieHeader(url, http_response.headers_source));
 
             // 各処理が終わったらputResponseToThreadとしての結果を返す
             $.when.apply(null, deferreds)
               .done(function() {
                 callback(http_response);
               });
-          }
-
-          // HTTPレスポンスヘッダからCookieを取り出す
-
-          function RecieveCookies(set_cookies, callback) {
-
-            // Set-Cookieヘッダを解析する
-            function ParseSetCookie() {
-              // 分割する
-              _(set_cookies.split(';'))
-                .each(function(set_cookie) {
-                  var list = util.splitString(set_cookie, '=');
-                  var key = $.trim(list[0]);
-                  var value = $.trim(list[1]);
-
-                  if (key === 'expires' || key === 'path')
-                    return;
-
-                  var obj = {};
-                  obj[key] = value;
-                  _(cookies)
-                    .extend(obj);
-                });
-
-              // 忍法帖用のCookieを持っていなかったら作成する
-              if (typeof cookies['HAP'] === 'undefined')
-                cookies['HAP'] = '';
-
-              // Cookieを保存する
-              return storage.set({
-                'cookies': cookies
-              });
-            }
-
-            var cookies = {};
-
-            if (Array.isArray(set_cookies))
-              return $.when.apply(null, _(set_cookies)
-                .map(RecieveCookies));
-
-            return $.when.apply(null, [
-              storage.get('cookies')
-              .done(function(items) {
-                // 保存済みのCookieを取得する
-                _(cookies)
-                  .extend(items.cookies);
-              })
-            ])
-              .done(ParseSetCookie);
           }
 
           // 書き込み内容などをSJISに変換する
@@ -278,32 +231,25 @@
             .done(RecieveResponse);
         }
 
-        // CookieのHTTPリクエストヘッダを取得する
 
-        function GetCookieHeader(cookies) {
-          var keys = _.keys(cookies);
-          var cookies_header_terms = _(keys)
-            .map(function(key) {
-              return key + '=' + cookies[key];
-            });
-          return cookies_header_terms.join('; ');
-        }
+        console.log('@client: before write');
+        var deferreds = $.when.apply(null, [
+          cookie_manager.getCookieHeader(url)
+          .done(function(cookie_header) {
+            if (cookie_header === 'Cookie: ')
+              return;
+            _(http_req_headers)
+              .extend({
+                'Cookie': cookie_header.substr(7)
+              });
 
-
-        $.when.apply(null, [
-          storage.get('cookies')
-          .done(function(items) {
-            if (typeof items.cookies !== 'undefined') {
-              _(http_req_headers)
-                .extend({
-                  'Cookie': GetCookieHeader(items.cookies)
-                });
-            }
           })
-        ])
-          .done(function() {
-            Write(callback);
-          });
+        ]);
+        deferreds.done(function() {
+          console.log('@client: after setting');
+          console.log('@client: after setting headers = ', http_req_headers);
+          Write(callback);
+        });
       }
     });
 

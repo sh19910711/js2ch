@@ -14,6 +14,7 @@
         'storage': './sources/storage-node',
         'parser': './sources/parser',
         'client': './sources/client',
+        'cookie-manager': './sources/cookie-manager',
         'util': './sources/util',
         'encoding': './lib/encoding',
         'purl': './lib/purl'

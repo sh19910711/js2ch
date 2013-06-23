@@ -16,7 +16,9 @@
   _(chrome)
     .extend({
       storage: {
-        local: new(requirejs('./sources/storage-node'))()
+        local: new(requirejs('./sources/storage-node'))({
+          target: 'test-storage-chrome.db'
+        })
       }
     });
 

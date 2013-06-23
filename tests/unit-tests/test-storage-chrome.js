@@ -10,13 +10,20 @@
       };
     });
 
+    after(function() {
+      require('child_process')
+        .exec('rm test-*.db');
+    });
+
     describe('experiments', function() {
 
       it('setしてgetできることを確認(String)', function(done) {
         requirejs([
           'storage'
         ], function(Storage) {
-          var storage = new Storage();
+          var storage = new Storage({
+            target: 'test-storage-chrome-1.db'
+          });
           storage.clear(function() {
             storage.set({
               'value': 'value 1'
@@ -34,7 +41,9 @@
         requirejs([
           'storage'
         ], function(Storage) {
-          var storage = new Storage();
+          var storage = new Storage({
+            target: 'test-storage-chrome-2.db'
+          });
           storage.clear(function() {
             storage.set({
               'value': 'value 1'
@@ -52,7 +61,9 @@
         requirejs([
           'storage'
         ], function(Storage) {
-          var storage = new Storage();
+          var storage = new Storage({
+            target: 'test-storage-chrome-3.db'
+          });
           storage.clear(function() {
             storage.set({
               'value': 'value 1'
@@ -72,7 +83,9 @@
         requirejs([
           'storage'
         ], function(Storage) {
-          var storage = new Storage();
+          var storage = new Storage({
+            target: 'test-storage-chrome-4.db'
+          });
           storage.clear(function() {
             storage.set({
               'value': 'value 1'
@@ -98,7 +111,9 @@
         requirejs([
           'storage'
         ], function(Storage) {
-          var storage = new Storage();
+          var storage = new Storage({
+            target: 'test-storage-chrome-5.db'
+          });
           storage.clear(function() {
             storage.set({
               'value': 'value 1'
