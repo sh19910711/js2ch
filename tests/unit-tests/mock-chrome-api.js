@@ -4,7 +4,6 @@
 
   // chrome-apiのmock
   var chrome = {};
-  console.log('test');
 
   // socketはnodeの物を使いまわす
   _(chrome)
