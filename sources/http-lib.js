@@ -60,7 +60,7 @@
         var url_obj = $.url(url);
         var connect_info = {
           host: url_obj.attr('host'),
-          path: url_obj.attr('path'),
+          path: url_obj.attr('path') || '/',
           port: parseInt(url_obj.attr('port') || DEFAULT_HTTP_PORT, 10)
         };
         var socket_id;
@@ -171,7 +171,7 @@
         var url_obj = $.url(url);
         var connect_info = {
           host: url_obj.attr('host'),
-          path: url_obj.attr('path'),
+          path: url_obj.attr('path') || '/',
           query: url_obj.attr('query'),
           port: url_obj.attr('port') || DEFAULT_HTTP_PORT
         };
@@ -205,6 +205,7 @@
                 .each(function(key) {
                   http_headers.push(key + ': ' + http_headers_obj[key] + BR);
                 });
+              http_headers.push('Content-Type: application/x-www-form-urlencoded' + BR);
               http_headers.push('Content-Length: ' + query_length + BR);
               http_headers.push('Connection: close' + BR);
               http_headers.push(BR);
