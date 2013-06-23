@@ -36,7 +36,16 @@
     /**
      * @constructor HttpLib
      */
-    var HttpLib = function() {};
+    var HttpLib = function(callback_context) {
+      callback_context = callback_context || this;
+
+      // Deferredの設定
+      var keys = ['get', 'post'];
+      _(keys)
+        .each(function(key) {
+          this[key] = UtilLib.getDeferredFunc(this[key], this, callback_context);
+        }, this);
+    };
 
     HttpLib.prototype = {};
     var proto = _(HttpLib.prototype);
@@ -345,13 +354,6 @@
       };
       return http_response;
     }
-
-    // Deferredの設定
-    var keys = ['get', 'post'];
-    _(keys)
-      .each(function(key) {
-        HttpLib.prototype[key] = UtilLib.getDeferredFunc(HttpLib.prototype[key]);
-      });
 
     return HttpLib;
   });

@@ -35,7 +35,9 @@
     /**
      * @constructor Client
      */
-    var Client = function() {
+    var Client = function(callback_context) {
+      callback_context = callback_context || this;
+
       /**
        * @description HTTPリクエスト時に渡すヘッダのリスト
        * @memberof Client
@@ -44,6 +46,13 @@
       this.HTTP_REQ_HEADERS_DEFAULT = {
         'User-Agent': 'Monazilla/1.00'
       };
+
+      // Deferredの設定
+      var keys = ['getThreadList', 'getSettingText', 'getResponsesFromThread', 'putResponseToThread'];
+      _(keys)
+        .each(function(key) {
+          this[key] = UtilLib.getDeferredFunc(this[key], this, callback_context);
+        }, this);
     };
 
     Client.prototype = {};
@@ -304,12 +313,6 @@
     }
 
 
-    // Deferredの設定
-    var keys = ['getThreadList', 'getSettingText', 'getResponsesFromThread', 'putResponseToThread'];
-    _(keys)
-      .each(function(key) {
-        Client.prototype[key] = UtilLib.getDeferredFunc(Client.prototype[key]);
-      });
 
     return Client;
   });
