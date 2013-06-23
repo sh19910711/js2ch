@@ -76,7 +76,6 @@
        * 処理完了後に callback(Number) として呼び出される
        */
       getByteLength: function getByteLength(str, callback) {
-        console.log('str: ', str);
         setTimeout(function() {
           callback(Buffer.byteLength(str, 'sjis'));
         }, 0);

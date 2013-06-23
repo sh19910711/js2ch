@@ -225,6 +225,7 @@ module.exports = function(grunt) {
   register_test_task('test-client', './tests/unit-tests/test-client.js');
   register_test_task('test-parser', './tests/unit-tests/test-parser.js');
   register_test_task('test-cookie-manager', './tests/unit-tests/test-cookie-manager.js');
+  register_test_task('test-http-lib', './tests/unit-tests/test-http-lib.js');
 
   // 基本的な操作の登録
   grunt.registerTask('enhancement', ['delay-tasks', 'jsbeautifier', 'doc', 'test']);
