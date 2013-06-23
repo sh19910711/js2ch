@@ -10,6 +10,11 @@
       };
     });
 
+    after(function() {
+      require('child_process')
+        .exec('rm test-storage-*.db');
+    });
+
     describe('experiments', function() {
 
       it('setしてgetできることを確認(String)', function(done) {
