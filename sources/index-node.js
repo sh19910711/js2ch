@@ -20,7 +20,7 @@
       'http-lib': './sources/http-lib',
       'parser': './sources/parser',
       'buffer-lib': './sources/buffer-lib-node',
-      'util': './sources/util-lib',
+      'util-lib': './sources/util-lib',
       'cookie-manager': './sources/cookie-manager',
       'logger': './sources/logger',
       'formatter': './sources/formatter',

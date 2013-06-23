@@ -19,9 +19,9 @@
   define([
     'underscore',
     'jquery',
-    'util',
+    'util-lib',
     'sqlite3'
-  ], function(_, $, util, sqlite3) {
+  ], function(_, $, UtilLib, sqlite3) {
     // on memory (test)
     var TABLE_NAME = 'items';
     var STORAGE_TARGET = 'js2ch.db';
@@ -274,7 +274,7 @@
     var keys = ['get', 'set', 'remove', 'clear'];
     _(keys)
       .each(function(key) {
-        StorageNode.prototype[key] = util.getDeferredFunc(StorageNode.prototype[key]);
+        StorageNode.prototype[key] = UtilLib.getDeferredFunc(StorageNode.prototype[key]);
       });
 
     return StorageNode;

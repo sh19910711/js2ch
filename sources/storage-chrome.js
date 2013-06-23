@@ -19,8 +19,8 @@
   define([
     'jquery',
     'underscore',
-    'util'
-  ], function($, _, util) {
+    'util-lib'
+  ], function($, _, UtilLib) {
     var storage = chrome.storage.local;
 
     /**
@@ -116,7 +116,7 @@
     var keys = ["get", "set", "remove", "clear"];
     _(keys)
       .each(function(key) {
-        StorageChrome.prototype[key] = util.getDeferredFunc(StorageChrome.prototype[key]);
+        StorageChrome.prototype[key] = UtilLib.getDeferredFunc(StorageChrome.prototype[key]);
       });
 
     return StorageChrome;

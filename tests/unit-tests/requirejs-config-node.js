@@ -15,7 +15,7 @@
         'parser': './sources/parser',
         'client': './sources/client',
         'cookie-manager': './sources/cookie-manager',
-        'util': './sources/util-lib',
+        'util-lib': './sources/util-lib',
         'encoding': './lib/encoding',
         'purl': './lib/purl'
       }

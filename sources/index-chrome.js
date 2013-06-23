@@ -19,7 +19,7 @@
       'storage': '../sources/storage-chrome',
       'http-lib': '../sources/http-lib',
       'buffer-lib': '../sources/buffer-lib-chrome',
-      'util': '../sources/util-lib',
+      'util-lib': '../sources/util-lib',
       'parser': '../sources/parser',
       'logger': '../sources/logger',
       'cookie-manager': '../sources/cookie-manager',

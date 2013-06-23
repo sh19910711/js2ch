@@ -22,10 +22,10 @@
     'socket',
     'purl',
     'async',
-    'util',
+    'util-lib',
     'buffer-lib',
     'logger'
-  ], function($, _, Socket, purl, async, util, BufferLib, Logger) {
+  ], function($, _, Socket, purl, async, UtilLib, BufferLib, Logger) {
     var socket = new Socket();
     var buffer_lib = new BufferLib();
     var logger = new Logger();
@@ -297,7 +297,7 @@
 
       var lines = http_headers.slice(1);
       var terms = lines.map(function(line) {
-        return util.splitString(line, ':')
+        return UtilLib.splitString(line, ':')
           .map($.trim);
       });
       var response_headers = {
@@ -315,13 +315,13 @@
     // HTTPレスポンスからヘッダ部を取り出す
 
     function GetHeaderText(http_response) {
-      return util.splitString(http_response, BR + BR)[0];
+      return UtilLib.splitString(http_response, BR + BR)[0];
     }
 
     // HTTPレスポンスからボディ部分を取り出す
 
     function GetBodyText(http_response) {
-      return util.splitString(http_response, BR + BR)[1];
+      return UtilLib.splitString(http_response, BR + BR)[1];
     }
 
     // オブジェクトをクエリ用の文字列に変換する
@@ -350,7 +350,7 @@
     var keys = ['get', 'post'];
     _(keys)
       .each(function(key) {
-        HttpLib.prototype[key] = util.getDeferredFunc(HttpLib.prototype[key]);
+        HttpLib.prototype[key] = UtilLib.getDeferredFunc(HttpLib.prototype[key]);
       });
 
     return HttpLib;
