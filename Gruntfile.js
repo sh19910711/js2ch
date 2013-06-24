@@ -86,15 +86,15 @@ module.exports = function(grunt) {
           tasks: ['test-issue-4']
         },
         'enhancement': {
-          files: ['./sources/**/*.js', './tests/**/*.js'],
+          files: ['./sources/**/*.js', './tests/unit-tests/**/*.js'],
           tasks: ['enhancement']
         },
         'testing': {
-          files: ['./tests/**/*.js'],
+          files: ['./tests/unit-tests/**/*.js'],
           tasks: ['testing']
         },
         'implement': {
-          files: ['./sources/**/*.js', './tests/**/*.js'],
+          files: ['./sources/**/*.js', './tests/unit-tests/**/*.js'],
           tasks: ['implement']
         }
       }

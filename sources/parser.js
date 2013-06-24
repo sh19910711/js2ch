@@ -25,7 +25,10 @@
     /**
      * @constructor Parser
      */
-    var Parser = function() {
+    var Parser = function(options, callback_context) {
+      callback_context = callback_context || this;
+      options = (options && options['client']) || options || {};
+
       /**
        * @description 2chのデータ分割用トークン
        * @memberof Parser
@@ -140,6 +143,23 @@
           .map(get_response.bind(this));
 
         return res;
+      }
+    });
+
+    proto.extend({
+      /**
+       * @description HTMLテキストからtitleタグの内容を取り出す
+       *
+       * @param {String} html_text
+       * 解析するHTMLテキスト
+       * @return {String}
+       * titleタグの中身
+       */
+      parseTitleFromHTML: function parseTitleTextFromHTML(html_text) {
+        var match_result = html_text.match(/<title>(.*?)<\/title>/i);
+        if (Array.isArray(match_result))
+          return match_result[1];
+        return undefined;
       }
     });
 

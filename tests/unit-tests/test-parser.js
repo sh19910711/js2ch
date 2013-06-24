@@ -10,7 +10,7 @@
       };
     });
 
-    describe('experiments', function() {
+    describe('2ch-data', function() {
 
       it('#parseThreadList', function(done) {
         requirejs([
@@ -45,33 +45,175 @@
           done();
         });
       });
+
+      it('#parseResponsesFromThread', function(done) {
+        requirejs([
+          'underscore',
+          'parser'
+        ], function(_, Parser) {
+          var parser = new Parser();
+
+          var response_list = [
+            'test-name<>test-mail<>test-info<>test-body<>test-subject\n'
+          ];
+
+          var ret = parser.parseResponsesFromThread(response_list.join('\n'));
+          ret.length.should.be.equal(response_list.length);
+
+          _(ret)
+            .each(function(response_info) {
+              response_info.name.data.should.be.equal('test-name');
+              response_info.mail.should.be.equal('test-mail');
+              response_info.info.should.be.equal('test-info');
+              response_info.body.should.be.equal('test-body');
+              response_info.subject.should.be.equal('test-subject');
+            });
+
+          done();
+        });
+      });
+
     });
 
-    it('#parseResponsesFromThread', function(done) {
-      requirejs([
-        'underscore',
-        'parser'
-      ], function(_, Parser) {
-        var parser = new Parser();
+    describe('html', function() {
 
-        var response_list = [
-          'test-name<>test-mail<>test-info<>test-body<>test-subject\n'
-        ];
+      describe('#parseTitleFromHTML', function() {
 
-        var ret = parser.parseResponsesFromThread(response_list.join('\n'));
-        ret.length.should.be.equal(response_list.length);
+        it('title only, 小文字', function(done) {
+          requirejs([
+            'parser'
+          ], function(Parser) {
+            var parser = new Parser();
 
-        _(ret)
-          .each(function(response_info) {
-            response_info.name.data.should.be.equal('test-name');
-            response_info.mail.should.be.equal('test-mail');
-            response_info.info.should.be.equal('test-info');
-            response_info.body.should.be.equal('test-body');
-            response_info.subject.should.be.equal('test-subject');
+            var html_text = [
+              '<title>Test Text</title>'
+            ].join('');
+
+            var result = parser.parseTitleFromHTML(html_text);
+            result.should.be.equal('Test Text');
+
+            done();
           });
+        });
 
-        done();
+        it('title only, 大文字', function(done) {
+          requirejs([
+            'parser'
+          ], function(Parser) {
+            var parser = new Parser();
+
+            var html_text = [
+              '<TITLE>Test Text</TITLE>'
+            ].join('');
+
+            var result = parser.parseTitleFromHTML(html_text);
+            result.should.be.equal('Test Text');
+
+            done();
+          });
+        });
+
+        it('simple nesting, 小文字', function(done) {
+          requirejs([
+            'parser'
+          ], function(Parser) {
+            var parser = new Parser();
+
+            var html_text = [
+              '<html>',
+              '<head>',
+              '<meta charset="UTF-8">',
+              '<title>Test Text</title>',
+              '</head>',
+              '<body>',
+              '<h1>Test Head</h1>',
+              '</body>',
+              '</html>'
+            ].join('');
+
+            var result = parser.parseTitleFromHTML(html_text);
+            result.should.be.equal('Test Text');
+
+            done();
+          });
+        });
+
+        it('simple nesting, 小文字', function(done) {
+          requirejs([
+            'parser'
+          ], function(Parser) {
+            var parser = new Parser();
+
+            var html_text = [
+              '<html>',
+              '<head>',
+              '<meta charset="UTF-8">',
+              '<TITLE>Test Text</TITLE>',
+              '</head>',
+              '<body>',
+              '<h1>Test Head</h1>',
+              '</body>',
+              '</html>'
+            ].join('');
+
+            var result = parser.parseTitleFromHTML(html_text);
+            result.should.be.equal('Test Text');
+
+            done();
+          });
+        });
+
+        it('複数のtitleタグ', function(done) {
+          requirejs([
+            'parser'
+          ], function(Parser) {
+            var parser = new Parser();
+
+            var html_text = [
+              '<html>',
+              '<head>',
+              '<meta charset="UTF-8">',
+              '<TITLE>Test Text 1</TITLE>',
+              '</head>',
+              '<body>',
+              '<TITLE>Test Text 2</TITLE>',
+              '</body>',
+              '</html>'
+            ].join('');
+
+            var result = parser.parseTitleFromHTML(html_text);
+            result.should.be.equal('Test Text 1');
+
+            done();
+          });
+        });
+
+        it('titleタグを含まないケース', function(done) {
+          requirejs([
+            'parser'
+          ], function(Parser) {
+            var parser = new Parser();
+
+            var html_text = [
+              '<html>',
+              '<head>',
+              '<meta charset="UTF-8">',
+              '</head>',
+              '<body>',
+              '</body>',
+              '</html>'
+            ].join('');
+
+            var result = parser.parseTitleFromHTML(html_text);
+            var type = typeof result;
+            type.should.be.equal('undefined');
+
+            done();
+          });
+        });
+
       });
+
     });
 
   });
