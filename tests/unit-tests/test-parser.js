@@ -214,6 +214,49 @@
 
       });
 
+      describe('Parser#parseFormFromHTML', function() {
+        it('formタグ', function(done) {
+          requirejs([
+            'parser'
+          ], function(Parser) {
+            var parser = new Parser();
+
+            var html_text = [
+              '<form method=POST action="../test/bbs.cgi?guid=ON">',
+              '<input type=hidden name=subject value="">',
+              '<input TYPE=hidden NAME=FROM value="">',
+              '<input TYPE=hidden NAME=mail value="sage">',
+              '<input type=hidden name=MESSAGE value="">',
+              '<input type=hidden name=bbs value=news4vip>',
+              '<input type=hidden name=time value=1372084136>',
+              '<input type=hidden name=key value=1372053483>',
+              '<input type=hidden name="yuki" value="akari">',
+              '<br>',
+              '<input type=submit value="上記全てを承諾して書き込む" name="submit">',
+              '<br>',
+              '</form>'
+            ].join('');
+
+            var result = parser.parseFormFromHTML(html_text);
+
+            var action = '../test/bbs.cgi?guid=ON';
+            result[action]['method'].should.be.equal('post');
+            result[action]['action'].should.be.equal(action);
+            result[action].params['subject'].should.be.equal('');
+            result[action].params['FROM'].should.be.equal('');
+            result[action].params['mail'].should.be.equal('sage');
+            result[action].params['MESSAGE'].should.be.equal('');
+            result[action].params['bbs'].should.be.equal('news4vip');
+            result[action].params['time'].should.be.equal('1372084136');
+            result[action].params['key'].should.be.equal('1372053483');
+            result[action].params['yuki'].should.be.equal('akari');
+            result[action].params['submit'].should.be.equal('上記全てを承諾して書き込む');
+
+            done();
+          });
+        });
+      });
+
     });
 
   });

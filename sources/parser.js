@@ -163,6 +163,90 @@
       }
     });
 
+    proto.extend({
+      parseFormFromHTML: function parseFormFromHTML(html_text) {
+
+        var tag_list = html_text.replace(/\r/, '')
+          .replace(/\n/, '')
+          .match(/(<.+?>)/g);
+
+        // formタグの開始地点かどうか判定
+        var is_open_form_tag = function is_open_form_tag(line) {
+          if (line[1] === '/')
+            return false;
+          var element = $.parseHTML(line);
+          var tag_name = element[0].tagName.toLowerCase();
+          return tag_name === 'form';
+        };
+
+        // formタグの終了地点かどうか判定
+        var is_close_form_tag = function is_close_form_tag(line) {
+          if (line[1] !== '/')
+            return false;
+          line = '<' + line.substr(2);
+          var element = $.parseHTML(line);
+          var tag_name = element[0].tagName.toLowerCase();
+          return tag_name === 'form';
+        };
+
+        // formタグの範囲を取得する
+        var get_form_ranges = function get_form_ranges(tag_list) {
+          var ranges = [];
+          var stack = [];
+          var len = tag_list.length;
+          for (var i = 0; i < len; ++i) {
+            var line = tag_list[i];
+            if (is_open_form_tag(line)) {
+              stack.push(i);
+            }
+            else if (is_close_form_tag(line)) {
+              ranges.push({
+                first: stack[stack.length - 1],
+                second: parseInt(i, 10)
+              });
+              stack.pop();
+            }
+          }
+          return ranges;
+        };
+
+        var ranges = get_form_ranges(tag_list);
+        console.log('ranges = ', ranges);
+
+        // フォームのリストを取得する
+        // form_list[アクション名] = 情報
+        var form_list = {};
+        _(ranges)
+          .each(function(range) {
+            var lines = tag_list.slice(range.first, range.second - range.first + 1);
+            var html_text = lines.join('');
+            var form_element = $.parseHTML(html_text)[0];
+            var action = $(form_element)
+              .attr('action');
+            var method = $(form_element)
+              .attr('method')
+              .toLowerCase();
+            var form_info = {
+              action: action,
+              method: method,
+              params: {}
+            };
+            $(form_element)
+              .children()
+              .each(function() {
+                var name = $(this)
+                  .attr('name');
+                var value = $(this)
+                  .attr('value');
+                form_info['params'][name] = value;
+              });
+            form_list[action] = form_info;
+          })
+
+        return form_list;
+      }
+    });
+
     return Parser;
   });
 
