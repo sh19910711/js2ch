@@ -27,8 +27,9 @@
     /**
      * @constructor SocketNode
      */
-    var SocketNode = function(callback_context) {
+    var SocketNode = function(options, callback_context) {
       callback_context = callback_context || this;
+      options = (options && options['socket']) || options || {};
 
       this.sockets = [];
 

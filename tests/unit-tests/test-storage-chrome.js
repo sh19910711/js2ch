@@ -12,7 +12,7 @@
 
     after(function() {
       require('child_process')
-        .exec('rm test-*.db');
+        .exec('rm test-storage-chrome-*.db');
     });
 
     describe('experiments', function() {

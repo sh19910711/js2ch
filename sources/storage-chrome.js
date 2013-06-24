@@ -28,6 +28,7 @@
      */
     var StorageChrome = function(options, callback_context) {
       callback_context = callback_context || this;
+      options = (options && options['storage']) || options || {};
 
       // Deferred設定
       var keys = ["get", "set", "remove", "clear"];

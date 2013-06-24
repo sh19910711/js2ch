@@ -27,16 +27,13 @@
     'util-lib',
     'logger'
   ], function($, _, Backbone, HttpLib, CookieManager, Parser, encoding, UtilLib, Logger) {
-    var http = new HttpLib();
-    var parser = new Parser();
-    var logger = new Logger();
-    var cookie_manager = new CookieManager();
 
     /**
      * @constructor Client
      */
-    var Client = function(callback_context) {
+    var Client = function(options, callback_context) {
       callback_context = callback_context || this;
+      options = (options && options['client']) || options || {};
 
       /**
        * @description HTTPリクエスト時に渡すヘッダのリスト
@@ -47,11 +44,23 @@
         'User-Agent': 'Monazilla/1.00'
       };
 
+      this.http = new HttpLib((options && options['http-lib']) || options, this);
+      this.parser = new Parser((options && options['parser']) || options, this);
+      this.logger = new Logger((options && options['logger']) || options, this);
+      this.cookie_manager = new CookieManager((options && options['cookie-manager']) || options || {}, this);
+
       // Deferredの設定
-      var keys = ['getThreadList', 'getSettingText', 'getResponsesFromThread', 'putResponseToThread'];
+      var keys = ['getThreadList', 'getSettingText', 'getResponsesFromThread'];
       _(keys)
         .each(function(key) {
           this[key] = UtilLib.getDeferredFunc(this[key], this, callback_context);
+        }, this);
+
+      // Deferredの設定（失敗する可能性があるもの）
+      var keys = ['putResponseToThread'];
+      _(keys)
+        .each(function(key) {
+          this[key] = UtilLib.getDeferredFuncWillFail(this[key], this, callback_context);
         }, this);
     };
 
@@ -72,14 +81,14 @@
        */
       getThreadList: function getThreadList(hostname, board_id, callback) {
         var url = GetUrl(hostname, '/' + board_id + '/subject.txt');
-        http.get(
+        this.http.get(
           url,
           _(this.HTTP_REQ_HEADERS_DEFAULT)
           .extend({
             'Host': hostname,
           }))
           .done(function(http_response) {
-            callback(parser.parseThreadList(http_response.body));
+            callback(this.parser.parseThreadList(http_response.body));
           });
       }
     });
@@ -105,7 +114,7 @@
        */
       getSettingText: function getSettingText(hostname, board_id, callback) {
         var url = GetUrl(hostname, '/' + board_id + '/SETTING.TXT');
-        http.get(
+        this.http.get(
           url,
           _(this.HTTP_REQ_HEADERS_DEFAULT)
           .extend({
@@ -140,14 +149,14 @@
        */
       getResponsesFromThread: function getResponsesFromThread(hostname, board_id, thread_id, callback) {
         var url = GetUrl(hostname, '/' + board_id + GetDatPath(hostname, thread_id));
-        http.get(
+        this.http.get(
           url,
           _(this.HTTP_REQ_HEADERS_DEFAULT)
           .extend({
             'Host': hostname
           }))
           .done(function(http_response) {
-            callback(parser.parseResponsesFromThread(http_response.body));
+            callback(http_response);
           });
       }
     });
@@ -177,7 +186,7 @@
        * @param {Client#putResponseToThread-callback} callback
        * 書き込み完了後 callback(Object) として呼び出される
        */
-      putResponseToThread: function putResponseToThread(hostname, board_id, thread_id, response, callback) {
+      putResponseToThread: function putResponseToThread(hostname, board_id, thread_id, response, ok_callback, fail_callback) {
         var url = GetUrl(hostname, '/test/bbs.cgi?guid=ON');
 
         var http_req_headers = _(this.HTTP_REQ_HEADERS_DEFAULT)
@@ -187,25 +196,31 @@
           });
 
         // 書き込みを行う
-
-        function Write(callback) {
-          console.log('@write: start');
+        var write = function write(ok_callback, fail_callback) {
 
           // 書き込み送信後にHTTPレスポンスヘッダを受け取る
+          var receive_response = function receive_response(http_response) {
+            var after_receive_response = function after_receive_response() {
+              if (/書き込みました/.test(http_response.body))
+                ok_callback(http_response.body);
+              else
+                fail_callback(http_response.body);
+            };
+            after_receive_response = after_receive_response.bind(this);
 
-          function RecieveResponse(http_response) {
             var deferreds = [];
 
             // HTTPレスポンスヘッダにSet-Cookieがある場合の処理
-            if (typeof http_response.headers['Set-Cookie'] !== 'undefined')
-              deferreds.push(cookie_manager.setCookieHeader(url, http_response.headers_source));
+            if (typeof http_response.headers['Set-Cookie'] !== 'undefined') {
+              console.log('@putResponseToThread::write:receive_response');
+              deferreds.push(this.cookie_manager.setCookieHeader(url, http_response.headers_source));
+            }
 
             // 各処理が終わったらputResponseToThreadとしての結果を返す
             $.when.apply(null, deferreds)
-              .done(function() {
-                callback(http_response);
-              });
-          }
+              .done(after_receive_response);
+          };
+          receive_response = receive_response.bind(this);
 
           // 書き込み内容などをSJISに変換する
           var converted_response = _(response)
@@ -225,7 +240,7 @@
 
           // 準備ができたら書き込む
           // TODO: 利用規約などを確認させるための処理が組めるような流れもつくる
-          http.post(
+          this.http.post(
             url,
             http_req_headers, {
               'bbs': board_id,
@@ -237,13 +252,14 @@
               'MESSAGE': escaped_response.body,
               'yuki': 'akari'
             })
-            .done(RecieveResponse);
-        }
+            .done(receive_response);
+        };
+
+        write = write.bind(this);
 
 
-        console.log('@client: before write');
         var deferreds = $.when.apply(null, [
-          cookie_manager.getCookieHeader(url)
+          this.cookie_manager.getCookieHeader(url)
           .done(function(cookie_header) {
             if (cookie_header === 'Cookie: ')
               return;
@@ -255,9 +271,7 @@
           })
         ]);
         deferreds.done(function() {
-          console.log('@client: after setting');
-          console.log('@client: after setting headers = ', http_req_headers);
-          Write(callback);
+          write(ok_callback, fail_callback);
         });
       }
     });
@@ -287,6 +301,12 @@
 
     function ConvertToSJIS(str) {
       return encoding.codeToString(encoding.convert(GetArray(str), 'SJIS', 'AUTO'));
+    }
+
+    // 与えられた文字列をSJISに変換する
+
+    function ConvertToUTF8(str) {
+      return encoding.codeToString(encoding.convert(GetArray(str), 'UTF-8', 'SJIS'));
     }
 
     // 与えられた文字列をSJISに変換する

@@ -16,7 +16,7 @@
     .extend({
       storage: {
         local: new(requirejs('./sources/storage-node'))({
-          target: 'test-storage-chrome.db'
+          target: 'test-mock-chrome-api-storage.db'
         })
       }
     });

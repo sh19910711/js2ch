@@ -26,8 +26,9 @@
     /**
      * @constructor SocketChrome
      */
-    var SocketChrome = function(callback_context) {
+    var SocketChrome = function(options, callback_context) {
       callback_context = callback_context || this;
+      options = (options && options['socket']) || options || {};
 
       // Deferred設定
       var keys = ['connect', 'create', 'read', 'write'];

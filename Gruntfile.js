@@ -164,7 +164,7 @@ module.exports = function(grunt) {
       'mocha',
       '--reporter tap',
       '--ui bdd',
-      '--timeout 5000'
+      '--timeout 3000'
     ];
     var mocha_command = command_list.join(' ');
 
@@ -212,7 +212,7 @@ module.exports = function(grunt) {
     var done = this.async();
     setTimeout(function() {
       done();
-    }, 1000);
+    }, 100);
   });
 
   // テスト用のタスクを登録する

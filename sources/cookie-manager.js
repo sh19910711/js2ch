@@ -27,7 +27,9 @@
      */
     var CookieManager = function(options, callback_context) {
       callback_context = callback_context || this;
-      this.storage = new Storage((options && options.storage) || {}, this);
+      options = (options && options['cookie-manager']) || options || {};
+
+      this.storage = new Storage((options && options['storage']) || options, this);
 
       // Deferred設定
       var keys = ['clear', 'getCookieHeader', 'setCookieHeader', 'set'];
@@ -128,17 +130,20 @@
        * 保存完了後、callback() として呼び出される
        */
       set: function set(url, cookies, callback) {
+        var after_get = function after_get_func(items) {
+          if (!Array.isArray(items.cookies))
+            items.cookies = [];
+          items.cookies = items.cookies.concat(cookies);
+          var promise = this.storage.set({
+            'cookies': items.cookies
+          });
+          promise.done(callback);
+        };
+        after_get = after_get.bind(this);
+
         // ストレージに保存する
         this.storage.get('cookies')
-          .done(function(items) {
-            if (!Array.isArray(items.cookies))
-              items.cookies = [];
-            items.cookies = items.cookies.concat(cookies);
-            var promise = this.storage.set({
-              'cookies': items.cookies
-            });
-            promise.done(callback);
-          });
+          .done(after_get);
       }
     });
 

@@ -75,6 +75,85 @@
 
     _util_lib.extend({
       /**
+       * @description
+       * 与えられた関数をDeferredを返すように変更した関数を返す
+       * @memberof UtilLib
+       *
+       * @param {Function} func
+       * 変更する関数
+       * @param {Function} inner_context
+       * funcのcontext
+       * @param {Function} callback_context
+       * callback関数のcontext
+       * @return {Function}
+       */
+      getDeferredFuncWillFail: function getDeferredFuncWillFail(func, inner_context, callback_context) {
+        return function() {
+          inner_context = this || inner_context;
+          callback_context = callback_context || inner_context;
+
+          var deferred = new $.Deferred();
+
+          // argumentsを配列に変換する
+          var args = Array.prototype.slice.apply(arguments);
+
+          var done_callback = function() {}, fail_callback = function() {};
+
+          if ((args[args.length - 2] instanceof Function) && (args[args.length - 1] instanceof Function)) {
+            done_callback = arguments[arguments.length - 2];
+            fail_callback = arguments[arguments.length - 1];
+
+            // done_callback関数とpromise#done関数を呼び出すための関数を
+            // 元の関数のdone_callbackに登録する
+            args[args.length - 2] = function() {
+              if (done_callback instanceof Function)
+                done_callback.apply(callback_context, arguments);
+              deferred.resolveWith(callback_context, arguments);
+            };
+
+            // fail_callback関数とpromise#done関数を呼び出すための関数を
+            // 元の関数のcallbackに登録する
+            args[args.length - 1] = function() {
+              if (fail_callback instanceof Function)
+                fail_callback.apply(callback_context, arguments);
+              deferred.rejectWith(callback_context, arguments);
+            };
+          }
+          else if (args[args.length - 1] instanceof Function) {
+            done_callback = arguments[arguments.length - 1];
+
+            // done_callback関数とpromise#done関数を呼び出すための関数を
+            // 元の関数のdone_callbackに登録する
+            args[args.length - 1] = function() {
+              if (done_callback instanceof Function)
+                done_callback.apply(callback_context, arguments);
+              deferred.resolveWith(callback_context, arguments);
+            };
+
+            args.push(function() {
+              deferred.rejectWith(callback_context, arguments);
+            });
+          }
+          else {
+            args.push(function() {
+              deferred.resolveWith(callback_context, arguments);
+            });
+            args.push(function() {
+              deferred.rejectWith(callback_context, arguments);
+            });
+          }
+
+
+          // Deferredする前の関数を呼び出す
+          func.apply(inner_context, args);
+
+          return deferred;
+        };
+      }
+    });
+
+    _util_lib.extend({
+      /**
        * @description 与えられた文字列をtokenで分割する
        * @memberof UtilLib
        *
