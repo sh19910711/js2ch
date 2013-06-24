@@ -203,11 +203,24 @@
           var receive_response = function receive_response(http_response) {
             // HTTPレスポンス受信後の処理（callbackの実行）
             var after_receive_response = function after_receive_response() {
+              var title_text = this.parser.parseTitleFromHTML(http_response.body);
+
               // TODO: 利用規約などを確認させるための処理が組めるような流れもつくる
-              if (/書き込みました/.test(http_response.body))
+              if ('書き込みました。' === title_text) {
                 ok_callback(http_response.body);
-              else
-                fail_callback(http_response.body);
+              }
+              else if ('■ 書き込み確認 ■' === title_text) {
+                fail_callback({
+                  type: 'confirm',
+                  httpResponse: http_response
+                });
+              }
+              else {
+                fail_callback({
+                  type: 'error',
+                  httpResponse: http_response
+                });
+              }
             };
             after_receive_response = after_receive_response.bind(this);
 
@@ -249,8 +262,7 @@
             'submit': ConvertToSJIS('上記全てを承諾して書き込む'),
             'FROM': escaped_response.name,
             'mail': escaped_response.mail,
-            'MESSAGE': escaped_response.body,
-            'yuki': 'akari'
+            'MESSAGE': escaped_response.body
           };
 
           // 準備ができたらPOSTリクエストを送信する

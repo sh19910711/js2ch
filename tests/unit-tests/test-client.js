@@ -94,7 +94,7 @@
               }, function(response) {}),
             ]);
 
-            promise.done(function() {
+            promise.always(function() {
               done();
             });
 
