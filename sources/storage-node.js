@@ -31,6 +31,7 @@
      */
     var StorageNode = function(options, callback_context) {
       callback_context = callback_context || this;
+      options = (options && options['storage']) || options || {};
 
       var self = this;
       self.callbacks = new $.Callbacks('once');
@@ -40,17 +41,19 @@
       // （作成が済むまで他の操作はcallbacksにストックしておく）
       this.sqlite = sqlite3.verbose();
       var db = new this.sqlite.Database(self.target);
-      db.get('SELECT COUNT(*) FROM sqlite_master WHERE type=\'table\' and name=\'' + TABLE_NAME + '\'', function(error, row) {
-        var result = row['COUNT(*)'];
-        if (result === 0) {
-          db.run('CREATE TABLE ' + TABLE_NAME + ' (key, value)', function() {
+      db.serialize(function() {
+        db.get('SELECT COUNT(*) FROM sqlite_master WHERE type=\'table\' and name=\'' + TABLE_NAME + '\'', function(error, row) {
+          var result = row['COUNT(*)'];
+          if (result === 0) {
+            db.run('CREATE TABLE ' + TABLE_NAME + ' (key, value)', function() {
+              self.callbacks.fire();
+              db.close();
+            });
+          }
+          else {
             self.callbacks.fire();
-            db.close();
-          });
-        }
-        else {
-          self.callbacks.fire();
-        }
+          }
+        });
       });
 
       // Deferred設定
@@ -112,7 +115,7 @@
           });
 
         // アイテムを取得する
-        var db = new this.sqlite.Database(STORAGE_TARGET);
+        var db = new this.sqlite.Database(this.target);
         db.all('SELECT key,value FROM ' + TABLE_NAME, function(error, rows) {
           var res = _(default_values)
             .clone();
@@ -162,7 +165,7 @@
             serialized[key] = JSON.stringify(items[key]);
           });
 
-        var db = new this.sqlite.Database(STORAGE_TARGET);
+        var db = new this.sqlite.Database(this.target);
         db.serialize(function() {
           var deferreds = [];
           // UPDATE
@@ -228,7 +231,7 @@
           keys = [keys];
 
         // アイテムを削除する
-        var db = new this.sqlite.Database(STORAGE_TARGET);
+        var db = new this.sqlite.Database(this.target);
         var stmt = db.prepare('DELETE FROM ' + TABLE_NAME + ' WHERE key = ?');
         var deferreds = [];
         _(keys)
@@ -268,7 +271,7 @@
         }
 
         // アイテムを削除する
-        var db = new this.sqlite.Database(STORAGE_TARGET);
+        var db = new this.sqlite.Database(this.target);
         db.run('DELETE FROM ' + TABLE_NAME, function() {
           db.close();
           callback();

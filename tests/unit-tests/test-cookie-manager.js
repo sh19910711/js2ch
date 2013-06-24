@@ -177,7 +177,7 @@
         ], function(_, $, CookieManager) {
           var cookie_manager = new CookieManager({
             storage: {
-              target: 'test-cookie-manager-6.db'
+              target: 'test-cookie-manager-7.db'
             }
           });
 
@@ -239,7 +239,7 @@
         ], function(_, $, CookieManager) {
           var cookie_manager = new CookieManager({
             storage: {
-              target: 'test-cookie-manager-6.db'
+              target: 'test-cookie-manager-8.db'
             }
           });
 
@@ -321,7 +321,7 @@
         ], function(_, $, CookieManager) {
           var cookie_manager = new CookieManager({
             storage: {
-              target: 'test-cookie-manager-6.db'
+              target: 'test-cookie-manager-9.db'
             }
           });
 

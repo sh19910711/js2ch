@@ -93,42 +93,52 @@
           callback_context = callback_context || inner_context;
 
           var deferred = new $.Deferred();
-          var done_callback = arguments[arguments.length - 2];
-          var fail_callback = arguments[arguments.length - 1];
 
           // argumentsを配列に変換する
           var args = Array.prototype.slice.apply(arguments);
 
-          // done_callback関数とpromise#done関数を呼び出すための関数を
-          // 元の関数のdone_callbackに登録する
-          if (done_callback instanceof Function) {
-            args[args.length - 1] = function() {
+          var done_callback = function() {}, fail_callback = function() {};
+
+          if ((args[args.length - 2] instanceof Function) && (args[args.length - 1] instanceof Function)) {
+            done_callback = arguments[arguments.length - 2];
+            fail_callback = arguments[arguments.length - 1];
+
+            // done_callback関数とpromise#done関数を呼び出すための関数を
+            // 元の関数のdone_callbackに登録する
+            args[args.length - 2] = function() {
               if (done_callback instanceof Function)
                 done_callback.apply(callback_context, arguments);
               deferred.resolveWith(callback_context, arguments);
             };
-          }
-          else {
-            args.push(function() {
-              if (done_callback instanceof Function)
-                done_callback.apply(callback_context, arguments);
-              deferred.resolveWith(callback_context, arguments);
-            });
-          }
 
-          // fail_callback関数とpromise#done関数を呼び出すための関数を
-          // 元の関数のcallbackに登録する
-          if (fail_callback instanceof Function) {
+            // fail_callback関数とpromise#done関数を呼び出すための関数を
+            // 元の関数のcallbackに登録する
             args[args.length - 1] = function() {
               if (fail_callback instanceof Function)
                 fail_callback.apply(callback_context, arguments);
               deferred.rejectWith(callback_context, arguments);
             };
           }
+          else if (args[args.length - 1] instanceof Function) {
+            done_callback = arguments[arguments.length - 1];
+
+            // done_callback関数とpromise#done関数を呼び出すための関数を
+            // 元の関数のdone_callbackに登録する
+            args[args.length - 1] = function() {
+              if (done_callback instanceof Function)
+                done_callback.apply(callback_context, arguments);
+              deferred.resolveWith(callback_context, arguments);
+            };
+
+            args.push(function() {
+              deferred.rejectWith(callback_context, arguments);
+            });
+          }
           else {
             args.push(function() {
-              if (fail_callback instanceof Function)
-                fail_callback.apply(callback_context, arguments);
+              deferred.resolveWith(callback_context, arguments);
+            });
+            args.push(function() {
               deferred.rejectWith(callback_context, arguments);
             });
           }
