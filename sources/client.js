@@ -114,12 +114,14 @@
        */
       getSettingText: function getSettingText(hostname, board_id, callback) {
         var url = GetUrl(hostname, '/' + board_id + '/SETTING.TXT');
-        this.http.get(
-          url,
-          _(this.HTTP_REQ_HEADERS_DEFAULT)
+        var http_request_headers = this.HTTP_REQ_HEADERS_DEFAULT;
+
+        _(http_request_headers)
           .extend({
             'Host': hostname
-          }))
+          });
+
+        this.http.get(url, http_request_headers)
           .done(function(http_response) {
             callback(parser.parseSettingText(http_response.body));
           });
@@ -197,10 +199,11 @@
 
         // 書き込みを行う
         var write = function write(ok_callback, fail_callback) {
-
           // 書き込み送信後にHTTPレスポンスヘッダを受け取る
           var receive_response = function receive_response(http_response) {
+            // HTTPレスポンス受信後の処理（callbackの実行）
             var after_receive_response = function after_receive_response() {
+              // TODO: 利用規約などを確認させるための処理が組めるような流れもつくる
               if (/書き込みました/.test(http_response.body))
                 ok_callback(http_response.body);
               else
@@ -208,19 +211,19 @@
             };
             after_receive_response = after_receive_response.bind(this);
 
-            var deferreds = [];
+            var promises = [];
 
             // HTTPレスポンスヘッダにSet-Cookieがある場合の処理
             if (typeof http_response.headers['Set-Cookie'] !== 'undefined') {
-              console.log('@putResponseToThread::write:receive_response');
-              deferreds.push(this.cookie_manager.setCookieHeader(url, http_response.headers_source));
+              promises.push(this.cookie_manager.setCookieHeader(url, http_response.headers_source));
             }
 
             // 各処理が終わったらputResponseToThreadとしての結果を返す
-            $.when.apply(null, deferreds)
+            $.when.apply(null, promises)
               .done(after_receive_response);
           };
           receive_response = receive_response.bind(this);
+
 
           // 書き込み内容などをSJISに変換する
           var converted_response = _(response)
@@ -238,38 +241,42 @@
               escaped_response[key] = EscapeSJIS(value);
             });
 
-          // 準備ができたら書き込む
-          // TODO: 利用規約などを確認させるための処理が組めるような流れもつくる
-          this.http.post(
-            url,
-            http_req_headers, {
-              'bbs': board_id,
-              'key': thread_id,
-              'time': 1,
-              'submit': ConvertToSJIS('上記全てを承諾して書き込む'),
-              'FROM': escaped_response.name,
-              'mail': escaped_response.mail,
-              'MESSAGE': escaped_response.body,
-              'yuki': 'akari'
-            })
+          // 送信するデータ
+          var http_req_params = {
+            'bbs': board_id,
+            'key': thread_id,
+            'time': 1,
+            'submit': ConvertToSJIS('上記全てを承諾して書き込む'),
+            'FROM': escaped_response.name,
+            'mail': escaped_response.mail,
+            'MESSAGE': escaped_response.body,
+            'yuki': 'akari'
+          };
+
+          // 準備ができたらPOSTリクエストを送信する
+          this.http.post(url, http_req_headers, http_req_params)
             .done(receive_response);
         };
-
         write = write.bind(this);
 
 
+        // 取得したCookieをHTTPリクエストヘッダに追加する
+        var after_get_cookie_header = function after_get_cookie_header_func(cookie_header) {
+          if (cookie_header === 'Cookie: ')
+            return;
+          _(http_req_headers)
+            .extend({
+              'Cookie': cookie_header.substr(7)
+            });
+        };
+
+        // リクエスト前の準備
         var deferreds = $.when.apply(null, [
           this.cookie_manager.getCookieHeader(url)
-          .done(function(cookie_header) {
-            if (cookie_header === 'Cookie: ')
-              return;
-            _(http_req_headers)
-              .extend({
-                'Cookie': cookie_header.substr(7)
-              });
-
-          })
+          .done(after_get_cookie_header)
         ]);
+
+        // 準備ができたらwriteを実行する
         deferreds.done(function() {
           write(ok_callback, fail_callback);
         });
