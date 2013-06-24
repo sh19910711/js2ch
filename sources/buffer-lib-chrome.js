@@ -77,7 +77,6 @@
     });
 
     proto.extend({
-      // 文字列のバイト数を求める
       /**
        * @description 文字列のバイト数を求める
        * @memberof BufferLibChrome
