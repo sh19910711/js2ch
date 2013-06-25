@@ -218,7 +218,7 @@
         var form_list = {};
         _(ranges)
           .each(function(range) {
-            var lines = tag_list.slice(range.first, range.second - range.first + 1);
+            var lines = tag_list.slice(range.first, range.second + 1);
             var html_text = lines.join('');
             var form_element = $.parseHTML(html_text)[0];
             var action = $(form_element)
