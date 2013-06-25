@@ -44,13 +44,13 @@
           app.use(express.bodyParser());
 
           app.post('/test/bbs.cgi', function(req, res) {
-            var body = '書き込みました';
+            var body = '<title>書き込みました。</title>';
             body = encoding.convert(body, 'SJIS', 'AUTO');
             buffer_lib.convertToString(body)
             .done(function(str) {
               buffer_lib.getByteLength(str)
               .done(function(len) {
-                res.setHeader('Content-Type', 'text/plain');
+                res.setHeader('Content-Type', 'text/html');
                 res.setHeader('Content-Length', len);
                 res.end(str);
               });
