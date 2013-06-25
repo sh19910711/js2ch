@@ -45,7 +45,7 @@
 
           app.post('/test/bbs.cgi', function(req, res) {
             if (req.body.key === 'test') {
-              var body = '<title>書き込みました。</title>';
+              var body = '<title>書きこみました。</title>';
               body = encoding.convert(body, 'SJIS', 'AUTO');
               buffer_lib.convertToString(body)
                 .done(function(str) {
@@ -62,11 +62,10 @@
                 var body = [
                   '<html>',
                   '<head>',
-                  '<title>書き込みました。</title>',
+                  '<title>書きこみました。</title>',
                   '</head>',
                   '<body>',
                   '<form action="../test/bbs.cgi?guid=ON">',
-                  '<input type="hidden" name="subject" value="">',
                   '<input type="hidden" name="FROM" value="' + req.body['FROM'] + '">',
                   '<input type="hidden" name="mail" value="' + req.body['mail'] + '">',
                   '<input type="hidden" name="MESSAGE" value="' + req.body['MESSAGE'] + '">',
@@ -74,6 +73,7 @@
                   '<input type="hidden" name="time" value="' + req.body['time'] + '">',
                   '<input type="hidden" name="key" value="' + req.body['key'] + '">',
                   '<input type="hidden" name="yuki" value="akari">',
+                  '<input type="submit" name="submit" value="上記全てを承諾して書き込む">',
                   '</form>',
                   '</body>',
                   '</html>'
@@ -105,6 +105,7 @@
                   '<input type="hidden" name="time" value="' + req.body['time'] + '">',
                   '<input type="hidden" name="key" value="' + req.body['key'] + '">',
                   '<input type="hidden" name="yuki" value="akari">',
+                  '<input type="submit" name="submit" value="上記全てを承諾して書き込む">',
                   '</form>',
                   '</body>',
                   '</html>'

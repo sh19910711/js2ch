@@ -220,15 +220,9 @@
                   .done(function(items) {
                     // ストレージに設定できたら再書き込みを行う
                     var after_storage_set = function after_storage_set_func() {
-                      setTimeout(function() {
-                        this.putResponseToThread(hostname, board_id, thread_id, response)
-                          .done(function() {
-                            promise.resolve();
-                          })
-                          .fail(function() {
-                            promise.reject();
-                          });
-                      }.bind(this), 1000);
+                      this.putResponseToThread(hostname, board_id, thread_id, response)
+                        .done(promise.resolve)
+                        .fail(promise.reject);
                     };
                     after_storage_set = after_storage_set.bind(this);
 
@@ -265,7 +259,7 @@
 
               var title_text = this.parser.parseTitleFromHTML(http_response.body);
 
-              if ('書き込みました。' === title_text) {
+              if ('書きこみました。' === title_text) {
                 ok_callback(http_response.body);
               }
               else if ('■ 書き込み確認 ■' === title_text) {
@@ -314,7 +308,6 @@
 
           // 準備ができたらPOSTリクエストを送信する
           var send_http_request = function send_http_request_func() {
-            console.log('@send_http_request: ', url, http_req_headers, http_req_params);
             this.http.post(url, http_req_headers, http_req_params)
               .done(receive_response);
           };
@@ -370,11 +363,10 @@
                 'bbs': board_id,
                 'key': thread_id,
                 'time': 1,
-                // 'submit': ConvertToSJIS('上記全てを承諾して書き込む'),
                 'submit': ConvertToSJIS('書き込む'),
                 'FROM': escaped_response.name,
                 'mail': escaped_response.mail,
-                'MESSAGE': escaped_response.body
+                'MESSAGE': escaped_response.body,
               });
 
             deferred.resolve();

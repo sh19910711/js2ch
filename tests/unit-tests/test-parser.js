@@ -231,6 +231,7 @@
               '<input type=hidden name=time value=1372084136>',
               '<input type=hidden name=key value=1372053483>',
               '<input type=hidden name="yuki" value="akari">',
+              '<input type=submit value="foo" name="bar">',
               '<br>',
               '<input type=submit value="上記全てを承諾して書き込む" name="submit">',
               '<br>',

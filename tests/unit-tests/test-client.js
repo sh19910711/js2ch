@@ -151,7 +151,7 @@
                   });
               }
               else {
-                deferred.resolve();
+                throw new Error('エラーござる');
               }
             });
 

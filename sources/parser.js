@@ -178,11 +178,12 @@
 
           if (!Array.isArray(element) || element.length !== 1)
             return false;
-          
-          if (typeof (element[0].tagName) === 'string') {
+
+          if (typeof(element[0].tagName) === 'string') {
             var tag_name = element[0].tagName.toLowerCase();
             return tag_name === 'form';
-          } else {
+          }
+          else {
             return false;
           }
         };
@@ -196,11 +197,12 @@
 
           if (!Array.isArray(element) || element.length !== 1)
             return false;
-          
-          if (typeof (element[0].tagName) === 'string') {
+
+          if (typeof(element[0].tagName) === 'string') {
             var tag_name = element[0].tagName.toLowerCase();
             return tag_name === 'form';
-          } else {
+          }
+          else {
             return false;
           }
         };
@@ -227,7 +229,6 @@
         };
 
         var ranges = get_form_ranges(tag_list);
-        console.log('ranges = ', ranges);
 
         // フォームのリストを取得する
         // form_list[アクション名] = 情報
