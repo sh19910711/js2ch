@@ -83,6 +83,45 @@
           done();
         });
       });
+
+      it('同じキーの値を複数回格納したときに更新されているか確認する', function(done) {
+        requirejs([
+          'cookie-manager'
+        ], function(CookieManager) {
+          var cookie_manager = new CookieManager({
+            storage: {
+              target: 'test-cookie-manager-4-2.db'
+            }
+          });
+
+          cookie_manager.set('http://www.example.info', [{
+            key: 'key1',
+            value: 'value1',
+            domain: 'www.example.info',
+            path: '/'
+          }])
+            .done(function() {
+              cookie_manager.getCookieHeader('http://www.example.info')
+                .done(function(cookie_header) {
+                  cookie_header.should.be.equal('Cookie: key1=value1');
+                  cookie_manager.set('http://www.example.info', [{
+                    key: 'key1',
+                    value: 'value2',
+                    domain: 'www.example.info',
+                    path: '/'
+                  }])
+                    .done(function() {
+                      cookie_manager.getCookieHeader('http://www.example.info')
+                        .done(function(cookie_header) {
+                          cookie_header.should.be.equal('Cookie: key1=value2');
+                          done();
+                        });
+                    });
+                })
+            });
+
+        });
+      });
     });
 
     describe('experiments', function() {

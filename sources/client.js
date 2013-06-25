@@ -204,12 +204,12 @@
 
         // 書き込みを行う
         var write = function write(ok_callback, fail_callback) {
+
           // 書き込み送信後にHTTPレスポンスヘッダを受け取る
           var receive_response = function receive_response(http_response) {
 
             // HTTPレスポンス受信後の処理（callbackの実行）
             var after_receive_response = function after_receive_response() {
-              var title_text = this.parser.parseTitleFromHTML(http_response.body);
 
               // 書き込み確認後の処理
               var confirm_callback = function confirm_callback_func() {
@@ -220,13 +220,15 @@
                   .done(function(items) {
                     // ストレージに設定できたら再書き込みを行う
                     var after_storage_set = function after_storage_set_func() {
-                      this.putResponseToThread(hostname, board_id, thread_id, response)
-                        .done(function() {
-                          promise.resolve();
-                        })
-                        .fail(function() {
-                          promise.reject();
-                        });
+                      setTimeout(function() {
+                        this.putResponseToThread(hostname, board_id, thread_id, response)
+                          .done(function() {
+                            promise.resolve();
+                          })
+                          .fail(function() {
+                            promise.reject();
+                          });
+                      }.bind(this), 1000);
                     };
                     after_storage_set = after_storage_set.bind(this);
 
@@ -235,7 +237,14 @@
                     var new_form_params = this.parser.parseFormFromHTML(http_response.body)['../test/bbs.cgi?guid=ON'].params;
                     _(_.keys(http_req_params))
                       .each(function(key) {
-                        delete new_form_params[key];
+                        if (typeof new_form_params[key] === 'undefined')
+                          delete new_form_params[key];
+                        else if (key === 'FROM' || key === 'MESSAGE' || key === 'mail' || key === 'time')
+                          delete new_form_params[key];
+                        else if (http_req_params[key] === new_form_params[key])
+                          delete new_form_params[key];
+                        else
+                          new_form_params[key] = ConvertToSJIS(new_form_params[key].toString());
                       });
 
                     // オブジェクトじゃなかったらオブジェクトにしておく
@@ -253,6 +262,8 @@
               };
               confirm_callback = confirm_callback.bind(this);
 
+
+              var title_text = this.parser.parseTitleFromHTML(http_response.body);
 
               if ('書き込みました。' === title_text) {
                 ok_callback(http_response.body);
@@ -303,6 +314,7 @@
 
           // 準備ができたらPOSTリクエストを送信する
           var send_http_request = function send_http_request_func() {
+            console.log('@send_http_request: ', url, http_req_headers, http_req_params);
             this.http.post(url, http_req_headers, http_req_params)
               .done(receive_response);
           };
@@ -383,7 +395,7 @@
             return;
           _(http_req_headers)
             .extend({
-              'Cookie': cookie_header.substr(7)
+              'Cookie': cookie_header.substr(8)
             });
         };
 
