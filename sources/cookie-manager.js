@@ -84,6 +84,7 @@
 
         this.storage.get('cookies')
           .done(function(items) {
+
             // 取得したCookieを取捨選別する
             var cookies = _(items.cookies)
               .filter(function(cookie_obj) {
@@ -124,7 +125,7 @@
        *
        * @param {String} url
        * 保存元のURL
-       * @param {Object} cookies
+       * @param {Array} cookies
        * 保存するCookieの情報
        * @param {CookieManager#set-callback} callback
        * 保存完了後、callback() として呼び出される
@@ -133,7 +134,30 @@
         var after_get = function after_get_func(items) {
           if (!Array.isArray(items.cookies))
             items.cookies = [];
-          items.cookies = items.cookies.concat(cookies);
+
+          // items.cookiesに含まれるキーを持つものはconcatするものから排除する
+          var new_cookies = _(cookies)
+            .filter(function(new_cookie) {
+              return !_(items.cookies)
+                .some(function(stored_cookie) {
+                  return new_cookie.key === stored_cookie.key;
+                });
+            });
+
+          // 値を更新する
+          items.cookies = _(items.cookies)
+            .map(function(stored_cookie) {
+              _(cookies)
+                .each(function(new_cookie) {
+                  if (new_cookie.key === stored_cookie.key)
+                    stored_cookie.value = new_cookie.value;
+                });
+              return stored_cookie;
+            });
+
+          // 新しいCookieを追加する
+          items.cookies = items.cookies.concat(new_cookies);
+
           var promise = this.storage.set({
             'cookies': items.cookies
           });
@@ -166,11 +190,34 @@
        * 保存完了後、callback() として呼び出される
        */
       setCookieHeader: function setCookieHeader(url, http_response_headers, callback) {
+        // 重複排除用
+        var stored_keys = {};
 
         // Set-Cookieヘッダを取り出す
         var cookies = _(http_response_headers.split('\r\n'))
           .filter(function(line) {
             return /^set-cookie\:/i.test(line);
+          })
+          .filter(function(line) {
+            // 重複している要素を排除する
+            line = line.substr(11);
+
+            // ';'（セミコロン）で区切る
+            var split_list = _(line.split(';'))
+              .map($.trim);
+
+            // split_listから先頭の要素を取り出す
+            var cookie_pair = UtilLib.splitString(split_list.splice(0, 1)[0], '=');
+            var cookie_obj = {
+              key: cookie_pair[0],
+              value: cookie_pair[1]
+            };
+
+            // 重複していたら追加しない
+            if (_.has(stored_keys, cookie_obj.key))
+              return false;
+            stored_keys[cookie_obj.key] = true;
+            return true;
           })
           .map(function(line) {
             line = line.substr(11);

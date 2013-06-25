@@ -27,6 +27,9 @@
                 'storage': {
                   'target': 'test-client-1.db'
                 }
+              },
+              'storage': {
+                'target': 'test-client-1.db'
               }
             });
             client.getThreadList('localhost:8080', 'news4vip', function(thread_list) {
@@ -45,6 +48,9 @@
                 'storage': {
                   'target': 'test-client-2.db'
                 }
+              },
+              'storage': {
+                'target': 'test-client-2.db'
               }
             });
             client.getThreadList('localhost:8080', 'news4vip')
@@ -67,6 +73,9 @@
                 'storage': {
                   'target': 'test-client-3.db'
                 }
+              },
+              'storage': {
+                'target': 'test-client-3.db'
               }
             });
 
@@ -96,6 +105,65 @@
 
             promise.done(function() {
               done();
+            });
+
+          });
+        });
+      });
+
+      describe('書き込み系のテスト（confirm）', function() {
+        it('Client#putResponseToThread', function(done) {
+          requirejs([
+            'jquery',
+            'client'
+          ], function($, Client) {
+            var client = new Client({
+              'cookie-manager': {
+                'storage': {
+                  'target': 'test-client-4.db'
+                }
+              },
+              'storage': {
+                'target': 'test-client-4.db'
+              }
+            });
+
+            var deferred = new $.Deferred();
+
+            var host = 'localhost:8080';
+            var board_id = 'news4vip-confirm';
+            var thread_id = 'confirm';
+            var response_data = {
+              name: 'test name',
+              mail: 'test mail',
+              body: 'test body'
+            };
+
+            var promise = client.putResponseToThread(host, board_id, thread_id, response_data);
+            promise.fail(function(info) {
+              if (info.type === 'confirm') {
+                info.confirm()
+                  .done(function() {
+                    deferred.resolve();
+                  })
+                  .fail(function() {
+                    throw new Error('エラーござる');
+                  });
+              }
+              else {
+                throw new Error('エラーござる');
+              }
+            });
+
+            deferred.done(function() {
+              // 2回目の書き込みはそのままいけるはず
+              client.putResponseToThread(host, board_id, thread_id, response_data)
+                .done(function() {
+                  done();
+                })
+                .fail(function() {
+                  throw new Error('エラーござる');
+                });
             });
 
           });

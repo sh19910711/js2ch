@@ -56,7 +56,13 @@ module.exports = function(grunt) {
       },
 
       jsbeautifier: {
-        files: ['./sources/*.js', './lib/js2ch-*.js', './Gruntfile.js', 'tests/unit-tests/**/*.js'],
+        files: [
+          './sources/*.js',
+          './lib/js2ch-*.js',
+          './Gruntfile.js',
+          'tests/unit-tests/**/*.js',
+          'tests/mocks/**/*.js'
+        ],
         options: {
           indent_size: 2,
           indent_char: ' ',
@@ -86,15 +92,15 @@ module.exports = function(grunt) {
           tasks: ['test-issue-4']
         },
         'enhancement': {
-          files: ['./sources/**/*.js', './tests/**/*.js'],
+          files: ['./sources/**/*.js', './tests/unit-tests/**/*.js'],
           tasks: ['enhancement']
         },
         'testing': {
-          files: ['./tests/**/*.js'],
+          files: ['./tests/unit-tests/**/*.js'],
           tasks: ['testing']
         },
         'implement': {
-          files: ['./sources/**/*.js', './tests/**/*.js'],
+          files: ['./sources/**/*.js', './tests/unit-tests/**/*.js'],
           tasks: ['implement']
         }
       }
