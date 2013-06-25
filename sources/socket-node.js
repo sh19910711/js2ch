@@ -21,14 +21,25 @@
     'net',
     'encoding',
     'logger',
-    'util'
-  ], function(_, net, encoding, logger, util) {
-    var sockets = [];
+    'util-lib'
+  ], function(_, net, encoding, logger, UtilLib) {
 
     /**
      * @constructor SocketNode
      */
-    var SocketNode = function() {};
+    var SocketNode = function(options, callback_context) {
+      callback_context = callback_context || this;
+      options = (options && options['socket']) || options || {};
+
+      this.sockets = [];
+
+      // Deferred設定
+      var keys = ['connect', 'create', 'read', 'write'];
+      _(keys)
+        .each(function(key) {
+          this[key] = UtilLib.getDeferredFunc(this[key], this, callback_context);
+        }, this);
+    };
 
     SocketNode.prototype = {};
     var proto = _(SocketNode.prototype);
@@ -48,8 +59,8 @@
        */
       create: function create(type, options, callback) {
         var socket = new net.Socket();
-        var socket_id = sockets.length;
-        sockets.push(socket);
+        var socket_id = this.sockets.length;
+        this.sockets.push(socket);
         setTimeout(callback, 0, {
           socketId: socket_id
         });
@@ -72,7 +83,7 @@
        * @param {Integer} socketId
        */
       destroy: function destroy(socketId) {
-        sockets[socketId].destroy();
+        this.sockets[socketId].destroy();
       }
     });
 
@@ -91,7 +102,7 @@
        * ホストへ接続後 callback(Integer) として呼び出される
        */
       connect: function connect(socketId, hostname, port, callback) {
-        var socket = sockets[socketId];
+        var socket = this.sockets[socketId];
         socket.connect(port, hostname, function() {
           callback(0);
         });
@@ -132,7 +143,7 @@
        * 接続を切断するソケットID
        */
       disconnect: function disconnect(socketId) {
-        sockets[socketId].destroy();
+        this.sockets[socketId].destroy();
       }
     });
 
@@ -150,7 +161,7 @@
        * 各バッファについて callback(Object) として複数回呼び出される
        */
       read: function read(socketId, bufferSize, callback) {
-        var socket = sockets[socketId];
+        var socket = this.sockets[socketId];
         var interval_timer = setInterval(function() {
           if (!socket.finished)
             return;
@@ -204,7 +215,7 @@
        */
       write: function write(socketId, data, callback) {
         var data_str = ArrayBufferToString(data);
-        var socket = sockets[socketId];
+        var socket = this.sockets[socketId];
         socket.write(data_str, function() {
           callback();
         });
@@ -219,13 +230,6 @@
     function ArrayBufferToString(buf) {
       return String.fromCharCode.apply(null, new Uint16Array(buf));
     }
-
-    // Deferred設定
-    var keys = ['connect', 'create', 'read', 'write'];
-    _(keys)
-      .each(function(key) {
-        SocketNode.prototype[key] = util.getDeferredFunc(SocketNode.prototype[key]);
-      });
 
     return SocketNode;
   });

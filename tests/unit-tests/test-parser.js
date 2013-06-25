@@ -10,7 +10,7 @@
       };
     });
 
-    describe('experiments', function() {
+    describe('2ch-data', function() {
 
       it('#parseThreadList', function(done) {
         requirejs([
@@ -45,33 +45,219 @@
           done();
         });
       });
+
+      it('#parseResponsesFromThread', function(done) {
+        requirejs([
+          'underscore',
+          'parser'
+        ], function(_, Parser) {
+          var parser = new Parser();
+
+          var response_list = [
+            'test-name<>test-mail<>test-info<>test-body<>test-subject\n'
+          ];
+
+          var ret = parser.parseResponsesFromThread(response_list.join('\n'));
+          ret.length.should.be.equal(response_list.length);
+
+          _(ret)
+            .each(function(response_info) {
+              response_info.name.data.should.be.equal('test-name');
+              response_info.mail.should.be.equal('test-mail');
+              response_info.info.should.be.equal('test-info');
+              response_info.body.should.be.equal('test-body');
+              response_info.subject.should.be.equal('test-subject');
+            });
+
+          done();
+        });
+      });
+
     });
 
-    it('#parseResponsesFromThread', function(done) {
-      requirejs([
-        'underscore',
-        'parser'
-      ], function(_, Parser) {
-        var parser = new Parser();
+    describe('html', function() {
 
-        var response_list = [
-          'test-name<>test-mail<>test-info<>test-body<>test-subject\n'
-        ];
+      describe('#parseTitleFromHTML', function() {
 
-        var ret = parser.parseResponsesFromThread(response_list.join('\n'));
-        ret.length.should.be.equal(response_list.length);
+        it('title only, 小文字', function(done) {
+          requirejs([
+            'parser'
+          ], function(Parser) {
+            var parser = new Parser();
 
-        _(ret)
-          .each(function(response_info) {
-            response_info.name.data.should.be.equal('test-name');
-            response_info.mail.should.be.equal('test-mail');
-            response_info.info.should.be.equal('test-info');
-            response_info.body.should.be.equal('test-body');
-            response_info.subject.should.be.equal('test-subject');
+            var html_text = [
+              '<title>Test Text</title>'
+            ].join('');
+
+            var result = parser.parseTitleFromHTML(html_text);
+            result.should.be.equal('Test Text');
+
+            done();
           });
+        });
 
-        done();
+        it('title only, 大文字', function(done) {
+          requirejs([
+            'parser'
+          ], function(Parser) {
+            var parser = new Parser();
+
+            var html_text = [
+              '<TITLE>Test Text</TITLE>'
+            ].join('');
+
+            var result = parser.parseTitleFromHTML(html_text);
+            result.should.be.equal('Test Text');
+
+            done();
+          });
+        });
+
+        it('simple nesting, 小文字', function(done) {
+          requirejs([
+            'parser'
+          ], function(Parser) {
+            var parser = new Parser();
+
+            var html_text = [
+              '<html>',
+              '<head>',
+              '<meta charset="UTF-8">',
+              '<title>Test Text</title>',
+              '</head>',
+              '<body>',
+              '<h1>Test Head</h1>',
+              '</body>',
+              '</html>'
+            ].join('');
+
+            var result = parser.parseTitleFromHTML(html_text);
+            result.should.be.equal('Test Text');
+
+            done();
+          });
+        });
+
+        it('simple nesting, 小文字', function(done) {
+          requirejs([
+            'parser'
+          ], function(Parser) {
+            var parser = new Parser();
+
+            var html_text = [
+              '<html>',
+              '<head>',
+              '<meta charset="UTF-8">',
+              '<TITLE>Test Text</TITLE>',
+              '</head>',
+              '<body>',
+              '<h1>Test Head</h1>',
+              '</body>',
+              '</html>'
+            ].join('');
+
+            var result = parser.parseTitleFromHTML(html_text);
+            result.should.be.equal('Test Text');
+
+            done();
+          });
+        });
+
+        it('複数のtitleタグ', function(done) {
+          requirejs([
+            'parser'
+          ], function(Parser) {
+            var parser = new Parser();
+
+            var html_text = [
+              '<html>',
+              '<head>',
+              '<meta charset="UTF-8">',
+              '<TITLE>Test Text 1</TITLE>',
+              '</head>',
+              '<body>',
+              '<TITLE>Test Text 2</TITLE>',
+              '</body>',
+              '</html>'
+            ].join('');
+
+            var result = parser.parseTitleFromHTML(html_text);
+            result.should.be.equal('Test Text 1');
+
+            done();
+          });
+        });
+
+        it('titleタグを含まないケース', function(done) {
+          requirejs([
+            'parser'
+          ], function(Parser) {
+            var parser = new Parser();
+
+            var html_text = [
+              '<html>',
+              '<head>',
+              '<meta charset="UTF-8">',
+              '</head>',
+              '<body>',
+              '</body>',
+              '</html>'
+            ].join('');
+
+            var result = parser.parseTitleFromHTML(html_text);
+            var type = typeof result;
+            type.should.be.equal('undefined');
+
+            done();
+          });
+        });
+
       });
+
+      describe('Parser#parseFormFromHTML', function() {
+        it('formタグ', function(done) {
+          requirejs([
+            'parser'
+          ], function(Parser) {
+            var parser = new Parser();
+
+            var html_text = [
+              '<form method=POST action="../test/bbs.cgi?guid=ON">',
+              '<input type=hidden name=subject value="">',
+              '<input TYPE=hidden NAME=FROM value="">',
+              '<input TYPE=hidden NAME=mail value="sage">',
+              '<input type=hidden name=MESSAGE value="">',
+              '<input type=hidden name=bbs value=news4vip>',
+              '<input type=hidden name=time value=1372084136>',
+              '<input type=hidden name=key value=1372053483>',
+              '<input type=hidden name="yuki" value="akari">',
+              '<input type=submit value="foo" name="bar">',
+              '<br>',
+              '<input type=submit value="上記全てを承諾して書き込む" name="submit">',
+              '<br>',
+              '</form>'
+            ].join('');
+
+            var result = parser.parseFormFromHTML(html_text);
+
+            var action = '../test/bbs.cgi?guid=ON';
+            result[action]['method'].should.be.equal('post');
+            result[action]['action'].should.be.equal(action);
+            result[action].params['subject'].should.be.equal('');
+            result[action].params['FROM'].should.be.equal('');
+            result[action].params['mail'].should.be.equal('sage');
+            result[action].params['MESSAGE'].should.be.equal('');
+            result[action].params['bbs'].should.be.equal('news4vip');
+            result[action].params['time'].should.be.equal('1372084136');
+            result[action].params['key'].should.be.equal('1372053483');
+            result[action].params['yuki'].should.be.equal('akari');
+            result[action].params['submit'].should.be.equal('上記全てを承諾して書き込む');
+
+            done();
+          });
+        });
+      });
+
     });
 
   });

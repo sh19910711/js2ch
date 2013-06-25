@@ -4,7 +4,6 @@
 
   // chrome-apiのmock
   var chrome = {};
-  console.log('test');
 
   // socketはnodeの物を使いまわす
   _(chrome)
@@ -17,7 +16,7 @@
     .extend({
       storage: {
         local: new(requirejs('./sources/storage-node'))({
-          target: 'test-storage-chrome.db'
+          target: 'test-mock-chrome-api-storage.db'
         })
       }
     });

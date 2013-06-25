@@ -56,7 +56,13 @@ module.exports = function(grunt) {
       },
 
       jsbeautifier: {
-        files: ['./sources/*.js', './lib/js2ch-*.js', './Gruntfile.js', 'tests/unit-tests/**/*.js'],
+        files: [
+          './sources/*.js',
+          './lib/js2ch-*.js',
+          './Gruntfile.js',
+          'tests/unit-tests/**/*.js',
+          'tests/mocks/**/*.js'
+        ],
         options: {
           indent_size: 2,
           indent_char: ' ',
@@ -86,15 +92,15 @@ module.exports = function(grunt) {
           tasks: ['test-issue-4']
         },
         'enhancement': {
-          files: ['./sources/**/*.js', './tests/**/*.js'],
+          files: ['./sources/**/*.js', './tests/unit-tests/**/*.js'],
           tasks: ['enhancement']
         },
         'testing': {
-          files: ['./tests/**/*.js'],
+          files: ['./tests/unit-tests/**/*.js'],
           tasks: ['testing']
         },
         'implement': {
-          files: ['./sources/**/*.js', './tests/**/*.js'],
+          files: ['./sources/**/*.js', './tests/unit-tests/**/*.js'],
           tasks: ['implement']
         }
       }
@@ -164,7 +170,7 @@ module.exports = function(grunt) {
       'mocha',
       '--reporter tap',
       '--ui bdd',
-      '--timeout 5000'
+      '--timeout 3000'
     ];
     var mocha_command = command_list.join(' ');
 
@@ -212,7 +218,7 @@ module.exports = function(grunt) {
     var done = this.async();
     setTimeout(function() {
       done();
-    }, 1000);
+    }, 100);
   });
 
   // テスト用のタスクを登録する
@@ -225,6 +231,7 @@ module.exports = function(grunt) {
   register_test_task('test-client', './tests/unit-tests/test-client.js');
   register_test_task('test-parser', './tests/unit-tests/test-parser.js');
   register_test_task('test-cookie-manager', './tests/unit-tests/test-cookie-manager.js');
+  register_test_task('test-http-lib', './tests/unit-tests/test-http-lib.js');
 
   // 基本的な操作の登録
   grunt.registerTask('enhancement', ['delay-tasks', 'jsbeautifier', 'doc', 'test']);

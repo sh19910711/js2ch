@@ -18,15 +18,25 @@
 
   define([
     'underscore',
-    'util'
-  ], function(_, util) {
+    'util-lib'
+  ], function(_, UtilLib) {
 
     var socket = chrome.socket;
 
     /**
      * @constructor SocketChrome
      */
-    var SocketChrome = function() {};
+    var SocketChrome = function(options, callback_context) {
+      callback_context = callback_context || this;
+      options = (options && options['socket']) || options || {};
+
+      // Deferred設定
+      var keys = ['connect', 'create', 'read', 'write'];
+      _(keys)
+        .each(function(key) {
+          this[key] = UtilLib.getDeferredFunc(this[key], this, callback_context);
+        }, this);
+    };
 
     SocketChrome.prototype = {};
     var proto = _(SocketChrome.prototype);
@@ -44,7 +54,7 @@
        * ソケット作成後に callback(Object) として呼び出される
        */
       create: function create() {
-        socket.create.apply(this, arguments);
+        socket.create.apply(socket, arguments);
       }
     });
 
@@ -64,7 +74,7 @@
        * @param {Integer} socketId
        */
       destroy: function destroy() {
-        socket.destroy.apply(this, arguments);
+        socket.destroy.apply(socket, arguments);
       }
     });
 
@@ -83,7 +93,7 @@
        * ホストへ接続後 callback(Integer) として呼び出される
        */
       connect: function connect() {
-        socket.connect.apply(this, arguments);
+        socket.connect.apply(socket, arguments);
       }
     });
 
@@ -104,7 +114,7 @@
        * 接続を切断するソケットID
        */
       disconnect: function disconnect() {
-        socket.disconnect.apply(this, arguments);
+        socket.disconnect.apply(socket, arguments);
       }
     });
 
@@ -122,7 +132,7 @@
        * 各バッファについて callback(Object) として複数回呼び出される
        */
       read: function read() {
-        socket.read.apply(this, arguments);
+        socket.read.apply(socket, arguments);
       }
     });
 
@@ -149,7 +159,7 @@
        * 書き込み後に callback() として呼び出される
        */
       write: function write() {
-        socket.write.apply(this, arguments);
+        socket.write.apply(socket, arguments);
       }
     });
 
@@ -157,13 +167,6 @@
      * @description ソケットへの書き込み後に callback() として呼び出される
      * @callback SocketChrome#write-callback
      */
-
-    // Deferred設定
-    var keys = ['connect', 'create', 'read', 'write'];
-    _(keys)
-      .each(function(key) {
-        SocketChrome.prototype[key] = util.getDeferredFunc(SocketChrome.prototype[key]);
-      });
 
     return SocketChrome;
   });

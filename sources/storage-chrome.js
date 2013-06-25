@@ -19,14 +19,24 @@
   define([
     'jquery',
     'underscore',
-    'util'
-  ], function($, _, util) {
+    'util-lib'
+  ], function($, _, UtilLib) {
     var storage = chrome.storage.local;
 
     /**
      * @constructor StorageChrome
      */
-    var StorageChrome = function(options) {};
+    var StorageChrome = function(options, callback_context) {
+      callback_context = callback_context || this;
+      options = (options && options['storage']) || options || {};
+
+      // Deferred設定
+      var keys = ["get", "set", "remove", "clear"];
+      _(keys)
+        .each(function(key) {
+          this[key] = UtilLib.getDeferredFunc(this[key], this, callback_context);
+        }, this);
+    };
 
     StorageChrome.prototype = {};
     var proto = _(StorageChrome.prototype);
@@ -111,13 +121,6 @@
      * @description 削除完了後 callback() として呼び出される
      * @callback StorageChrome#clear-callback
      */
-
-    // Deferred設定
-    var keys = ["get", "set", "remove", "clear"];
-    _(keys)
-      .each(function(key) {
-        StorageChrome.prototype[key] = util.getDeferredFunc(StorageChrome.prototype[key]);
-      });
 
     return StorageChrome;
   });

@@ -18,15 +18,25 @@
     'underscore',
     'jquery',
     'storage',
-    'util',
+    'util-lib',
     'purl'
-  ], function(_, $, Storage, util, purl_dummy) {
+  ], function(_, $, Storage, UtilLib, purl_dummy) {
 
     /**
      * @constructor CookieManager
      */
-    var CookieManager = function(options) {
-      this.storage = new Storage((options && options.storage) || {});
+    var CookieManager = function(options, callback_context) {
+      callback_context = callback_context || this;
+      options = (options && options['cookie-manager']) || options || {};
+
+      this.storage = new Storage((options && options['storage']) || options, this);
+
+      // Deferred設定
+      var keys = ['clear', 'getCookieHeader', 'setCookieHeader', 'set'];
+      _(keys)
+        .each(function(key) {
+          this[key] = UtilLib.getDeferredFunc(this[key], this, callback_context);
+        }, this);
     };
 
     CookieManager.prototype = {};
@@ -40,9 +50,10 @@
        * @param {CookieManager#clear-callback} callback
        */
       clear: function clear(callback) {
-        this.storage.clear(function() {
-          callback();
-        });
+        this.storage.clear()
+          .done(function() {
+            callback();
+          });
       }
     });
 
@@ -73,6 +84,7 @@
 
         this.storage.get('cookies')
           .done(function(items) {
+
             // 取得したCookieを取捨選別する
             var cookies = _(items.cookies)
               .filter(function(cookie_obj) {
@@ -113,23 +125,49 @@
        *
        * @param {String} url
        * 保存元のURL
-       * @param {Object} cookies
+       * @param {Array} cookies
        * 保存するCookieの情報
        * @param {CookieManager#set-callback} callback
        * 保存完了後、callback() として呼び出される
        */
       set: function set(url, cookies, callback) {
+        var after_get = function after_get_func(items) {
+          if (!Array.isArray(items.cookies))
+            items.cookies = [];
+
+          // items.cookiesに含まれるキーを持つものはconcatするものから排除する
+          var new_cookies = _(cookies)
+            .filter(function(new_cookie) {
+              return !_(items.cookies)
+                .some(function(stored_cookie) {
+                  return new_cookie.key === stored_cookie.key;
+                });
+            });
+
+          // 値を更新する
+          items.cookies = _(items.cookies)
+            .map(function(stored_cookie) {
+              _(cookies)
+                .each(function(new_cookie) {
+                  if (new_cookie.key === stored_cookie.key)
+                    stored_cookie.value = new_cookie.value;
+                });
+              return stored_cookie;
+            });
+
+          // 新しいCookieを追加する
+          items.cookies = items.cookies.concat(new_cookies);
+
+          var promise = this.storage.set({
+            'cookies': items.cookies
+          });
+          promise.done(callback);
+        };
+        after_get = after_get.bind(this);
+
         // ストレージに保存する
         this.storage.get('cookies')
-          .done(function(items) {
-            if (!Array.isArray(items.cookies))
-              items.cookies = [];
-            items.cookies = items.cookies.concat(cookies);
-            var promise = this.storage.set({
-              'cookies': items.cookies
-            });
-            promise.done(callback);
-          }.bind(this));
+          .done(after_get);
       }
     });
 
@@ -152,11 +190,34 @@
        * 保存完了後、callback() として呼び出される
        */
       setCookieHeader: function setCookieHeader(url, http_response_headers, callback) {
+        // 重複排除用
+        var stored_keys = {};
 
         // Set-Cookieヘッダを取り出す
         var cookies = _(http_response_headers.split('\r\n'))
           .filter(function(line) {
             return /^set-cookie\:/i.test(line);
+          })
+          .filter(function(line) {
+            // 重複している要素を排除する
+            line = line.substr(11);
+
+            // ';'（セミコロン）で区切る
+            var split_list = _(line.split(';'))
+              .map($.trim);
+
+            // split_listから先頭の要素を取り出す
+            var cookie_pair = UtilLib.splitString(split_list.splice(0, 1)[0], '=');
+            var cookie_obj = {
+              key: cookie_pair[0],
+              value: cookie_pair[1]
+            };
+
+            // 重複していたら追加しない
+            if (_.has(stored_keys, cookie_obj.key))
+              return false;
+            stored_keys[cookie_obj.key] = true;
+            return true;
           })
           .map(function(line) {
             line = line.substr(11);
@@ -166,7 +227,7 @@
               .map($.trim);
 
             // split_listから先頭の要素を取り出す
-            var cookie_pair = util.splitString(split_list.splice(0, 1)[0], '=');
+            var cookie_pair = UtilLib.splitString(split_list.splice(0, 1)[0], '=');
             var cookie_obj = {
               key: cookie_pair[0],
               value: cookie_pair[1]
@@ -175,7 +236,7 @@
             // Cookieの属性情報を取得する
             var attributes = _(split_list)
               .reduce(function(obj_sum, line) {
-                var split_list = util.splitString(line, '=');
+                var split_list = UtilLib.splitString(line, '=');
                 var attribute_name = split_list[0];
                 var attribute_value = split_list[1];
                 var obj = {};
@@ -226,13 +287,6 @@
      * @callback CookieManager#set-callback
      */
 
-
-    // Deferred設定
-    var keys = ['clear', 'getCookieHeader', 'setCookieHeader', 'set'];
-    _(keys)
-      .each(function(key) {
-        CookieManager.prototype[key] = util.getDeferredFunc(CookieManager.prototype[key]);
-      });
 
     return CookieManager;
   });

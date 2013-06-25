@@ -16,15 +16,26 @@
   define([
     'underscore',
     'encoding',
-    'logger'
-  ], function(_, encoding) {
+    'logger',
+    'util-lib'
+  ], function(_, encoding, logger, UtilLib) {
     /**
      * @constructor BufferLibNode
      */
-    var BufferLib = function() {};
+    var BufferLibNode = function(options, callback_context) {
+      callback_context = callback_context || this;
+      options = (options && options['buffer-lib']) || options || {};
 
-    BufferLib.prototype = {};
-    var proto = _(BufferLib.prototype);
+      // Deferredの設定
+      var keys = ['convertToString', 'convertToBuffer', 'getByteLength'];
+      _(keys)
+        .each(function(key) {
+          this[key] = UtilLib.getDeferredFunc(this[key], this, callback_context);
+        }, this);
+    };
+
+    BufferLibNode.prototype = {};
+    var proto = _(BufferLibNode.prototype);
 
     proto.extend({
       /**
@@ -38,7 +49,7 @@
        */
       convertToString: function convertToString(buf_array, callback) {
         setTimeout(function() {
-          callback(new Buffer(encoding.convert(buf_array, 'UTF-8', 'SJIS'))
+          callback(new Buffer(encoding.convert(buf_array, 'UTF-8', 'AUTO'))
             .toString('UTF-8'));
         }, 0);
       }
@@ -76,14 +87,13 @@
        * 処理完了後に callback(Number) として呼び出される
        */
       getByteLength: function getByteLength(str, callback) {
-        console.log('str: ', str);
         setTimeout(function() {
-          callback(Buffer.byteLength(str, 'sjis'));
+          callback(Buffer.byteLength(str));
         }, 0);
       }
     });
 
-    return BufferLib;
+    return BufferLibNode;
   });
 
 })();

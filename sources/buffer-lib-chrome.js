@@ -17,12 +17,23 @@
   define([
     'underscore',
     'encoding',
-    'logger'
-  ], function(_, encoding, logger) {
+    'logger',
+    'util-lib'
+  ], function(_, encoding, logger, UtilLib) {
     /**
      * @constructor BufferLibChrome
      */
-    var BufferLibChrome = function() {};
+    var BufferLibChrome = function(options, callback_context) {
+      callback_context = callback_context || this;
+      options = (options && options['buffer-lib']) || options || {};
+
+      // Deferredの設定
+      var keys = ['convertToString', 'convertToBuffer', 'getByteLength'];
+      _(keys)
+        .each(function(key) {
+          this[key] = UtilLib.getDeferredFunc(this[key], this, callback_context);
+        }, this);
+    };
 
     BufferLibChrome.prototype = {};
     var proto = _(BufferLibChrome.prototype);
@@ -66,7 +77,6 @@
     });
 
     proto.extend({
-      // 文字列のバイト数を求める
       /**
        * @description 文字列のバイト数を求める
        * @memberof BufferLibChrome
