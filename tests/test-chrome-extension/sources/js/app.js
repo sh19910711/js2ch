@@ -32,18 +32,25 @@ requirejs([
         };
 
         js2ch.putResponseToThread(host, board_id, thread_id, res)
-          .done(function(response) {
+          .done(function(info) {
             console.log('書き込みdone: ', response);
           })
-          .fail(function(response) {
-            console.log('書き込みdone: ', response);
+          .fail(function(info) {
+            if ( info.type === 'confirm' ) {
+              console.log('書き込み確認', info.httpResponse.body);
+            } else {
+              console.log('書き込みfail: ', response);
+            }
           });
 
         console.log('投稿');
       });
 
       $('body').on('click', '#database_clear', function() {
-        js2ch.cookie_manager.storage.clear();
+        js2ch.cookie_manager.storage.clear()
+          .done(function() {
+            console.log('db clear');
+          });
       });
 
       $('body').append(function() {
