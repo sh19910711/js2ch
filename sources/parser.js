@@ -175,8 +175,16 @@
           if (line[1] === '/')
             return false;
           var element = $.parseHTML(line);
-          var tag_name = element[0].tagName.toLowerCase();
-          return tag_name === 'form';
+
+          if (!Array.isArray(element) || element.length !== 1)
+            return false;
+          
+          if (typeof (element[0].tagName) === 'string') {
+            var tag_name = element[0].tagName.toLowerCase();
+            return tag_name === 'form';
+          } else {
+            return false;
+          }
         };
 
         // formタグの終了地点かどうか判定
@@ -185,8 +193,16 @@
             return false;
           line = '<' + line.substr(2);
           var element = $.parseHTML(line);
-          var tag_name = element[0].tagName.toLowerCase();
-          return tag_name === 'form';
+
+          if (!Array.isArray(element) || element.length !== 1)
+            return false;
+          
+          if (typeof (element[0].tagName) === 'string') {
+            var tag_name = element[0].tagName.toLowerCase();
+            return tag_name === 'form';
+          } else {
+            return false;
+          }
         };
 
         // formタグの範囲を取得する
