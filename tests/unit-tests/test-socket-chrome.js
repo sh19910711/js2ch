@@ -1,8 +1,8 @@
 (function() {
   'use strict';
 
-
   var should = require('should');
+  var server_8080;
 
   describe('Socket', function() {
 
@@ -12,6 +12,13 @@
       global.window = {
         jQuery: jQuery
       };
+
+      server_8080 = require('../mocks/http-server-1');
+      server_8080.createHttpServer(8080);
+    });
+
+    after(function() {
+      server_8080.close();
     });
 
     // 実験的なテスト
@@ -122,7 +129,7 @@
             var deferred = $.when.apply(
               null, [
                 http_get(
-                  'http://localhost/robots.txt'
+                  'http://localhost:8080/robots.txt'
                 )
                 .done(check_status_200)
               ]

@@ -5,3 +5,7 @@ node_modules
 /test-*
 **/*.db
 **/out
+test_result/
+coverages/
+lib-cov/
+sources-cov/

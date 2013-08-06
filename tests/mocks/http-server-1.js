@@ -58,9 +58,16 @@ var createHttpServer = function createHttpServer(port) {
     });
   });
 
-  app.listen(port, '127.0.0.1', function() {});
+  return app.listen(port, '127.0.0.1', function() {});
 }
 
+var server;
 module.exports = {
-  createHttpServer: createHttpServer
+  createHttpServer: function(port) {
+    server = createHttpServer(port);
+    return server;
+  },
+  close: function() {
+    server.close();
+  }
 };
