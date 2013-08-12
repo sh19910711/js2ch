@@ -3,7 +3,6 @@ node_js:
   - "0.10"
   - "0.8"
 install:
-  - mkdir 
   - npm install -g grunt-cli
   - npm install -g mocha
   - npm install
