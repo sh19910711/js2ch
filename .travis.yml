@@ -8,3 +8,12 @@ install:
   - npm install
 script:
   - grunt test-normal
+  - grunt test-normal
+  - grunt test-normal
+  - grunt test-normal
+  - grunt test-normal
+  - grunt test-normal
+  - grunt test-normal
+  - grunt test-normal
+  - grunt test-normal
+  - grunt test-normal
