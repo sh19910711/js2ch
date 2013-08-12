@@ -4,8 +4,8 @@ node_js:
   - "0.9"
   - "0.8"
 install:
-  - sudo npm install -g grunt-cli
-  - sudo npm install -g mocha
+  - npm install -g grunt-cli
+  - npm install -g mocha
   - npm install
 script:
   - grunt test
