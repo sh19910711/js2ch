@@ -238,6 +238,52 @@ module.exports = function(grunt) {
   });
 
   // すべてのテストを実行する
+  grunt.registerTask('all-tests-normal', function() {
+    var cnt = 0;
+    var done = this.async();
+    var command_list = [
+      'mocha',
+      '--reporter tap',
+      '--ui bdd',
+      '--timeout 10000'
+    ];
+    var mocha_command = command_list.join(' ');
+
+    var files = _(registered_test_tasks)
+      .map(function(testtask) {
+        return testtask.filepath
+      });
+
+    var $ = require('jquery');
+    var result_code = null;
+
+    var deferred_all = new $.Deferred();
+
+    var cnt = 0;
+    function run_test(filepath, callback) {
+      cnt ++;
+      require('child_process')
+        .exec(mocha_command + ' ' + filepath, function(error, stdout, stderr) {
+          grunt.log.write(stdout);
+          grunt.log.write(stderr);
+          if (error) {
+            result_code = error;
+          }
+          callback(error);
+        });
+    }
+
+    async.series(
+        _(files).map(function(filepath) {
+          return run_test.bind(null, filepath);
+        }),
+        function() {
+          done(result_code);
+        }
+      );
+  });
+
+  // すべてのテストを実行する
   grunt.registerTask('all-tests-coverages', function() {
     var cnt = 0;
     var done = this.async();
@@ -374,6 +420,7 @@ module.exports = function(grunt) {
   grunt.registerTask('document', ['delay-tasks', 'jsbeautifier', 'doc']);
 
   grunt.registerTask('test', ['all-tests']);
+  grunt.registerTask('test-normal', ['all-tests-normal']);
   grunt.registerTask('test-well-known-ports', ['all-tests-need-well-known-ports']);
   grunt.registerTask('build', ['jsbeautifier', 'requirejs']);
   grunt.registerTask('doc', ['jsbeautifier', 'jsdoc']);
