@@ -45,6 +45,17 @@
           app.use(express.static(__dirname + '/../fixtures/2ch'));
           app.use(express.bodyParser());
 
+          app.get('/news4vip/dat/1379534723.dat', function(req, res) {
+            var fs = require('fs');
+            var path = require('path');
+            var datpath = path.resolve(__dirname, '../fixtures/2ch/news4vip/1379534723.dat');
+            fs.readFile(datpath, function(err, data) {
+              res.setHeader('Content-Type', 'text/html');
+              res.setHeader('Content-Length', data.length);
+              res.end(data);
+            });
+          });
+
           app.post('/test/bbs.cgi', function(req, res) {
             if (req.body.key === 'test') {
               var body = '<title>書きこみました。</title>';
