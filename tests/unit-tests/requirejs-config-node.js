@@ -3,7 +3,7 @@
 
   module.exports = (function() {
     var requirejs = require('requirejs');
-    if ( process.env.COVERAGE ) {
+    if (process.env.COVERAGE) {
       requirejs.config({
         baseUrl: '',
         paths: {
@@ -21,7 +21,8 @@
           'purl': './lib/purl'
         }
       });
-    } else {
+    }
+    else {
       requirejs.config({
         baseUrl: '',
         paths: {

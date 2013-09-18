@@ -14,7 +14,8 @@
         jQuery: jQuery
       };
 
-      server_8080 = require('../mocks/http-server-1').createHttpServer(8080);
+      server_8080 = require('../mocks/http-server-1')
+        .createHttpServer(8080);
     });
 
     after(function() {
