@@ -127,7 +127,7 @@
 
         this.http.get(url, http_request_headers)
           .done(function(http_response) {
-            callback(parser.parseSettingText(http_response.body));
+            callback(this.parser.parseSettingText(http_response.body));
           });
       }
     });
@@ -162,7 +162,7 @@
             'Host': hostname
           }))
           .done(function(http_response) {
-            callback(http_response);
+            callback(this.parser.parseResponsesFromThread(http_response.body));
           });
       }
     });

@@ -192,11 +192,11 @@
             });
             client.getResponsesFromThread('localhost:8080', 'news4vip', '1379534723', function(responses) {
               responses.length.should.be.equal(75);
-              responses[0].name.should.be.equal("以下、名無しにかわりましてVIPがお送りします");
-              responses[0].mail.should.be.equal("");
-              responses[0].info.should.be.equal("2013/09/19(木) 05:05:23.77 ID:TZ0akNcn0");
-              responses[0].body.should.be.equal("お、おさない <br> は、はしらない <br> し、しんでる <br>  <br>  <br> みたいな");
-              responses[45].mail.should.be.equal("sage");
+              responses[0].name.data.should.be.equal("以下、名無しにかわりましてVIPがお送りします");
+              responses[0].mail.data.should.be.equal("");
+              responses[0].info.data.should.be.equal("2013/09/19(木) 05:05:23.77 ID:TZ0akNcn0");
+              responses[0].body.data.should.be.equal("お、おさない <br> は、はしらない <br> し、しんでる <br>  <br>  <br> みたいな");
+              responses[45].mail.data.should.be.equal("sage");
               done();
             });
           });

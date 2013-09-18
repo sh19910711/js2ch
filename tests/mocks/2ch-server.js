@@ -46,7 +46,6 @@
           app.use(express.bodyParser());
 
           app.get('/news4vip/dat/1379534723.dat', function(req, res) {
-            console.log('hello');
             var fs = require('fs');
             var path = require('path');
             var datpath = path.resolve(__dirname, '../fixtures/2ch/news4vip/1379534723.dat');
