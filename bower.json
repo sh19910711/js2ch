@@ -6,6 +6,7 @@
     "**/.*",
     "node_modules",
     "components",
+    "bower_components",
     "lib/*-node.js",
     "package.json",
     "r.js",
@@ -16,9 +17,9 @@
     "tasks"
   ],
   "dependencies": {
-    "jquery": "~2.0.2",
-    "underscore": "~1.4.4",
-    "requirejs": "~2.1.6",
+    "jquery": "~2.0.3",
+    "underscore": "~1.5.2",
+    "requirejs": "~2.1.8",
     "async": "~0.2.5",
     "backbone": "~1.0.0"
   }
