@@ -11,6 +11,33 @@
     });
 
     describe('2ch-data', function() {
+      it('#parseThreadList (from fixture)', function(done) {
+        requirejs([
+          'underscore',
+          'parser',
+          'buffer-lib'
+        ], function(_, Parser, BufferLib) {
+          var parser = new Parser();
+          var buffer_lib = new BufferLib();
+          var fs = require('fs');
+          var path = require('path');
+
+          fs.readFile(path.resolve(__dirname, '../fixtures/2ch/news4vip/subject.txt'), function(err, data) {
+            buffer_lib.convertToString(data)
+              .done(function(data) {
+                var ret = parser.parseThreadList(data);
+                ret.length.should.be.equal(170);
+                ret[0].filename.should.be.equal("1371817087.dat");
+                ret[0].subject.should.be.equal("メ→ラ→ミみたいに完成した呪文やワザが&gt;&gt;1にかかるスレ");
+                ret[0].responses.should.be.equal(691);
+                ret[169].filename.should.be.equal("1371796143.dat");
+                ret[169].subject.should.be.equal("暇な時にはgdgdしながらAA雑談");
+                ret[169].responses.should.be.equal(96);
+                done();
+              });
+          });
+        });
+      });
 
       it('#parseThreadList', function(done) {
         requirejs([
