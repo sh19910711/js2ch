@@ -228,7 +228,7 @@
      */
 
     function ArrayBufferToString(buf) {
-      return String.fromCharCode.apply(null, new Uint16Array(buf));
+      return String.fromCharCode.apply(null, new Uint8Array(buf));
     }
 
     return SocketNode;

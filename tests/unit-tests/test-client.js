@@ -1,5 +1,6 @@
 (function() {
   var should = require('should');
+  var server_8080;
 
   describe('Client', function() {
     before(function() {
@@ -8,11 +9,15 @@
       global.window = {
         jQuery: jQuery
       };
+
+      server_8080 = require('../mocks/2ch-server');
+      server_8080.createServer(8080);
     });
 
     after(function() {
       require('child_process')
         .exec('rm test-client-*.db');
+      server_8080.close();
     });
 
     describe('experiments', function() {

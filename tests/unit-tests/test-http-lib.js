@@ -1,6 +1,8 @@
 (function() {
   'use strict';
 
+  var server_8654;
+
   describe('HttpLib', function() {
 
     before(function() {
@@ -10,6 +12,13 @@
       global.window = {
         jQuery: jQuery
       };
+
+      server_8654 = require('../mocks/http-server-1')
+        .createHttpServer(8654);
+    });
+
+    after(function() {
+      server_8654.close();
     });
 
     describe('#get', function() {

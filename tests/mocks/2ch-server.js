@@ -1,6 +1,8 @@
 (function() {
   'use strict';
 
+  var server;
+
   module.exports = {
     createServer: function(port) {
       console.log('2ch mock server start');
@@ -132,8 +134,11 @@
         });
 
 
-        app.listen(port, '127.0.0.1');
+        server = app.listen(port, '127.0.0.1');
       });
+    },
+    close: function() {
+      server.close();
     }
   };
 

@@ -67,8 +67,8 @@
        */
       convertToBuffer: function convertToBuffer(str, callback) {
         setTimeout(function() {
-          var buf = new ArrayBuffer(str.length * 2);
-          var bufView = new Uint16Array(buf);
+          var buf = new ArrayBuffer(str.length);
+          var bufView = new Uint8Array(buf);
           for (var i = 0; i < str.length; ++i)
             bufView[i] = str.charCodeAt(i);
           callback(buf);

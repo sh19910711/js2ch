@@ -2,10 +2,17 @@
   'use strict';
 
   var should = require('should');
+  var server_8654;
 
   describe('HttpLib', function() {
     before(function() {
       global.requirejs = require('../requirejs-config-node');
+      server_8654 = require('../../mocks/http-server-1');
+      server_8654.createHttpServer(8654);
+    });
+
+    after(function() {
+      server_8654.close();
     });
 
     // "ポート番号が指定してあるURLを読み込むことができない"
