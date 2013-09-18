@@ -7,7 +7,8 @@
   describe('Socket', function() {
     before(function() {
       global.requirejs = require('../requirejs-config-node');
-      server_8654 = require('../../mocks/http-server-1').createHttpServer(8654);
+      server_8654 = require('../../mocks/http-server-1')
+        .createHttpServer(8654);
     });
 
     after(function() {

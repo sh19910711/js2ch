@@ -214,8 +214,9 @@ module.exports = function(grunt) {
         var deferred_all = new $.Deferred();
 
         var cnt = 0;
+
         function run_test(filepath, callback) {
-          cnt ++;
+          cnt++;
           require('child_process')
             .exec(mocha_command + ' ' + filepath + ' > test_result/test_tap_result.' + cnt + '.txt', function(error, stdout, stderr) {
               grunt.log.write(stdout);
@@ -227,13 +228,14 @@ module.exports = function(grunt) {
         }
 
         async.series(
-            _(files).map(function(filepath) {
-              return run_test.bind(null, filepath);
-            }),
-            function() {
-              done(result_code);
-            }
-          );
+          _(files)
+          .map(function(filepath) {
+            return run_test.bind(null, filepath);
+          }),
+          function() {
+            done(result_code);
+          }
+        );
       });
   });
 
@@ -260,8 +262,9 @@ module.exports = function(grunt) {
     var deferred_all = new $.Deferred();
 
     var cnt = 0;
+
     function run_test(filepath, callback) {
-      cnt ++;
+      cnt++;
       require('child_process')
         .exec(mocha_command + ' ' + filepath, function(error, stdout, stderr) {
           grunt.log.write(stdout);
@@ -274,13 +277,14 @@ module.exports = function(grunt) {
     }
 
     async.series(
-        _(files).map(function(filepath) {
-          return run_test.bind(null, filepath);
-        }),
-        function() {
-          done(result_code);
-        }
-      );
+      _(files)
+      .map(function(filepath) {
+        return run_test.bind(null, filepath);
+      }),
+      function() {
+        done(result_code);
+      }
+    );
   });
 
   // すべてのテストを実行する
@@ -308,8 +312,9 @@ module.exports = function(grunt) {
         var deferred_all = new $.Deferred();
 
         var cnt = 0;
+
         function run_test(filepath, callback) {
-          cnt ++;
+          cnt++;
           require('child_process')
             .exec('COVERAGE=1 ' + mocha_command + ' ' + filepath + ' > coverages/result.' + cnt + '.html', function(error, stdout, stderr) {
               grunt.log.write(stdout);
@@ -321,13 +326,14 @@ module.exports = function(grunt) {
         }
 
         async.series(
-            _(files).map(function(filepath) {
-              return run_test.bind(null, filepath);
-            }),
-            function() {
-              done(result_code);
-            }
-          );
+          _(files)
+          .map(function(filepath) {
+            return run_test.bind(null, filepath);
+          }),
+          function() {
+            done(result_code);
+          }
+        );
       });
   });
 
@@ -364,13 +370,14 @@ module.exports = function(grunt) {
     }
 
     async.series(
-        _(files).map(function(filepath) {
-          return run_test.bind(null, filepath);
-        }),
-        function() {
-          done(result_code);
-        }
-      );
+      _(files)
+      .map(function(filepath) {
+        return run_test.bind(null, filepath);
+      }),
+      function() {
+        done(result_code);
+      }
+    );
 
   });
 
