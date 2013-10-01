@@ -1,6 +1,6 @@
 {
   "name": "js2ch",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "main": "lib/js2ch-chrome.js",
   "ignore": [
     "**/.*",
@@ -14,7 +14,11 @@
     "sources",
     "tests",
     "LICENSE.*",
-    "tasks"
+    "tasks",
+    "test_result",
+    "coverages",
+    "lib-cov",
+    "sources-cov"
   ],
   "dependencies": {
     "jquery": "~2.0.3",
