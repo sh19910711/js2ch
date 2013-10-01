@@ -1,11 +1,12 @@
 {
   "name": "js2ch",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "main": "lib/js2ch-chrome.js",
   "ignore": [
     "**/.*",
     "node_modules",
     "components",
+    "bower_components",
     "lib/*-node.js",
     "package.json",
     "r.js",
@@ -13,12 +14,16 @@
     "sources",
     "tests",
     "LICENSE.*",
-    "tasks"
+    "tasks",
+    "test_result",
+    "coverages",
+    "lib-cov",
+    "sources-cov"
   ],
   "dependencies": {
-    "jquery": "~2.0.2",
-    "underscore": "~1.4.4",
-    "requirejs": "~2.1.6",
+    "jquery": "~2.0.3",
+    "underscore": "~1.5.2",
+    "requirejs": "~2.1.8",
     "async": "~0.2.5",
     "backbone": "~1.0.0"
   }

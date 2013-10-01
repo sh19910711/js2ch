@@ -90,10 +90,10 @@
           _(ret)
             .each(function(response_info) {
               response_info.name.data.should.be.equal('test-name');
-              response_info.mail.should.be.equal('test-mail');
-              response_info.info.should.be.equal('test-info');
-              response_info.body.should.be.equal('test-body');
-              response_info.subject.should.be.equal('test-subject');
+              response_info.mail.data.should.be.equal('test-mail');
+              response_info.info.data.should.be.equal('test-info');
+              response_info.body.data.should.be.equal('test-body');
+              response_info.subject.data.should.be.equal('test-subject');
             });
 
           done();

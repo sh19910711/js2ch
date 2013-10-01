@@ -110,20 +110,28 @@
 
         function get_mail(str) {
           // TODO: validate
-          return $.trim(str);
+          return {
+            data: $.trim(str)
+          };
         }
 
         function get_info(str) {
           // TODO: ここにIDなどが記録されている
-          return $.trim(str);
+          return {
+            data: $.trim(str)
+          };
         }
 
         function get_body(str) {
-          return $.trim(str);
+          return {
+            data: $.trim(str)
+          };
         }
 
         function get_subject(str) {
-          return $.trim(str);
+          return {
+            data: $.trim(str)
+          };
         }
 
         function get_response(line, response_number) {

@@ -65,21 +65,23 @@ module.exports = function(grunt) {
           'tests/mocks/**/*.js'
         ],
         options: {
-          indent_size: 2,
-          indent_char: ' ',
-          indent_level: 0,
-          indent_with_tabs: false,
-          brace_style: 'end-expand',
-          preserve_newlines: true,
-          max_preserve_newlines: 10,
-          jslint_happy: false,
-          keep_array_indentation: false,
-          keep_function_indentation: false,
-          space_before_conditional: true,
-          eval_code: false,
-          indent_case: false,
-          unescape_strings: false,
-          break_chained_methods: true
+          js: {
+            indent_size: 2,
+            indent_char: ' ',
+            indent_level: 0,
+            indent_with_tabs: false,
+            brace_style: 'end-expand',
+            preserve_newlines: true,
+            max_preserve_newlines: 10,
+            jslint_happy: false,
+            keep_array_indentation: false,
+            keep_function_indentation: false,
+            space_before_conditional: true,
+            eval_code: false,
+            indent_case: false,
+            unescape_strings: false,
+            break_chained_methods: true
+          }
         }
       },
 
@@ -436,7 +438,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-jsbeautifier');
-  grunt.loadNpmTasks('grunt-parallel');
 
   // 設定を反映する
   grunt.initConfig(initConfig);

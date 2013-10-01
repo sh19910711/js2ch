@@ -8,8 +8,14 @@ lib/*-chrome.js
 README.md
 
 components
+bower_components
 node_modules
 sources
 tests
 tasks
 out
+
+test_result/
+coverages/
+lib-cov/
+sources-cov/
