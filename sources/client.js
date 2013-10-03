@@ -451,9 +451,12 @@
     function EscapeSJIS(str) {
       return _(str)
         .map(function(c) {
-          return '%' + c.charCodeAt()
+          var code = c.charCodeAt()
             .toString(16)
             .toUpperCase();
+          while (code.length < 2)
+            code = "0" + code;
+          return '%' + code;
         })
         .join('');
     }

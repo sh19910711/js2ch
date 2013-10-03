@@ -199,8 +199,7 @@
                 body: 'test1\ntest2\ntest3\n'
               })
               .done(function(response) {
-                var ret = response.match(/<body>(.*?)<\/body>/)[1];
-                console.log(ret);
+                var ret = response.match(/<body>([\s\S]*?)<\/body>/m)[1];
                 ret.should.be.equal('test1\ntest2\ntest3\n');
               })
               .fail(function(response) {})
