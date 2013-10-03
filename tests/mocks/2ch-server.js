@@ -57,7 +57,22 @@
           });
 
           app.post('/test/bbs.cgi', function(req, res) {
-            if (req.body.key === 'test') {
+            var querystring = require('querystring');
+            if (req.body.key === 'test2') {
+              var body = '<title>書きこみました。</title>';
+              body += '<body>' + querystring.unescape(req.body.MESSAGE) + '</body>';
+              body = encoding.convert(body, 'SJIS', 'AUTO');
+              buffer_lib.convertToString(body)
+                .done(function(str) {
+                  buffer_lib.getByteLength(str)
+                    .done(function(len) {
+                      res.setHeader('Content-Type', 'text/html');
+                      res.setHeader('Content-Length', len);
+                      res.end(str);
+                    });
+                });
+            }
+            else if (req.body.key === 'test') {
               var body = '<title>書きこみました。</title>';
               body = encoding.convert(body, 'SJIS', 'AUTO');
               buffer_lib.convertToString(body)

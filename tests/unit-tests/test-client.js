@@ -175,6 +175,44 @@
         });
       });
 
+      describe('書き込み系のテスト（本文に改行を含む）', function() {
+        it('Client#putResponseToThread', function(done) {
+          requirejs([
+            'jquery',
+            'client'
+          ], function($, Client) {
+            var client = new Client({
+              'cookie-manager': {
+                'storage': {
+                  'target': 'test-client-3.db'
+                }
+              },
+              'storage': {
+                'target': 'test-client-3.db'
+              }
+            });
+
+            var promise = $.when.apply(null, [
+              client.putResponseToThread('localhost:8080', 'news4vip', 'test2', {
+                name: 'test name',
+                mail: 'test mail',
+                body: 'test1\ntest2\ntest3\n'
+              })
+              .done(function(response) {
+                var ret = response.match(/<body>(.*?)<\/body>/)[1];
+                console.log(ret);
+                ret.should.be.equal('test1\ntest2\ntest3\n');
+              })
+              .fail(function(response) {})
+            ]);
+
+            promise.done(function() {
+              done();
+            });
+          });
+        });
+      });
+
       describe('レスポンスの取得', function() {
         it('Client#getResponsesFromThread', function(done) {
           requirejs([
