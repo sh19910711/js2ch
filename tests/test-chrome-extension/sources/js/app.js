@@ -6,7 +6,7 @@ requirejs([
   }, function() {
     var host = 'hayabusa.2ch.net';
     var board_id = 'news4vip';
-    var thread_id = '1372053483';
+    var thread_id = '1380812402';
 
     requirejs([
               'underscore',
@@ -91,8 +91,7 @@ requirejs([
 
       var parser = new Parser();
       js2ch.getResponsesFromThread(host, board_id, thread_id)
-        .done(function(http_response) {
-          var responses = parser.parseResponsesFromThread(http_response.body);
+        .done(function(responses) {
           responses.reverse();
           _(responses).each(function(response) {
             $('body').append(function() {
@@ -100,9 +99,9 @@ requirejs([
               res += '<ul>';
               res += '<li>'+response.number+'</li>';
               res += '<li>'+response.name.data+'</li>';
-              res += '<li>'+response.mail+'</li>';
-              res += '<li>'+response.info+'</li>';
-              res += '<li>'+response.body+'</li>';
+              res += '<li>'+response.mail.data+'</li>';
+              res += '<li>'+response.info.data+'</li>';
+              res += '<li>'+response.body.data+'</li>';
               res += '</ul>';
               return res;
             });
