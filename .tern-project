@@ -1,0 +1,24 @@
+{
+  "loadEagerly": [
+    "./sources/client.js"
+  ],
+  "plugins": {
+    "requirejs": {
+      "baseURL": "./sources",
+      "paths": { 
+        "client": "../sources/client",
+        "socket": "../sources/socket-node",
+        "storage": "../sources/storage-node",
+        "http-lib": "../sources/http-lib",
+        "parser": "../sources/parser",
+        "buffer-lib": "../sources/buffer-lib-node",
+        "util-lib": "../sources/util-lib",
+        "cookie-manager": "../sources/cookie-manager",
+        "logger": "../sources/logger",
+        "formatter": "../sources/formatter",
+        "jquery": "../tern/jquery",
+        "underscore": "../tern/underscore"
+      }
+    }
+  }
+}
