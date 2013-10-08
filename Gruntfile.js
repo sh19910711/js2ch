@@ -416,7 +416,7 @@ module.exports = function(grunt) {
   register_test_task('test-issue-3', './tests/unit-tests/issues/test-3.js');
   register_test_task('test-storage-node', './tests/unit-tests/test-storage-node.js');
   register_test_task('test-storage-chrome', './tests/unit-tests/test-storage-chrome.js');
-  register_test_task('test-client', './tests/unit-tests/test-client.js');
+  register_test_task('test-client', './tests/unit-tests/t001-client-test.js');
   register_test_task('test-parser', './tests/unit-tests/test-parser.js');
   register_test_task('test-cookie-manager', './tests/unit-tests/test-cookie-manager.js');
   register_test_task_need_wellknown_ports('test-http-lib', './tests/unit-tests/test-http-lib.js');
