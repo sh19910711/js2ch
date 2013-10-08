@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  describe('CookieManager', function() {
+  describe('T002: CookieManager', function() {
 
     before(function() {
       global.should = require('should');
@@ -17,8 +17,8 @@
         .exec('rm test-cookie-*.db');
     });
 
-    describe('#clear', function() {
-      it('定義されているか確認する', function(done) {
+    describe('001: #clear', function() {
+      it('001: 定義されているか確認する', function(done) {
         requirejs([
           'cookie-manager'
         ], function(CookieManager) {
@@ -34,8 +34,8 @@
       });
     });
 
-    describe('#getCookieHeader', function() {
-      it('定義されているか確認する', function(done) {
+    describe('002: #getCookieHeader', function() {
+      it('001: 定義されているか確認する', function(done) {
         requirejs([
           'cookie-manager'
         ], function(CookieManager) {
@@ -51,8 +51,8 @@
       });
     });
 
-    describe('#setCookieHeader', function() {
-      it('定義されているか確認する', function(done) {
+    describe('003: #setCookieHeader', function() {
+      it('001: 定義されているか確認する', function(done) {
         requirejs([
           'cookie-manager'
         ], function(CookieManager) {
@@ -68,8 +68,8 @@
       });
     });
 
-    describe('#set', function() {
-      it('定義されているか確認する', function(done) {
+    describe('004: #set', function() {
+      it('001: 定義されているか確認する', function(done) {
         requirejs([
           'cookie-manager'
         ], function(CookieManager) {
@@ -84,7 +84,7 @@
         });
       });
 
-      it('同じキーの値を複数回格納したときに更新されているか確認する', function(done) {
+      it('002: 同じキーの値を複数回格納したときに更新されているか確認する', function(done) {
         requirejs([
           'cookie-manager'
         ], function(CookieManager) {
@@ -124,8 +124,8 @@
       });
     });
 
-    describe('experiments', function() {
-      it('set-cookie', function(done) {
+    describe('005: experiments', function() {
+      it('001: set-cookie', function(done) {
         requirejs([
           'underscore',
           'cookie-manager'
@@ -161,7 +161,7 @@
         });
       });
 
-      it('set-cookie twice request', function(done) {
+      it('002: set-cookie twice request', function(done) {
         requirejs([
           'underscore',
           'cookie-manager'
@@ -208,7 +208,7 @@
         });
       });
 
-      it('異なるドメインでCookieの共有が遮断されているか確認する', function(done) {
+      it('003: 異なるドメインでCookieの共有が遮断されているか確認する', function(done) {
         requirejs([
           'underscore',
           'jquery',
@@ -270,7 +270,7 @@
         });
       });
 
-      it('ポート番号が異なるホストでCookieが共有されているか確認する', function(done) {
+      it('004: ポート番号が異なるホストでCookieが共有されているか確認する', function(done) {
         requirejs([
           'underscore',
           'jquery',
@@ -352,7 +352,7 @@
         });
       });
 
-      it('禁止されているパスでCookieの共有が遮断されているか確認する', function(done) {
+      it('005: 禁止されているパスでCookieの共有が遮断されているか確認する', function(done) {
         requirejs([
           'underscore',
           'jquery',
