@@ -94,7 +94,7 @@
             'Host': hostname,
           }))
           .done(function(http_response) {
-            callback(this.parser.parseThreadList(http_response.body));
+            callback(this.parser.parseThreadList(ConvertToUTF8(http_response.body)));
           });
       }
     });
@@ -129,7 +129,7 @@
 
         this.http.get(url, http_request_headers)
           .done(function(http_response) {
-            callback(this.parser.parseSettingText(http_response.body));
+            callback(this.parser.parseSettingText(ConvertToUTF8(http_response.body)));
           });
       }
     });
@@ -164,7 +164,7 @@
             'Host': hostname
           }))
           .done(function(http_response) {
-            callback(this.parser.parseResponsesFromThread(http_response.body));
+            callback(this.parser.parseResponsesFromThread(ConvertToUTF8(http_response.body)));
           });
       }
     });
@@ -230,7 +230,7 @@
 
 
                     // 不足しているパラメータを取得する
-                    var new_form_params = this.parser.parseFormFromHTML(http_response.body)['../test/bbs.cgi?guid=ON'].params;
+                    var new_form_params = this.parser.parseFormFromHTML(ConvertToUTF8(http_response.body))['../test/bbs.cgi?guid=ON'].params;
                     _(_.keys(http_req_params))
                       .each(function(key) {
                         if (typeof new_form_params[key] === 'undefined')
@@ -259,10 +259,10 @@
               confirm_callback = confirm_callback.bind(this);
 
 
-              var title_text = this.parser.parseTitleFromHTML(http_response.body);
+              var title_text = this.parser.parseTitleFromHTML(ConvertToUTF8(http_response.body));
 
               if ('書きこみました。' === title_text) {
-                ok_callback(http_response.body);
+                ok_callback(ConvertToUTF8(http_response.body));
               }
               else if ('■ 書き込み確認 ■' === title_text) {
                 fail_callback({
@@ -442,10 +442,10 @@
       return encoding.codeToString(encoding.convert(GetArray(str), 'SJIS', 'AUTO'));
     }
 
-    // 与えられた文字列をSJISに変換する
+    // 与えられた文字列をUTF-8に変換する
 
     function ConvertToUTF8(str) {
-      return encoding.codeToString(encoding.convert(GetArray(str), 'UTF-8', 'SJIS'));
+      return encoding.codeToString(encoding.convert(GetArray(str), 'UNICODE', 'AUTO'));
     }
 
     // 与えられた文字列をSJISに変換する
