@@ -2,7 +2,7 @@
   var should = require('should');
   var server_8080;
 
-  describe('Client', function() {
+  describe('T001: Client', function() {
     before(function() {
       global.requirejs = require('./requirejs-config-node');
       global.jQuery = require('jquery');
@@ -20,10 +20,9 @@
       server_8080.close();
     });
 
-    describe('experiments', function() {
-
-      describe('取得系のテスト', function() {
-        it('Client#getThreadList', function(done) {
+    describe('001: experiments', function() {
+      describe('001: 取得系のテスト', function() {
+        it('001: Client#getThreadList', function(done) {
           requirejs([
             'client'
           ], function(Client) {
@@ -44,7 +43,7 @@
           });
         });
 
-        it('Client#getThreadList (Deferred)', function(done) {
+        it('002: Client#getThreadList (Deferred)', function(done) {
           requirejs([
             'client'
           ], function(Client) {
@@ -67,8 +66,8 @@
         });
       });
 
-      describe('書き込み系のテスト', function() {
-        it('Client#putResponseToThread', function(done) {
+      describe('002: 書き込み系のテスト', function() {
+        it('001: Client#putResponseToThread', function(done) {
           requirejs([
             'jquery',
             'client'
@@ -116,8 +115,8 @@
         });
       });
 
-      describe('書き込み系のテスト（confirm）', function() {
-        it('Client#putResponseToThread', function(done) {
+      describe('003: 書き込み系のテスト（confirm）', function() {
+        it('001: Client#putResponseToThread', function(done) {
           requirejs([
             'jquery',
             'client'
@@ -175,8 +174,45 @@
         });
       });
 
-      describe('レスポンスの取得', function() {
-        it('Client#getResponsesFromThread', function(done) {
+      describe('004: 書き込み系のテスト（本文に改行を含む）', function() {
+        it('001: Client#putResponseToThread', function(done) {
+          requirejs([
+            'jquery',
+            'client'
+          ], function($, Client) {
+            var client = new Client({
+              'cookie-manager': {
+                'storage': {
+                  'target': 'test-client-3.db'
+                }
+              },
+              'storage': {
+                'target': 'test-client-3.db'
+              }
+            });
+
+            var promise = $.when.apply(null, [
+              client.putResponseToThread('localhost:8080', 'news4vip', 'test2', {
+                name: 'test name',
+                mail: 'test mail',
+                body: 'test1\ntest2\ntest3\n'
+              })
+              .done(function(response) {
+                var ret = response.match(/<body>([\s\S]*?)<\/body>/m)[1];
+                ret.should.be.equal('test1\ntest2\ntest3\n');
+              })
+              .fail(function(response) {})
+            ]);
+
+            promise.done(function() {
+              done();
+            });
+          });
+        });
+      });
+
+      describe('005: レスポンスの取得', function() {
+        it('001: Client#getResponsesFromThread', function(done) {
           requirejs([
             'client'
           ], function(Client) {
@@ -204,8 +240,8 @@
       });
 
 
-      describe('取得系のテスト', function() {
-        it('Client#getThreadList', function(done) {
+      describe('006: 取得系のテスト', function() {
+        it('001: Client#getThreadList', function(done) {
           requirejs([
             'client'
           ], function(Client) {

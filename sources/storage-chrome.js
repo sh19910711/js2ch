@@ -39,9 +39,11 @@
     };
 
     StorageChrome.prototype = {};
-    var proto = _(StorageChrome.prototype);
+    var proto_extend = function(obj) {
+      _.extend(StorageChrome.prototype, obj);
+    };
 
-    proto.extend({
+    proto_extend({
       /**
        * @description 指定したキーを持つアイテムを取得する
        * @memberof StorageChrome
@@ -64,7 +66,7 @@
      * 取得されたアイテム
      */
 
-    proto.extend({
+    proto_extend({
       /**
        * @description アイテムを設定する
        * @memberof StorageChrome
@@ -84,7 +86,7 @@
      * @callback StorageChrome#set-callback
      */
 
-    proto.extend({
+    proto_extend({
       /**
        * @description 指定したキーを持つアイテムを削除する
        * @memberof StorageChrome
@@ -104,7 +106,7 @@
      * @callback StorageChrome#remove-callback
      */
 
-    proto.extend({
+    proto_extend({
       /**
        * @description すべてのデータを削除する
        * @memberof StorageChrome

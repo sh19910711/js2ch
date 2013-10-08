@@ -50,9 +50,11 @@
     };
 
     HttpLib.prototype = {};
-    var proto = _(HttpLib.prototype);
+    var proto_extend = function(obj) {
+      _.extend(HttpLib.prototype, obj);
+    };
 
-    proto.extend({
+    proto_extend({
       /**
        * @description GETリクエストを行う
        * @memberof HttpLib
@@ -172,7 +174,7 @@
      * HeaderとBodyに分けて返す
      */
 
-    proto.extend({
+    proto_extend({
       /**
        * @description 指定したURLにPOSTリクエストを行う
        * @memberof HttpLib

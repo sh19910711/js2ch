@@ -21,9 +21,11 @@
     var Formatter = function() {};
 
     Formatter.prototype = {};
-    var proto = _(Formatter.prototype);
+    var proto_extend = function(obj) {
+      _.extend(Formatter.prototype, obj);
+    };
 
-    proto.extend({
+    proto_extend({
       /**
        * @description [未実装] 与えられたオブジェクトを何らかの形に整える（デバッグ出力などで利用）
        * @memberof Formatter

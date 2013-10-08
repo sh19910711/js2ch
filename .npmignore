@@ -19,3 +19,5 @@ test_result/
 coverages/
 lib-cov/
 sources-cov/
+
+tern/

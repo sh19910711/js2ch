@@ -1,7 +1,7 @@
 (function() {
   var should = require('should');
 
-  describe('Parser', function() {
+  describe('T003: Parser', function() {
     before(function() {
       global.requirejs = require('./requirejs-config-node');
       global.jQuery = require('jquery');
@@ -10,8 +10,8 @@
       };
     });
 
-    describe('2ch-data', function() {
-      it('#parseThreadList (from fixture)', function(done) {
+    describe('001: 2ch-data', function() {
+      it('001: #parseThreadList (from fixture)', function(done) {
         requirejs([
           'underscore',
           'parser',
@@ -39,7 +39,7 @@
         });
       });
 
-      it('#parseThreadList', function(done) {
+      it('002: #parseThreadList', function(done) {
         requirejs([
           'underscore',
           'parser'
@@ -73,7 +73,7 @@
         });
       });
 
-      it('#parseResponsesFromThread', function(done) {
+      it('003: #parseResponsesFromThread', function(done) {
         requirejs([
           'underscore',
           'parser'
@@ -102,11 +102,11 @@
 
     });
 
-    describe('html', function() {
+    describe('002: html', function() {
 
-      describe('#parseTitleFromHTML', function() {
+      describe('001: #parseTitleFromHTML', function() {
 
-        it('title only, 小文字', function(done) {
+        it('001: title only, 小文字', function(done) {
           requirejs([
             'parser'
           ], function(Parser) {
@@ -123,7 +123,7 @@
           });
         });
 
-        it('title only, 大文字', function(done) {
+        it('002: title only, 大文字', function(done) {
           requirejs([
             'parser'
           ], function(Parser) {
@@ -140,7 +140,7 @@
           });
         });
 
-        it('simple nesting, 小文字', function(done) {
+        it('003: simple nesting, 小文字', function(done) {
           requirejs([
             'parser'
           ], function(Parser) {
@@ -165,7 +165,7 @@
           });
         });
 
-        it('simple nesting, 小文字', function(done) {
+        it('004: simple nesting, 小文字', function(done) {
           requirejs([
             'parser'
           ], function(Parser) {
@@ -190,7 +190,7 @@
           });
         });
 
-        it('複数のtitleタグ', function(done) {
+        it('005: 複数のtitleタグ', function(done) {
           requirejs([
             'parser'
           ], function(Parser) {
@@ -215,7 +215,7 @@
           });
         });
 
-        it('titleタグを含まないケース', function(done) {
+        it('006: titleタグを含まないケース', function(done) {
           requirejs([
             'parser'
           ], function(Parser) {
@@ -241,8 +241,8 @@
 
       });
 
-      describe('Parser#parseFormFromHTML', function() {
-        it('formタグ', function(done) {
+      describe('002: Parser#parseFormFromHTML', function() {
+        it('001: formタグ', function(done) {
           requirejs([
             'parser'
           ], function(Parser) {

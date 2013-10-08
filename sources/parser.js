@@ -37,9 +37,11 @@
     };
 
     Parser.prototype = {};
-    var proto = _(Parser.prototype);
+    var proto_extend = function(obj) {
+      _.extend(Parser.prototype, obj);
+    };
 
-    proto.extend({
+    proto_extend({
       /**
        * @description スレッド一覧をオブジェクトの配列に変換する
        * @memberof Parser
@@ -78,7 +80,7 @@
       }
     });
 
-    proto.extend({
+    proto_extend({
       /**
        * @description スレッドの書き込み一覧をオブジェクトの配列に変換する
        * @memberof Parser
@@ -154,7 +156,7 @@
       }
     });
 
-    proto.extend({
+    proto_extend({
       /**
        * @description HTMLテキストからtitleタグの内容を取り出す
        *
@@ -171,7 +173,7 @@
       }
     });
 
-    proto.extend({
+    proto_extend({
       parseFormFromHTML: function parseFormFromHTML(html_text) {
 
         var tag_list = html_text.replace(/\r/, '')

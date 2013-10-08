@@ -23,9 +23,11 @@
      */
     var UtilLib = function() {};
 
-    var _util_lib = _(UtilLib);
+    var _util_lib_extend = function(obj) {
+      _.extend(UtilLib, obj);
+    };
 
-    _util_lib.extend({
+    _util_lib_extend({
       /**
        * @description
        * 与えられた関数をDeferredを返すように変更した関数を返す
@@ -73,7 +75,7 @@
       }
     });
 
-    _util_lib.extend({
+    _util_lib_extend({
       /**
        * @description
        * 与えられた関数をDeferredを返すように変更した関数を返す
@@ -152,7 +154,7 @@
       }
     });
 
-    _util_lib.extend({
+    _util_lib_extend({
       /**
        * @description 与えられた文字列をtokenで分割する
        * @memberof UtilLib
@@ -169,7 +171,7 @@
       }
     });
 
-    _util_lib.extend({
+    _util_lib_extend({
       /**
        * @description 文字列が空かどうかを調べる
        * @memberof UtilLib
