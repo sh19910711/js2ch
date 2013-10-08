@@ -411,8 +411,8 @@ module.exports = function(grunt) {
   });
 
   // テスト用のタスクを登録する
-  register_test_task('test-socket-node', './tests/unit-tests/test-socket-node.js');
-  register_test_task('test-socket-chrome', './tests/unit-tests/test-socket-chrome.js');
+  register_test_task('test-socket-node', './tests/unit-tests/t005-socket-node-test.js');
+  register_test_task('test-socket-chrome', './tests/unit-tests/t004-socket-chrome-test.js');
   register_test_task('test-issue-3', './tests/unit-tests/issues/test-3.js');
   register_test_task('test-storage-node', './tests/unit-tests/test-storage-node.js');
   register_test_task('test-storage-chrome', './tests/unit-tests/test-storage-chrome.js');
