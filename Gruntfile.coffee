@@ -22,10 +22,6 @@ module.exports = (grunt)->
             async: 'empty:'
             encoding: 'empty:'
             purl: 'empty:'
-  })
-
-  _.extend(init_config, {
-    requirejs:
       buildNode:
         options:
           baseUrl: './'
