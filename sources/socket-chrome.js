@@ -39,9 +39,11 @@
     };
 
     SocketChrome.prototype = {};
-    var proto = _(SocketChrome.prototype);
+    var proto_extend = function(obj) {
+      _.extend(SocketChrome.prototype, obj);
+    };
 
-    proto.extend({
+    proto_extend({
       /**
        * @description ソケットを新しく作成する
        * @memberof SocketChrome
@@ -66,7 +68,7 @@
      * 作成されたソケットに関する情報
      */
 
-    proto.extend({
+    proto_extend({
       /**
        * @description ソケットを破棄する
        * @memberof SocketChrome
@@ -78,7 +80,7 @@
       }
     });
 
-    proto.extend({
+    proto_extend({
       /**
        * @description 指定のホストに接続する
        * @memberof SocketChrome
@@ -105,7 +107,7 @@
      * 接続が成功したかどうかを表す
      */
 
-    proto.extend({
+    proto_extend({
       /**
        * @description ソケットの接続を切断する
        * @memberof SocketChrome
@@ -118,7 +120,7 @@
       }
     });
 
-    proto.extend({
+    proto_extend({
       /**
        * @description 接続済みのソケットからデータを読み込む
        * @memberof SocketChrome
@@ -146,7 +148,7 @@
      * データや読み込みに関する情報が含まれる
      */
 
-    proto.extend({
+    proto_extend({
       /**
        * @description 接続済みのソケットにデータを書き込む
        * @memberof SocketChrome

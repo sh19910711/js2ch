@@ -69,9 +69,11 @@
     };
 
     Client.prototype = {};
-    var proto = _(Client.prototype);
+    var proto_extend = function(obj) {
+      _.extend(Client.prototype, obj);
+    };
 
-    proto.extend({
+    proto_extend({
       /**
        * @description スレッド一覧を取得する
        * @memberof Client
@@ -104,7 +106,7 @@
      * スレッド情報の配列
      */
 
-    proto.extend({
+    proto_extend({
       /**
        * @description [未実装] SETTING.TXTを取得する
        * @memberof Client
@@ -139,7 +141,7 @@
      * 板の設定情報
      */
 
-    proto.extend({
+    proto_extend({
       /**
        * @description スレッドの書き込みを取得する
        * @memberof Client
@@ -175,7 +177,7 @@
      * スレッドに書き込まれたレスのリスト
      */
 
-    proto.extend({
+    proto_extend({
       // スレッドに書き込む
       /**
        * @description スレッドに書き込みを行う
@@ -471,8 +473,6 @@
         });
       return res;
     }
-
-
 
     return Client;
   });

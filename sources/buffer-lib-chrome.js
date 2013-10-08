@@ -36,9 +36,11 @@
     };
 
     BufferLibChrome.prototype = {};
-    var proto = _(BufferLibChrome.prototype);
+    var proto_extend = function(obj) {
+      _.extend(BufferLibChrome.prototype, obj);
+    };
 
-    proto.extend({
+    proto_extend({
       /**
        * @description ArrayBufferを文字列に変換する
        * @memberof BufferLibChrome
@@ -57,7 +59,7 @@
       }
     });
 
-    proto.extend({
+    proto_extend({
       /**
        * @description 文字列をArrayBufferに変換する
        * @memberof BufferLibChrome
@@ -76,7 +78,7 @@
       }
     });
 
-    proto.extend({
+    proto_extend({
       /**
        * @description 文字列のバイト数を求める
        * @memberof BufferLibChrome
