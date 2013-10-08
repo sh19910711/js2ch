@@ -411,14 +411,14 @@ module.exports = function(grunt) {
   });
 
   // テスト用のタスクを登録する
-  register_test_task('test-socket-node', './tests/unit-tests/test-socket-node.js');
-  register_test_task('test-socket-chrome', './tests/unit-tests/test-socket-chrome.js');
+  register_test_task('test-socket-node', './tests/unit-tests/t005-socket-node-test.js');
+  register_test_task('test-socket-chrome', './tests/unit-tests/t004-socket-chrome-test.js');
   register_test_task('test-issue-3', './tests/unit-tests/issues/test-3.js');
-  register_test_task('test-storage-node', './tests/unit-tests/test-storage-node.js');
-  register_test_task('test-storage-chrome', './tests/unit-tests/test-storage-chrome.js');
-  register_test_task('test-client', './tests/unit-tests/test-client.js');
-  register_test_task('test-parser', './tests/unit-tests/test-parser.js');
-  register_test_task('test-cookie-manager', './tests/unit-tests/test-cookie-manager.js');
+  register_test_task('test-storage-node', './tests/unit-tests/t007-storage-node-test.js');
+  register_test_task('test-storage-chrome', './tests/unit-tests/t006-storage-chrome-test.js');
+  register_test_task('test-client', './tests/unit-tests/t001-client-test.js');
+  register_test_task('test-parser', './tests/unit-tests/t003-parser-test.js');
+  register_test_task('test-cookie-manager', './tests/unit-tests/t002-cookie-manager-test.js');
   register_test_task_need_wellknown_ports('test-http-lib', './tests/unit-tests/test-http-lib.js');
   register_test_task_need_wellknown_ports('test-issue-4', './tests/unit-tests/issues/test-4.js');
 

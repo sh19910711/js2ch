@@ -1,20 +1,21 @@
 (function() {
   'use strict';
 
+
   var should = require('should');
   var server_8080;
 
-  describe('Socket', function() {
+  describe('T005: Socket', function() {
 
     before(function() {
-      global.requirejs = require('./requirejs-config-chrome');
+      global.requirejs = require('./requirejs-config-node');
       global.jQuery = require('jquery');
       global.window = {
         jQuery: jQuery
       };
 
-      server_8080 = require('../mocks/http-server-1');
-      server_8080.createHttpServer(8080);
+      server_8080 = require('../mocks/http-server-1')
+        .createHttpServer(8080);
     });
 
     after(function() {
@@ -22,9 +23,9 @@
     });
 
     // 実験的なテスト
-    describe('experiments', function() {
-      describe('#create & #read & #write', function(done) {
-        it('HTTP通信のテスト', function(done) {
+    describe('001: experiments', function() {
+      describe('001: #create & #read & #write', function(done) {
+        it('001: HTTP通信のテスト', function(done) {
           requirejs([
             'underscore',
             'jquery',
@@ -139,8 +140,8 @@
         });
       });
 
-      describe('#create', function() {
-        it('ソケットを作成するたびにソケットの番号が増えていくことを確認する', function(done) {
+      describe('002: #create', function() {
+        it('001: ソケットを作成するたびにソケットの番号が増えていくことを確認する', function(done) {
           requirejs(['socket'], function(Socket) {
             var socket = new Socket();
             socket.create('tcp', {}, function(socket_info) {
@@ -155,8 +156,8 @@
         });
       });
 
-      describe('#create(deferred)', function() {
-        it('ソケットを作成するたびにソケットの番号が増えていくことを確認する', function(done) {
+      describe('003: #create(deferred)', function() {
+        it('001: ソケットを作成するたびにソケットの番号が増えていくことを確認する', function(done) {
           requirejs(['socket'], function(Socket) {
             var socket = new Socket();
             socket.create('tcp', {})

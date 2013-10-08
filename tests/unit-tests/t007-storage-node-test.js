@@ -1,9 +1,9 @@
 (function() {
   var should = require('should');
 
-  describe('Storage', function() {
+  describe('T007: Storage', function() {
     before(function() {
-      global.requirejs = require('./requirejs-config-chrome');
+      global.requirejs = require('./requirejs-config-node');
       global.jQuery = require('jquery');
       global.window = {
         jQuery: jQuery
@@ -12,17 +12,17 @@
 
     after(function() {
       require('child_process')
-        .exec('rm test-storage-chrome-*.db');
+        .exec('rm test-storage-*.db');
     });
 
-    describe('experiments', function() {
+    describe('001: experiments', function() {
 
-      it('setしてgetできることを確認(String)', function(done) {
+      it('001: setしてgetできることを確認(String)', function(done) {
         requirejs([
           'storage'
         ], function(Storage) {
           var storage = new Storage({
-            target: 'test-storage-chrome-1.db'
+            target: 'test-storage-node-1.db'
           });
           storage.clear(function() {
             storage.set({
@@ -37,12 +37,12 @@
         });
       });
 
-      it('setしてgetできることを確認(Array)', function(done) {
+      it('002: setしてgetできることを確認(Array)', function(done) {
         requirejs([
           'storage'
         ], function(Storage) {
           var storage = new Storage({
-            target: 'test-storage-chrome-2.db'
+            target: 'test-storage-node-2.db'
           });
           storage.clear(function() {
             storage.set({
@@ -57,12 +57,12 @@
         });
       });
 
-      it('setしてgetできることを確認(Object)', function(done) {
+      it('003: setしてgetできることを確認(Object)', function(done) {
         requirejs([
           'storage'
         ], function(Storage) {
           var storage = new Storage({
-            target: 'test-storage-chrome-3.db'
+            target: 'test-storage-node-3.db'
           });
           storage.clear(function() {
             storage.set({
@@ -79,12 +79,12 @@
         });
       });
 
-      it('removeできているか確認', function(done) {
+      it('004: removeできているか確認', function(done) {
         requirejs([
           'storage'
         ], function(Storage) {
           var storage = new Storage({
-            target: 'test-storage-chrome-4.db'
+            target: 'test-storage-node-4.db'
           });
           storage.clear(function() {
             storage.set({
@@ -107,12 +107,12 @@
         });
       });
 
-      it('clearできているか確認', function(done) {
+      it('005: clearできているか確認', function(done) {
         requirejs([
           'storage'
         ], function(Storage) {
           var storage = new Storage({
-            target: 'test-storage-chrome-5.db'
+            target: 'test-storage-node-5.db'
           });
           storage.clear(function() {
             storage.set({
