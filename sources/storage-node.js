@@ -66,9 +66,11 @@
     };
 
     StorageNode.prototype = {};
-    var proto = _(StorageNode.prototype);
+    var proto_extend = function(obj) {
+      _.extend(StorageNode.prototype, obj);
+    };
 
-    proto.extend({
+    proto_extend({
       /**
        * @description 指定したキーを持つアイテムを取得する
        * @memberof StorageNode
@@ -141,7 +143,7 @@
      * 取得されたアイテム
      */
 
-    proto.extend({
+    proto_extend({
       /**
        * @description アイテムを設定する
        * @memberof StorageNode
@@ -213,7 +215,7 @@
      * @callback StorageNode#set-callback
      */
 
-    proto.extend({
+    proto_extend({
       /**
        * @description 指定したデータを削除する
        * @memberof StorageNode
@@ -256,7 +258,7 @@
      * @callback StorageNode#remove-callback
      */
 
-    proto.extend({
+    proto_extend({
       /**
        * @description すべてのデータを削除する
        * @memberof StorageNode

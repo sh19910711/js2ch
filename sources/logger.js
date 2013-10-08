@@ -26,9 +26,11 @@
     var Logger = function() {};
 
     Logger.prototype = {};
-    var proto = _(Logger.prototype);
+    var proto_extend = function(obj) {
+      _.extend(Logger.prototype, obj);
+    };
 
-    proto.extend({
+    proto_extend({
       /**
        * @description ログ出力を行う
        * @memberof Logger
@@ -38,7 +40,7 @@
       }
     });
 
-    proto.extend({
+    proto_extend({
       /**
        * @description デバッグ出力を行う
        * @memberof Logger
@@ -48,7 +50,7 @@
       }
     });
 
-    proto.extend({
+    proto_extend({
       /**
        * @description 情報を出力する
        * @memberof Logger
@@ -58,7 +60,7 @@
       }
     });
 
-    proto.extend({
+    proto_extend({
       /**
        * @description 警告を出力する
        * @memberof Logger
@@ -68,7 +70,7 @@
       }
     });
 
-    proto.extend({
+    proto_extend({
       /**
        * @description エラー出力を行う
        * @memberof Logger

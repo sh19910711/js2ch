@@ -42,9 +42,11 @@
     };
 
     SocketNode.prototype = {};
-    var proto = _(SocketNode.prototype);
+    var proto_extend = function(obj) {
+      _.extend(SocketNode.prototype, obj);
+    };
 
-    proto.extend({
+    proto_extend({
       // ソケットを作成する
       /**
        * @description ソケットを新しく作成する
@@ -75,7 +77,7 @@
      * 作成されたソケットに関する情報
      */
 
-    proto.extend({
+    proto_extend({
       /**
        * @description ソケットを破棄する
        * @memberof SocketNode
@@ -87,7 +89,7 @@
       }
     });
 
-    proto.extend({
+    proto_extend({
       /**
        * @description 指定のホストに接続する
        * @memberof SocketNode
@@ -134,7 +136,7 @@
      * 接続が成功したかどうかを表す
      */
 
-    proto.extend({
+    proto_extend({
       /**
        * @description ソケットの接続を切断する
        * @memberof SocketNode
@@ -147,7 +149,7 @@
       }
     });
 
-    proto.extend({
+    proto_extend({
       /**
        * @description 接続済みのソケットからデータを読み込む
        * @memberof SocketNode
@@ -201,7 +203,7 @@
      * データや読み込みに関する情報が含まれる
      */
 
-    proto.extend({
+    proto_extend({
       /**
        * @description 接続済みのソケットにデータを書き込む
        * @memberof SocketNode

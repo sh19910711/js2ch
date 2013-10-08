@@ -40,9 +40,11 @@
     };
 
     CookieManager.prototype = {};
-    var proto = _(CookieManager.prototype);
+    var proto_extend = function(obj) {
+      _.extend(CookieManager.prototype, obj);
+    };
 
-    proto.extend({
+    proto_extend({
       /**
        * @description 記録しているCookieを全消去する
        * @memberof CookieManager
@@ -63,7 +65,7 @@
      */
 
 
-    proto.extend({
+    proto_extend({
       /**
        * @description 与えられたURLに対するCookieヘッダを返す
        * @memberof CookieManager
@@ -118,7 +120,7 @@
      */
 
 
-    proto.extend({
+    proto_extend({
       /**
        * @description 指定したCookieを保存する
        * @memberof CookieManager
@@ -177,7 +179,7 @@
      */
 
 
-    proto.extend({
+    proto_extend({
       /**
        * @description HTTPレスポンスヘッダを渡すとSet-Cookieを解析して保存する
        * @memberof CookieManager

@@ -35,9 +35,11 @@
     };
 
     BufferLibNode.prototype = {};
-    var proto = _(BufferLibNode.prototype);
+    var proto_extend = function(obj) {
+      _.extend(BufferLibNode.prototype, obj);
+    };
 
-    proto.extend({
+    proto_extend({
       /**
        * @description Bufferを文字列に変換する
        * @memberof BufferLibNode
@@ -55,7 +57,7 @@
       }
     });
 
-    proto.extend({
+    proto_extend({
       /**
        * @description 文字列をArrayBUfferに変換する
        * @memberof BufferLibNode
@@ -76,7 +78,7 @@
       }
     });
 
-    proto.extend({
+    proto_extend({
       /**
        * @description 文字列のバイト数を求める
        * @memberof BufferLibNode
