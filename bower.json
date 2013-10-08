@@ -18,7 +18,8 @@
     "test_result",
     "coverages",
     "lib-cov",
-    "sources-cov"
+    "sources-cov",
+    "tern"
   ],
   "dependencies": {
     "jquery": "~2.0.3",
