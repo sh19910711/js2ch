@@ -1,6 +1,6 @@
 {
   "name": "js2ch",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "description": "JavaScript 2ch-client library",
   "main": "./lib/js2ch-node",
   "dependencies": {
