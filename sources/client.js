@@ -206,128 +206,6 @@
 
         // 書き込みを行う
         var write = function write(ok_callback, fail_callback) {
-
-          // 書き込み送信後にHTTPレスポンスヘッダを受け取る
-          var receive_response = function receive_response(http_response) {
-
-            // HTTPレスポンス受信後の処理（callbackの実行）
-            var after_receive_response = function after_receive_response() {
-
-              // 書き込み確認後の処理
-              var confirm_callback = function confirm_callback_func() {
-                var promise = new $.Deferred();
-
-                // 不足しているパラメータを追加して保存し、再書き込みを行う
-                this.storage.get(STORAGE_FORM_APPEND_PARAMS)
-                  .done(function(items) {
-                    // ストレージに設定できたら再書き込みを行う
-                    var after_storage_set = function after_storage_set_func() {
-                      this.putResponseToThread(hostname, board_id, thread_id, response)
-                        .done(promise.resolve)
-                        .fail(promise.reject);
-                    };
-                    after_storage_set = after_storage_set.bind(this);
-
-
-                    // 不足しているパラメータを取得する
-                    var new_form_params = this.parser.parseFormFromHTML(ConvertToUTF8(http_response.body))['../test/bbs.cgi?guid=ON'].params;
-                    _(_.keys(http_req_params))
-                      .each(function(key) {
-                        if (typeof new_form_params[key] === 'undefined')
-                          delete new_form_params[key];
-                        else if (key === 'FROM' || key === 'MESSAGE' || key === 'mail' || key === 'time')
-                          delete new_form_params[key];
-                        else if (http_req_params[key] === new_form_params[key])
-                          delete new_form_params[key];
-                        else
-                          new_form_params[key] = ConvertToSJIS(new_form_params[key].toString());
-                      });
-
-                    // オブジェクトじゃなかったらオブジェクトにしておく
-                    if (typeof items[STORAGE_FORM_APPEND_PARAMS] !== 'object')
-                      items[STORAGE_FORM_APPEND_PARAMS] = {};
-
-                    // ストレージに保存しておく
-                    _(items[STORAGE_FORM_APPEND_PARAMS])
-                      .extend(new_form_params);
-                    this.storage.set(items)
-                      .done(after_storage_set);
-                  });
-
-                return promise;
-              };
-              confirm_callback = confirm_callback.bind(this);
-
-
-              var title_text = this.parser.parseTitleFromHTML(ConvertToUTF8(http_response.body));
-
-              if ('書きこみました。' === title_text) {
-                ok_callback(ConvertToUTF8(http_response.body));
-              }
-              else if ('■ 書き込み確認 ■' === title_text) {
-                fail_callback({
-                  type: 'confirm',
-                  httpResponse: http_response,
-                  confirm: confirm_callback
-                });
-              }
-              else {
-                fail_callback({
-                  type: 'error',
-                  httpResponse: http_response
-                });
-              }
-
-            };
-            after_receive_response = after_receive_response.bind(this);
-
-
-            // HTTPレスポンスヘッダにSet-Cookieがある場合の処理
-            var check_cookie = function check_cookie_func() {
-              var deferred = new $.Deferred();
-              if (typeof http_response.headers['Set-Cookie'] !== 'undefined') {
-                this.cookie_manager.setCookieHeader(url, http_response.headers_source)
-                  .done(function() {
-                    deferred.resolve();
-                  });
-              }
-              else {
-                deferred.resolve();
-              }
-              return deferred;
-            };
-            check_cookie = check_cookie.bind(this);
-
-
-            // リクエスト受信後のCookieなどの処理 
-            var promise = $.when.apply(null, [
-              check_cookie()
-            ]);
-            promise.done(after_receive_response);
-          };
-          receive_response = receive_response.bind(this);
-
-
-          // 準備ができたらPOSTリクエストを送信する
-          var send_http_request = function send_http_request_func() {
-            this.http.post(url, http_req_headers, http_req_params)
-              .done(receive_response);
-          };
-          send_http_request = send_http_request.bind(this);
-
-
-          // 追加のパラメータがあれば追加する（yuki=akariなどの対応）
-          var add_http_req_params = function add_http_req_params_func() {
-            var promise = this.storage.get(STORAGE_FORM_APPEND_PARAMS)
-            promise.done(function(items) {
-              _(http_req_params)
-                .extend(items[STORAGE_FORM_APPEND_PARAMS]);
-            });
-            return promise;
-          };
-          add_http_req_params = add_http_req_params.bind(this);
-
-
           // 送信直前に必要な処理を行う（パラメータの追加など）
           var promise = $.when.apply(null, [
             add_http_req_params()
@@ -337,6 +215,126 @@
           promise.done(send_http_request);
         };
         write = write.bind(this);
+
+        // 書き込み送信後にHTTPレスポンスヘッダを受け取る
+        var receive_response = function receive_response(http_response) {
+
+          // HTTPレスポンス受信後の処理（callbackの実行）
+          var after_receive_response = function after_receive_response() {
+
+            // 書き込み確認後の処理
+            var confirm_callback = function confirm_callback_func() {
+              var promise = new $.Deferred();
+
+              // 不足しているパラメータを追加して保存し、再書き込みを行う
+              this.storage.get(STORAGE_FORM_APPEND_PARAMS)
+                .done(function(items) {
+                  // ストレージに設定できたら再書き込みを行う
+                  var after_storage_set = function after_storage_set_func() {
+                    this.putResponseToThread(hostname, board_id, thread_id, response)
+                      .done(promise.resolve)
+                      .fail(promise.reject);
+                  };
+                  after_storage_set = after_storage_set.bind(this);
+
+
+                  // 不足しているパラメータを取得する
+                  var new_form_params = this.parser.parseFormFromHTML(ConvertToUTF8(http_response.body))['../test/bbs.cgi?guid=ON'].params;
+                  _(_.keys(http_req_params))
+                    .each(function(key) {
+                      if (typeof new_form_params[key] === 'undefined')
+                        delete new_form_params[key];
+                      else if (key === 'FROM' || key === 'MESSAGE' || key === 'mail' || key === 'time')
+                        delete new_form_params[key];
+                      else if (http_req_params[key] === new_form_params[key])
+                        delete new_form_params[key];
+                      else
+                        new_form_params[key] = ConvertToSJIS(new_form_params[key].toString());
+                    });
+
+                  // オブジェクトじゃなかったらオブジェクトにしておく
+                  if (typeof items[STORAGE_FORM_APPEND_PARAMS] !== 'object')
+                    items[STORAGE_FORM_APPEND_PARAMS] = {};
+
+                  // ストレージに保存しておく
+                  _(items[STORAGE_FORM_APPEND_PARAMS])
+                    .extend(new_form_params);
+                  this.storage.set(items)
+                    .done(after_storage_set);
+                });
+
+              return promise;
+            };
+            confirm_callback = confirm_callback.bind(this);
+
+
+            var title_text = this.parser.parseTitleFromHTML(ConvertToUTF8(http_response.body));
+
+            if ('書きこみました。' === title_text) {
+              ok_callback(ConvertToUTF8(http_response.body));
+            }
+            else if ('■ 書き込み確認 ■' === title_text) {
+              fail_callback({
+                type: 'confirm',
+                httpResponse: http_response,
+                confirm: confirm_callback
+              });
+            }
+            else {
+              fail_callback({
+                type: 'error',
+                httpResponse: http_response
+              });
+            }
+
+          };
+          after_receive_response = after_receive_response.bind(this);
+
+
+          // HTTPレスポンスヘッダにSet-Cookieがある場合の処理
+          var check_cookie = function check_cookie_func() {
+            var deferred = new $.Deferred();
+            if (typeof http_response.headers['Set-Cookie'] !== 'undefined') {
+              this.cookie_manager.setCookieHeader(url, http_response.headers_source)
+                .done(function() {
+                  deferred.resolve();
+                });
+            }
+            else {
+              deferred.resolve();
+            }
+            return deferred;
+          };
+          check_cookie = check_cookie.bind(this);
+
+
+          // リクエスト受信後のCookieなどの処理 
+          var promise = $.when.apply(null, [
+            check_cookie()
+          ]);
+          promise.done(after_receive_response);
+        };
+        receive_response = receive_response.bind(this);
+
+
+        // 準備ができたらPOSTリクエストを送信する
+        var send_http_request = function send_http_request_func() {
+          this.http.post(url, http_req_headers, http_req_params)
+            .done(receive_response);
+        };
+        send_http_request = send_http_request.bind(this);
+
+
+        // 追加のパラメータがあれば追加する（yuki=akariなどの対応）
+        var add_http_req_params = function add_http_req_params_func() {
+          var promise = this.storage.get(STORAGE_FORM_APPEND_PARAMS)
+          promise.done(function(items) {
+            _(http_req_params)
+              .extend(items[STORAGE_FORM_APPEND_PARAMS]);
+          });
+          return promise;
+        };
+        add_http_req_params = add_http_req_params.bind(this);
 
 
         // リクエスト前に送信するクエリを準備する
