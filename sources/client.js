@@ -218,23 +218,6 @@
 
         // 書き込み送信後にHTTPレスポンスヘッダを受け取る
         var receive_response = function receive_response() {
-          // HTTPレスポンスヘッダにSet-Cookieがある場合の処理
-          var check_cookie = function check_cookie_func() {
-            var deferred = new $.Deferred();
-            if (typeof this.http_response.headers['Set-Cookie'] !== 'undefined') {
-              this.cookie_manager.setCookieHeader(url, this.http_response.headers_source)
-                .done(function() {
-                  deferred.resolve();
-                });
-            }
-            else {
-              deferred.resolve();
-            }
-            return deferred;
-          };
-          check_cookie = check_cookie.bind(this);
-
-
           // リクエスト受信後のCookieなどの処理 
           var promise = $.when.apply(null, [
             check_cookie()
@@ -243,57 +226,25 @@
         };
         receive_response = receive_response.bind(this);
 
+        // HTTPレスポンスヘッダにSet-Cookieがある場合の処理
+        var check_cookie = function check_cookie_func() {
+          var deferred = new $.Deferred();
+          if (typeof this.http_response.headers['Set-Cookie'] !== 'undefined') {
+            this.cookie_manager.setCookieHeader(url, this.http_response.headers_source)
+              .done(function() {
+                deferred.resolve();
+              });
+          }
+          else {
+            deferred.resolve();
+          }
+          return deferred;
+        };
+        check_cookie = check_cookie.bind(this);
+
         // HTTPレスポンス受信後の処理（callbackの実行）
         var after_receive_response = function after_receive_response() {
-
-          // 書き込み確認後の処理
-          var confirm_callback = function confirm_callback_func() {
-            var promise = new $.Deferred();
-
-            // 不足しているパラメータを追加して保存し、再書き込みを行う
-            this.storage.get(STORAGE_FORM_APPEND_PARAMS)
-              .done(function(items) {
-                // ストレージに設定できたら再書き込みを行う
-                var after_storage_set = function after_storage_set_func() {
-                  this.putResponseToThread(hostname, board_id, thread_id, response)
-                    .done(promise.resolve)
-                    .fail(promise.reject);
-                };
-                after_storage_set = after_storage_set.bind(this);
-
-
-                // 不足しているパラメータを取得する
-                var new_form_params = this.parser.parseFormFromHTML(ConvertToUTF8(this.http_response.body))['../test/bbs.cgi?guid=ON'].params;
-                _(_.keys(http_req_params))
-                  .each(function(key) {
-                    if (typeof new_form_params[key] === 'undefined')
-                      delete new_form_params[key];
-                    else if (key === 'FROM' || key === 'MESSAGE' || key === 'mail' || key === 'time')
-                      delete new_form_params[key];
-                    else if (http_req_params[key] === new_form_params[key])
-                      delete new_form_params[key];
-                    else
-                      new_form_params[key] = ConvertToSJIS(new_form_params[key].toString());
-                  });
-
-                // オブジェクトじゃなかったらオブジェクトにしておく
-                if (typeof items[STORAGE_FORM_APPEND_PARAMS] !== 'object')
-                  items[STORAGE_FORM_APPEND_PARAMS] = {};
-
-                // ストレージに保存しておく
-                _(items[STORAGE_FORM_APPEND_PARAMS])
-                  .extend(new_form_params);
-                this.storage.set(items)
-                  .done(after_storage_set);
-              });
-
-            return promise;
-          };
-          confirm_callback = confirm_callback.bind(this);
-
-
           var title_text = this.parser.parseTitleFromHTML(ConvertToUTF8(this.http_response.body));
-
           if ('書きこみました。' === title_text) {
             ok_callback(ConvertToUTF8(this.http_response.body));
           }
@@ -310,9 +261,48 @@
               httpResponse: this.http_response
             });
           }
-
         };
         after_receive_response = after_receive_response.bind(this);
+
+        // 書き込み確認後の処理
+        var confirm_callback = function confirm_callback_func() {
+          var promise = new $.Deferred();
+          // 不足しているパラメータを追加して保存し、再書き込みを行う
+          this.storage.get(STORAGE_FORM_APPEND_PARAMS)
+            .done(function(items) {
+              // ストレージに設定できたら再書き込みを行う
+              var after_storage_set = function after_storage_set_func() {
+                this.putResponseToThread(hostname, board_id, thread_id, response)
+                  .done(promise.resolve)
+                  .fail(promise.reject);
+              };
+              after_storage_set = after_storage_set.bind(this);
+              // 不足しているパラメータを取得する
+              var new_form_params = this.parser.parseFormFromHTML(ConvertToUTF8(this.http_response.body))['../test/bbs.cgi?guid=ON'].params;
+              _(_.keys(http_req_params))
+                .each(function(key) {
+                  if (typeof new_form_params[key] === 'undefined')
+                    delete new_form_params[key];
+                  else if (key === 'FROM' || key === 'MESSAGE' || key === 'mail' || key === 'time')
+                    delete new_form_params[key];
+                  else if (http_req_params[key] === new_form_params[key])
+                    delete new_form_params[key];
+                  else
+                    new_form_params[key] = ConvertToSJIS(new_form_params[key].toString());
+                });
+              // オブジェクトじゃなかったらオブジェクトにしておく
+              if (typeof items[STORAGE_FORM_APPEND_PARAMS] !== 'object')
+                items[STORAGE_FORM_APPEND_PARAMS] = {};
+              // ストレージに保存しておく
+              _(items[STORAGE_FORM_APPEND_PARAMS])
+                .extend(new_form_params);
+              this.storage.set(items)
+                .done(after_storage_set);
+            });
+
+          return promise;
+        };
+        confirm_callback = confirm_callback.bind(this);
 
 
         // 準備ができたらPOSTリクエストを送信する
@@ -341,7 +331,6 @@
         // リクエスト前に送信するクエリを準備する
         var prepare_http_req_params = function prepare_http_req_params() {
           var deferred = new $.Deferred();
-
           var func = function func() {
             // 書き込み内容などをSJISに変換する
             var converted_response = _.clone(response);
@@ -373,10 +362,7 @@
             deferred.resolve();
           };
           func = func.bind(this);
-
-
           setTimeout(func, 0);
-
           return deferred;
         };
         prepare_http_req_params = prepare_http_req_params.bind(this);
