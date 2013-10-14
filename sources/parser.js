@@ -274,6 +274,26 @@
       }
     });
 
+    proto_extend({
+      parseSettingText: function parseSettingText(lines) {
+        var items = _(lines.match(/[a-zA-Z0-9\_]+=.*/g))
+          .map(function(line) {
+            var ret = line.match(/([a-zA-Z0-9\_]+)=(.*)/);
+            return {
+              key: $.trim(ret[1]),
+              value: $.trim(ret[2])
+            };
+          });
+        var res = _.reduce(items, function(prev, item) {
+          var obj = {};
+          obj[item.key] = item.value;
+          _.extend(prev, obj);
+          return prev;
+        }, {});
+        return res;
+      }
+    });
+
     return Parser;
   });
 

@@ -264,6 +264,55 @@
       });
     });
 
+    describe('007: SETTING.TXTの取得', function() {
+      it('001: Client#getSettingText', function(done) {
+        requirejs([
+          'client'
+        ], function(Client) {
+          var client = new Client({
+            'cookie-manager': {
+              'storage': {
+                'target': 'test-client-1.db'
+              }
+            },
+            'storage': {
+              'target': 'test-client-1.db'
+            }
+          });
+          client.getSettingText('localhost:8080', 'news4vip', function(obj) {
+            obj['BBS_TITLE'].should.be.equal('ニュース速報(VIP)＠２ちゃんねる');
+            obj['BBS_NONAME_NAME'].should.be.equal('以下、名無しにかわりましてVIPがお送りします');
+            obj['BBS_NINJA'].should.be.equal('checked');
+            done();
+          });
+        });
+      });
+      it('002: Client#getSettingText (Deferred)', function(done) {
+        requirejs([
+          'client'
+        ], function(Client) {
+          var client = new Client({
+            'cookie-manager': {
+              'storage': {
+                'target': 'test-client-1.db'
+              }
+            },
+            'storage': {
+              'target': 'test-client-1.db'
+            }
+          });
+          client.getSettingText('localhost:8080', 'news4vip')
+            .done(function(obj) {
+              obj['BBS_TITLE'].should.be.equal('ニュース速報(VIP)＠２ちゃんねる');
+              obj['BBS_NONAME_NAME'].should.be.equal('以下、名無しにかわりましてVIPがお送りします');
+              obj['BBS_NINJA'].should.be.equal('checked');
+              obj['timecount'].should.be.equal('15');
+              done();
+            });
+        });
+      });
+    })
+
   });
 
 })();

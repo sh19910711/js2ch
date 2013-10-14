@@ -3,7 +3,7 @@
 **/*.db
 
 bower.json
-Gruntfile.js
+Gruntfile.*
 lib/*-chrome.js
 README.md
 
