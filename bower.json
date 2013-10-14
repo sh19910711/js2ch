@@ -26,6 +26,6 @@
     "underscore": "~1.5.2",
     "requirejs": "~2.1.8",
     "async": "~0.2.5",
-    "backbone": "~1.0.0"
+    "backbone": "~1.1.0"
   }
 }
