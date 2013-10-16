@@ -127,29 +127,65 @@ module.exports = (grunt)->
   # Mocha
   _.extend(init_config, {
     mochaTest:
-      'test-tap':
-        options:
-          timeout: 5000
-          reporter: 'tap'
-          require: [
-            'should'
-          ]
-          captureFile: 'test_tap_result.txt'
-        src: [
-          './tests/unit-tests/t*-test.js'
-        ]
-      'test-cov':
-        options:
-          timeout: 5000
-          quiet: true
-          reporter: 'html-cov'
-          require: [
-            'should'
-          ]
-          captureFile: 'test_coverage.html'
-        src: [
-          './tests/unit-tests/t*-test.js'
-        ]
+      (()->
+        # mochaTest: test-tap
+        res = {}
+        _.extend(
+          res
+          {
+            'test-tap':
+              options:
+                timeout: 5000
+                reporter: 'tap'
+                require: [
+                  'should'
+                ]
+                captureFile: 'test_tap_result.txt'
+              src: [
+                './tests/unit-tests/t*-test.js'
+              ]
+          }
+        )
+        # mochaTest:test-cov
+        _.extend(
+          res
+          {
+            'test-cov':
+              options:
+                timeout: 5000
+                quiet: true
+                reporter: 'html-cov'
+                require: [
+                  'should'
+                ]
+                captureFile: 'test_coverage.html'
+              src: [
+                './tests/unit-tests/t*-test.js'
+              ]
+          }
+        )
+        # mochaTest:txxx
+        _.each(
+          [1...100]
+          (v)->
+            v = v.toString()
+            while v.length < 3
+              v = '0' + v
+            obj = {}
+            obj["t" + v] =
+              options:
+                timeout: 5000
+                reporter: 'tap'
+                require: [
+                  'should'
+                ]
+              src: [
+                "./tests/**/t#{v}-*-test.js"
+              ]
+            _.extend res, obj
+        )
+        res
+      )()
   })
 
   # jscoverage
