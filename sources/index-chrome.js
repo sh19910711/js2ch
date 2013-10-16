@@ -15,6 +15,7 @@
   requirejs.config({
     'paths': {
       'client': '../sources/client',
+      'client-put-utils': '../sources/client-put-utils',
       'socket': '../sources/socket-chrome',
       'storage': '../sources/storage-chrome',
       'http-lib': '../sources/http-lib',

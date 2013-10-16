@@ -16,8 +16,9 @@
 
   define([
     'jquery',
-    'underscore'
-  ], function($, _) {
+    'underscore',
+    'encoding'
+  ], function($, _, encoding) {
     /**
      * @constructor UtilLib
      */
@@ -185,6 +186,55 @@
           .length === 0;
       }
     });
+
+    //
+    // TODO: リファクタリング
+    // 
+
+    // ホスト名とパスを繋げたURLを返す
+    UtilLib.GetUrl = function(hostname, path) {
+      return 'http://' + hostname + path;
+    };
+
+    // DATファイルのパスを返す
+    UtilLib.GetDatPath = function(hostname, thread_id) {
+      return '/dat/' + thread_id + '.dat';
+    };
+
+    // 与えられた文字列をSJISに変換する
+    UtilLib.ConvertToSJIS = function(str) {
+      return encoding.codeToString(encoding.convert(UtilLib.GetArray(str), 'SJIS', 'AUTO'));
+    };
+
+    // 与えられた文字列をUTF-8に変換する
+
+    UtilLib.ConvertToUTF8 = function(str) {
+      return encoding.codeToString(encoding.convert(UtilLib.GetArray(str), 'UNICODE', 'AUTO'));
+    };
+
+    // 与えられた文字列をSJISに変換する
+    UtilLib.EscapeSJIS = function(str) {
+      return _(str)
+        .map(function(c) {
+          var code = c.charCodeAt()
+            .toString(16)
+            .toUpperCase();
+          while (code.length < 2)
+            code = "0" + code;
+          return '%' + code;
+        })
+        .join('');
+    };
+
+    // 文字列を配列に変換する
+    UtilLib.GetArray = function(str) {
+      var res = [];
+      _(str.split(''))
+        .each(function(c) {
+          res.push(c.charCodeAt());
+        });
+      return res;
+    };
 
     return UtilLib;
   });

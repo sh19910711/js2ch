@@ -26,17 +26,16 @@
     'parser',
     'encoding',
     'util-lib',
-    'logger'
-  ], function($, _, Backbone, HttpLib, Storage, CookieManager, Parser, encoding, UtilLib, Logger) {
-
-    var STORAGE_FORM_APPEND_PARAMS = 'form_append_params';
-
+    'logger',
+    'client-put-utils'
+  ], function($, _, Backbone, HttpLib, Storage, CookieManager, Parser, encoding, UtilLib, Logger, PutUtils) {
     /**
      * @constructor Client
      */
     var Client = function(options, callback_context) {
       callback_context = callback_context || this;
       options = (options && options['client']) || options || {};
+      this.STORAGE_FORM_APPEND_PARAMS = 'form_append_params';
 
       /**
        * @description HTTPリクエスト時に渡すヘッダのリスト
@@ -61,7 +60,7 @@
         }, this);
 
       // Deferredの設定（失敗する可能性があるもの）
-      var keys = ['putResponseToThread'];
+      var keys = ['putResponseToThread', 'putThreadToBoard'];
       _(keys)
         .each(function(key) {
           this[key] = UtilLib.getDeferredFuncWillFail(this[key], this, callback_context);
@@ -86,7 +85,7 @@
        * スレッド一覧取得後、callback(Array) として呼び出される。
        */
       getThreadList: function getThreadList(hostname, board_id, callback) {
-        var url = GetUrl(hostname, '/' + board_id + '/subject.txt');
+        var url = UtilLib.GetUrl(hostname, '/' + board_id + '/subject.txt');
         this.http.get(
           url,
           _(this.HTTP_REQ_HEADERS_DEFAULT)
@@ -94,7 +93,7 @@
             'Host': hostname,
           }))
           .done(function(http_response) {
-            callback(this.parser.parseThreadList(ConvertToUTF8(http_response.body)));
+            callback(this.parser.parseThreadList(UtilLib.ConvertToUTF8(http_response.body)));
           });
       }
     });
@@ -119,7 +118,7 @@
        * 情報取得後 callback(Object) として呼び出される
        */
       getSettingText: function getSettingText(hostname, board_id, callback) {
-        var url = GetUrl(hostname, '/' + board_id + '/SETTING.TXT');
+        var url = UtilLib.GetUrl(hostname, '/' + board_id + '/SETTING.TXT');
         var http_request_headers = this.HTTP_REQ_HEADERS_DEFAULT;
 
         _(http_request_headers)
@@ -129,7 +128,7 @@
 
         this.http.get(url, http_request_headers)
           .done(function(http_response) {
-            callback(this.parser.parseSettingText(ConvertToUTF8(http_response.body)));
+            callback(this.parser.parseSettingText(UtilLib.ConvertToUTF8(http_response.body)));
           });
       }
     });
@@ -156,7 +155,7 @@
        * 書き込み一覧を取得後 callback(Array) として呼び出される
        */
       getResponsesFromThread: function getResponsesFromThread(hostname, board_id, thread_id, callback) {
-        var url = GetUrl(hostname, '/' + board_id + GetDatPath(hostname, thread_id));
+        var url = UtilLib.GetUrl(hostname, '/' + board_id + UtilLib.GetDatPath(hostname, thread_id));
         this.http.get(
           url,
           _(this.HTTP_REQ_HEADERS_DEFAULT)
@@ -164,7 +163,7 @@
             'Host': hostname
           }))
           .done(function(http_response) {
-            callback(this.parser.parseResponsesFromThread(ConvertToUTF8(http_response.body)));
+            callback(this.parser.parseResponsesFromThread(UtilLib.ConvertToUTF8(http_response.body)));
           });
       }
     });
@@ -177,8 +176,8 @@
      * スレッドに書き込まれたレスのリスト
      */
 
+
     proto_extend({
-      // スレッドに書き込む
       /**
        * @description スレッドに書き込みを行う
        * @memberof Client
@@ -195,208 +194,42 @@
        * 書き込み完了後 callback(Object) として呼び出される
        */
       putResponseToThread: function putResponseToThread(hostname, board_id, thread_id, response, ok_callback, fail_callback) {
-        var url = GetUrl(hostname, '/test/bbs.cgi?guid=ON');
+        var args = Array.prototype.slice.call(arguments);
 
-        var http_req_headers = _(this.HTTP_REQ_HEADERS_DEFAULT)
-          .extend({
-            'Host': hostname,
-            'Referer': GetUrl(hostname, '/' + board_id + '/')
-          });
-        var http_req_params = {};
-
-        // 書き込みを行う
-        var write = function write(ok_callback, fail_callback) {
-          // 送信直前に必要な処理を行う（パラメータの追加など）
-          var promise = $.when.apply(null, [
-            add_http_req_params()
-          ]);
-
-          // 各処理が済んだらリクエストを送信
-          promise.done(send_http_request);
-        };
-        write = write.bind(this);
-
-        // 書き込み送信後にHTTPレスポンスヘッダを受け取る
-        var receive_response = function receive_response() {
-          // リクエスト受信後のCookieなどの処理 
-          var promise = $.when.apply(null, [
-            check_cookie()
-          ]);
-          promise.done(after_receive_response);
-        };
-        receive_response = receive_response.bind(this);
-
-        // HTTPレスポンスヘッダにSet-Cookieがある場合の処理
-        var check_cookie = function check_cookie_func() {
-          var deferred = new $.Deferred();
-          if (typeof this.http_response.headers['Set-Cookie'] !== 'undefined') {
-            this.cookie_manager.setCookieHeader(url, this.http_response.headers_source)
-              .done(function() {
-                deferred.resolve();
-              });
-          }
-          else {
-            deferred.resolve();
-          }
-          return deferred;
-        };
-        check_cookie = check_cookie.bind(this);
-
-        // HTTPレスポンス受信後の処理（callbackの実行）
-        var after_receive_response = function after_receive_response() {
-          var title_text = this.parser.parseTitleFromHTML(ConvertToUTF8(this.http_response.body));
-          if ('書きこみました。' === title_text) {
-            ok_callback(ConvertToUTF8(this.http_response.body));
-          }
-          else if ('■ 書き込み確認 ■' === title_text) {
-            fail_callback({
-              type: 'confirm',
-              httpResponse: this.http_response,
-              confirm: confirm_callback
-            });
-          }
-          else {
-            fail_callback({
-              type: 'error',
-              httpResponse: this.http_response
-            });
-          }
-        };
-        after_receive_response = after_receive_response.bind(this);
-
-        // 書き込み確認後の処理
-        var confirm_callback = function confirm_callback_func() {
-          var promise = new $.Deferred();
-          // 不足しているパラメータを追加して保存し、再書き込みを行う
-          this.storage.get(STORAGE_FORM_APPEND_PARAMS)
-            .done(function(items) {
-              // ストレージに設定できたら再書き込みを行う
-              var after_storage_set = function after_storage_set_func() {
-                this.putResponseToThread(hostname, board_id, thread_id, response)
-                  .done(promise.resolve)
-                  .fail(promise.reject);
-              };
-              after_storage_set = after_storage_set.bind(this);
-              // 不足しているパラメータを取得する
-              var new_form_params = this.parser.parseFormFromHTML(ConvertToUTF8(this.http_response.body))['../test/bbs.cgi?guid=ON'].params;
-              _(_.keys(http_req_params))
-                .each(function(key) {
-                  if (typeof new_form_params[key] === 'undefined')
-                    delete new_form_params[key];
-                  else if (key === 'FROM' || key === 'MESSAGE' || key === 'mail' || key === 'time')
-                    delete new_form_params[key];
-                  else if (http_req_params[key] === new_form_params[key])
-                    delete new_form_params[key];
-                  else
-                    new_form_params[key] = ConvertToSJIS(new_form_params[key].toString());
-                });
-              // オブジェクトじゃなかったらオブジェクトにしておく
-              if (typeof items[STORAGE_FORM_APPEND_PARAMS] !== 'object')
-                items[STORAGE_FORM_APPEND_PARAMS] = {};
-              // ストレージに保存しておく
-              _(items[STORAGE_FORM_APPEND_PARAMS])
-                .extend(new_form_params);
-              this.storage.set(items)
-                .done(after_storage_set);
+        var generate_http_params = function(callback) {
+          // 書き込み内容などをSJISに変換する
+          var converted_response = _.clone(this.response);
+          _(converted_response)
+            .each(function(value, key) {
+              converted_response[key] = UtilLib.ConvertToSJIS(value);
             });
 
-          return promise;
-        };
-        confirm_callback = confirm_callback.bind(this);
-
-
-        // 準備ができたらPOSTリクエストを送信する
-        var send_http_request = function send_http_request_func() {
-          this.http.post(url, http_req_headers, http_req_params)
-            .done(function(http_response) {
-              this.http_response = http_response;
-              receive_response();
+          // 書き込み内容などをパーセントエンコーディングでエスケープする
+          var escaped_response = _.clone(converted_response)
+          _(escaped_response)
+            .each(function(value, key) {
+              escaped_response[key] = UtilLib.EscapeSJIS(value);
             });
-        };
-        send_http_request = send_http_request.bind(this);
 
-
-        // 追加のパラメータがあれば追加する（yuki=akariなどの対応）
-        var add_http_req_params = function add_http_req_params_func() {
-          var promise = this.storage.get(STORAGE_FORM_APPEND_PARAMS)
-          promise.done(function(items) {
-            _(http_req_params)
-              .extend(items[STORAGE_FORM_APPEND_PARAMS]);
-          });
-          return promise;
-        };
-        add_http_req_params = add_http_req_params.bind(this);
-
-
-        // リクエスト前に送信するクエリを準備する
-        var prepare_http_req_params = function prepare_http_req_params() {
-          var deferred = new $.Deferred();
-          var func = function func() {
-            // 書き込み内容などをSJISに変換する
-            var converted_response = _.clone(response);
-            _(converted_response)
-              .each(function(value, key) {
-                converted_response[key] = ConvertToSJIS(value);
-              });
-
-            // 書き込み内容などをパーセントエンコーディングでエスケープする
-            var escaped_response = _.clone(converted_response)
-            _(escaped_response)
-              .each(function(value, key) {
-                escaped_response[key] = EscapeSJIS(value);
-              });
-
-            // 送信するデータ
-            _(http_req_params)
-              .extend({
-                'subject': '',
-                'bbs': board_id,
-                'key': thread_id,
-                'time': 1,
-                'submit': ConvertToSJIS('書き込む'),
-                'FROM': escaped_response.name,
-                'mail': escaped_response.mail,
-                'MESSAGE': escaped_response.body,
-              });
-
-            deferred.resolve();
-          };
-          func = func.bind(this);
-          setTimeout(func, 0);
-          return deferred;
-        };
-        prepare_http_req_params = prepare_http_req_params.bind(this);
-
-
-        // 取得したCookieをHTTPリクエストヘッダに追加する
-        var after_get_cookie_header = function after_get_cookie_header_func(cookie_header) {
-          if (cookie_header === 'Cookie: ')
-            return;
-          _(http_req_headers)
+          // 送信するデータ
+          _(this.http_req_params)
             .extend({
-              'Cookie': cookie_header.substr(8)
+              'subject': '',
+              'bbs': this.board_id,
+              'key': this.thread_id,
+              'time': 1,
+              'submit': UtilLib.ConvertToSJIS('書き込む'),
+              'FROM': escaped_response.name || '',
+              'mail': escaped_response.mail || '',
+              'MESSAGE': escaped_response.body || '',
             });
+
+          callback();
         };
 
-        // リクエスト前に送信するCookieを準備する
-        var prepare_cookie = function prepare_cookie_func() {
-          var promise = this.cookie_manager.getCookieHeader(url);
-          promise.done(after_get_cookie_header);
-          return promise;
-        };
-        prepare_cookie = prepare_cookie.bind(this);
-
-
-        // リクエスト前の準備
-        var deferreds = $.when.apply(null, [
-          prepare_cookie(),
-          prepare_http_req_params()
-        ]);
-
-        // 準備ができたらwriteを実行する
-        deferreds.done(function() {
-          write(ok_callback, fail_callback);
-        });
+        args.unshift(generate_http_params);
+        args.unshift(this.putResponseToThread);
+        put_func.apply(this, args);
       }
     });
 
@@ -409,55 +242,110 @@
      */
 
 
-    // ホスト名とパスを繋げたURLを返す
+    proto_extend({
+      /**
+       * @description スレッドを作成する
+       * @memberof Client
+       *
+       * @param {String} hostname
+       * ホスト名
+       * @param {String} board_id
+       * 板ID
+       * @param {Object} response
+       * スレッドの内容
+       * @param {Client#putThreadToBoard-callback} callback
+       * 書き込み完了後 callback(Object) として呼び出される
+       */
+      putThreadToBoard: function putThreadToBoard(hostname, board_id, response, ok_callback, fail_callback) {
+        var args = Array.prototype.slice.call(arguments);
 
-    function GetUrl(hostname, path) {
-      return 'http://' + hostname + path;
-    }
+        var generate_http_params = function(callback) {
+          // 書き込み内容などをSJISに変換する
+          var converted_response = _.clone(this.response);
+          _(converted_response)
+            .each(function(value, key) {
+              converted_response[key] = UtilLib.ConvertToSJIS(value);
+            });
 
-    // DATファイルのパスを返す
+          // 書き込み内容などをパーセントエンコーディングでエスケープする
+          var escaped_response = _.clone(converted_response)
+          _(escaped_response)
+            .each(function(value, key) {
+              escaped_response[key] = UtilLib.EscapeSJIS(value);
+            });
 
-    function GetDatPath(hostname, thread_id) {
-      return '/dat/' + thread_id + '.dat';
-    }
+          // 送信するデータ
+          _(this.http_req_params)
+            .extend({
+              'subject': escaped_response.subject || '',
+              'bbs': this.board_id,
+              'time': 1,
+              'submit': UtilLib.ConvertToSJIS('スレッドを作成する'),
+              'FROM': escaped_response.name || '',
+              'mail': escaped_response.mail || '',
+              'MESSAGE': escaped_response.body || ''
+            });
 
-    // 与えられた文字列をSJISに変換する
+          callback();
+        };
 
-    function ConvertToSJIS(str) {
-      return encoding.codeToString(encoding.convert(GetArray(str), 'SJIS', 'AUTO'));
-    }
+        args.unshift(generate_http_params);
+        args.unshift(this.putThreadToBoard);
+        put_func.call(
+          this,
+          this.putThreadToBoard,
+          generate_http_params,
+          hostname,
+          board_id,
+          '',
+          response,
+          ok_callback,
+          fail_callback
+        );
+      }
+    });
 
-    // 与えられた文字列をUTF-8に変換する
+    /**
+     * @description スレッド作成完了後 callback(Object) として呼び出される
+     * @callback Client#putThreadToBoard-callback
+     *
+     * @param {Object} http_response
+     * HTTPレスポンス
+     */
 
-    function ConvertToUTF8(str) {
-      return encoding.codeToString(encoding.convert(GetArray(str), 'UNICODE', 'AUTO'));
-    }
 
-    // 与えられた文字列をSJISに変換する
+    var put_func = function(self_func, generate_http_params_func, hostname, board_id, thread_id, response, ok_callback, fail_callback) {
+      var put_utils = new PutUtils(this);
 
-    function EscapeSJIS(str) {
-      return _(str)
-        .map(function(c) {
-          var code = c.charCodeAt()
-            .toString(16)
-            .toUpperCase();
-          while (code.length < 2)
-            code = "0" + code;
-          return '%' + code;
-        })
-        .join('');
-    }
+      put_utils.self_func = self_func;
+      put_utils.url = UtilLib.GetUrl(hostname, '/test/bbs.cgi?guid=ON');
+      put_utils.hostname = hostname;
+      put_utils.board_id = board_id;
+      put_utils.thread_id = thread_id;
+      put_utils.response = response;
+      put_utils.ok_callback = ok_callback;
+      put_utils.fail_callback = fail_callback;
 
-    // 文字列を配列に変換する
-
-    function GetArray(str) {
-      var res = [];
-      _(str.split(''))
-        .each(function(c) {
-          res.push(c.charCodeAt());
+      put_utils.http_req_headers = _(this.HTTP_REQ_HEADERS_DEFAULT)
+        .extend({
+          'Host': hostname,
+          'Referer': UtilLib.GetUrl(hostname, '/' + board_id + '/')
         });
-      return res;
-    }
+      put_utils.http_req_params = {};
+
+      put_utils.generate_http_params = generate_http_params_func;
+
+      // リクエスト前の準備
+      var deferreds = $.when.apply(null, [
+        put_utils.prepare_cookie(),
+        put_utils.prepare_http_req_params()
+      ]);
+
+      // 準備ができたらwriteを実行する
+      deferreds.done(function() {
+        put_utils.write();
+      });
+    };
 
     return Client;
   });

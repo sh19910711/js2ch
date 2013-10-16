@@ -1,10 +1,60 @@
 module.exports = (grunt)->
-  _ = require 'underscore'
+  _ = grunt.util._
   async = require 'async'
   init_config = {}
 
+  # 
+  # define tasks
+  #
+
+  # jscoverage task
+  grunt.registerMultiTask(
+    'jscoverage'
+    ''
+    ()->
+      done = @.async()
+      opts = @.data
+      grunt.util.spawn(
+        {
+          cmd: "jscoverage"
+          args: [opts.src, opts.dest]
+          opts:
+            stdio: 'inherit'
+        }
+        (error, result)->
+          done()
+      )
+  )
+
+  # jsdoc task
+  grunt.registerTask(
+    'jsdoc',
+    ()->
+      done = @.async()
+      command_list = [
+        'jsdoc'
+        './sources'
+        './lib/js2ch-*'
+      ]
+      command = command_list.join(' ')
+      require('child_process').exec(
+        command
+        (error, stdout, stderr)->
+          grunt.log.write(stdout)
+          grunt.log.write(stderr)
+          done()
+      )
+  )
+
+
+  #
+  # define configs
+  #
+
+  # require.js
   _.extend(init_config, {
     requirejs:
+      # generate lib/index-chrome.js
       buildChrome:
         options:
           baseUrl: './sources'
@@ -22,6 +72,7 @@ module.exports = (grunt)->
             async: 'empty:'
             encoding: 'empty:'
             purl: 'empty:'
+      # generate lib/index-node.js
       buildNode:
         options:
           baseUrl: './'
@@ -44,6 +95,7 @@ module.exports = (grunt)->
             sqlite3: 'empty:'
   })
 
+  # jsbeautify
   _.extend(init_config, {
     jsbeautifier:
       files: [
@@ -72,319 +124,140 @@ module.exports = (grunt)->
           break_chained_methods: true
   })
 
+  # Mocha
   _.extend(init_config, {
-    watch:
-      'test-issue-3':
-        files: ['./sources/http-lib.js', './tests/unit-tests/issues/test-3.js']
-        tasks: ['test-issue-3']
-      'test-issue-4':
-        files: ['./sources/socket-node.js', './tests/unit-tests/issues/test-4.js']
-        tasks: ['test-issue-4']
-      'enhancement':
-        files: ['./sources/**/*.js', './tests/unit-tests/**/*.js']
-        tasks: ['enhancement']
-      'testing':
-        files: ['./tests/unit-tests/**/*.js']
-        tasks: ['testing']
-      'implement':
-        files: ['./sources/**/*.js', './tests/unit-tests/**/*.js']
-        tasks: ['implement']
+    mochaTest:
+      (()->
+        # mochaTest: test-tap
+        res = {}
+        _.extend(
+          res
+          {
+            'test-tap':
+              options:
+                timeout: 5000
+                reporter: 'tap'
+                require: [
+                  'should'
+                ]
+                captureFile: 'test_tap_result.txt'
+              src: [
+                './tests/unit-tests/t*-test.js'
+              ]
+          }
+        )
+        # mochaTest:test-cov
+        _.extend(
+          res
+          {
+            'test-cov':
+              options:
+                timeout: 5000
+                quiet: true
+                reporter: 'html-cov'
+                require: [
+                  'should'
+                ]
+                captureFile: 'test_coverage.html'
+              src: [
+                './tests/unit-tests/t*-test.js'
+              ]
+          }
+        )
+        # mochaTest:txxx
+        _.each(
+          [1...100]
+          (v)->
+            v = v.toString()
+            while v.length < 3
+              v = '0' + v
+            obj = {}
+            obj["t" + v] =
+              options:
+                timeout: 5000
+                reporter: 'tap'
+                require: [
+                  'should'
+                ]
+              src: [
+                "./tests/**/t#{v}-*-test.js"
+              ]
+            _.extend res, obj
+        )
+        res
+      )()
+  })
+
+  # jscoverage
+  _.extend(init_config, {
+    'jscoverage': {
+      'sources':
+        src: "sources"
+        dest: "sources-cov"
+      'lib':
+        src: "lib"
+        dest: "lib-cov"
+    }
+  })
+
+  # Env
+  _.extend(init_config, {
+    env:
+      'test-cov':
+        COVERAGE: 1
+  })
+
+  # Clean
+  _.extend(init_config, {
+    clean:
+      'test-cov': [
+        'sources-cov'
+        'lib-cov'
+      ]
   })
 
   grunt.initConfig init_config
 
-  # テスト用のタスクを登録する
-  registered_test_tasks = []
-  register_test_task = (testname, filepath)->
-    registered_test_tasks.push
-      testname: testname
-      filepath: filepath
-    grunt.registerTask(testname, ()->
-      done = @.async()
-      command_list = [
-        'mocha'
-        '--reporter tap'
-        '--ui bdd'
-        filepath
-      ]
-      command = command_list.join(' ')
-      require('child_process').exec(
-        command
-        (error, stdout, stderr)->
-          grunt.log.write(stdout)
-          done(error)
-      )
-    )
+  # Run tests
+  grunt.registerTask(
+    'test'
+    [
+      'mochaTest:test-tap'
+    ]
+  )
 
-  # Well-knownポートを必要とするテストを登録する
-  registered_test_need_well_known_ports_tasks = []
-  register_test_task_need_wellknown_ports = (testname, filepath)->
-    registered_test_need_well_known_ports_tasks.push
-      testname: testname
-      filepath: filepath
-    grunt.registerTask(testname, ()->
-      done = @.async()
-      command_list = [
-        'mocha'
-        '--reporter tap'
-        '--ui bdd'
-        filepath
-      ]
-      command = command_list.join(' ')
-      require('child_process').exec(
-        command
-        (error, stdout, stderr)->
-          grunt.log.write(stdout)
-          done(error)
-      )
-    )
+  # Run tests with coverage
+  grunt.registerTask(
+    'test-cov'
+    [
+      'clean:test-cov'
+      'env:test-cov'
+      'jscoverage'
+      'mochaTest:test-cov'
+    ]
+  )
 
-  # jsdocを実行する
-  grunt.registerTask('jsdoc', ()->
-    done = this.async()
-    command_list = [
+  # Build
+  grunt.registerTask(
+    'build'
+    [
+      'test'
+      'jsbeautifier'
+      'requirejs'
+    ]
+  )
+
+  # Documentation
+  grunt.registerTask(
+    'doc'
+    [
+      'jsbeautifier'
       'jsdoc'
-      './sources'
-      './lib/js2ch-*'
     ]
-    command = command_list.join(' ')
-    require('child_process').exec(
-      command
-      (error, stdout, stderr)->
-        grunt.log.write(stdout)
-        grunt.log.write(stderr)
-        done()
-    )
   )
 
-  # すべてのテストを実行する
-  grunt.registerTask('all-tests', ()->
-    cnt = 0
-    done = @.async()
-    require('child_process')
-      .exec(
-        'rm result.txt && touch result.txt'
-        (error, stdout, stderr)->
-          command_list = [
-            'mocha'
-            '--reporter tap'
-            '--ui bdd'
-            '--timeout 10000'
-          ]
-          mocha_command = command_list.join(' ')
-          files = _(registered_test_tasks)
-            .map((testtask)->
-              testtask.filepath
-            )
-          $ = require('jquery')
-          result_code = null
-          deferred_all = new $.Deferred()
-          cnt = 0
-
-          run_test = (filepath, callback)->
-            cnt += 1
-            require('child_process')
-              .exec(
-                mocha_command + ' ' + filepath + ' > test_result/test_tap_result.' + cnt + '.txt'
-                (error, stdout, stderr)->
-                  grunt.log.write(stdout)
-                  if error
-                    result_code = error
-                  callback(error)
-              )
-
-          async.series(
-            _(files)
-            .map(
-              (filepath)->
-                run_test.bind(null, filepath)
-            ),
-            ()->
-              done(result_code)
-          )
-      )
-  )
-
-  # すべてのテストを実行する
-  grunt.registerTask('all-tests-normal', ()->
-    cnt = 0
-    done = @.async()
-    command_list = [
-      'mocha'
-      '--reporter tap'
-      '--ui bdd'
-      '--timeout 10000'
-    ]
-    mocha_command = command_list.join(' ')
-
-    files = _(registered_test_tasks)
-      .map((testtask)->
-        testtask.filepath
-      )
-
-    $ = require('jquery')
-    result_code = null
-    deferred_all = new $.Deferred()
-    cnt = 0
-
-    run_test = (filepath, callback)->
-      cnt++
-      require('child_process')
-        .exec(mocha_command + ' ' + filepath, (error, stdout, stderr)->
-          grunt.log.write(stdout)
-          grunt.log.write(stderr)
-          if error
-            result_code = error
-          callback(error)
-        )
-
-    async.series(
-      _(files)
-      .map((filepath)->
-        run_test.bind(null, filepath)
-      ),
-      ()->
-        done(result_code)
-    )
-  )
-
-  # すべてのテストを実行する
-  grunt.registerTask('all-tests-coverages', ()->
-    cnt = 0
-    done = @.async()
-    require('child_process')
-      .exec(
-        'rm result.txt && touch result.txt'
-        (error, stdout, stderr)->
-          command_list = [
-            'mocha'
-            '--reporter html-cov'
-            '--ui bdd'
-            '--timeout 10000'
-          ]
-          mocha_command = command_list.join(' ')
-          files = _(registered_test_tasks)
-            .map((testtask)->
-              return testtask.filepath
-            )
-
-          $ = require('jquery')
-          result_code = null
-          deferred_all = new $.Deferred()
-          cnt = 0
-
-          run_test = (filepath, callback)->
-            cnt += 1
-            require('child_process')
-              .exec('COVERAGE=1 ' + mocha_command + ' ' + filepath + ' > coverages/result.' + cnt + '.html', (error, stdout, stderr)->
-                grunt.log.write(stdout)
-                if error
-                  result_code = error
-                callback(error)
-              )
-
-          async.series(
-            _(files)
-            .map((filepath)->
-              run_test.bind(null, filepath)
-            ),
-            ()->
-              done(result_code)
-          )
-      )
-  )
-
-  # すべてのテストを実行する(Well-known ports)
-  grunt.registerTask('all-tests-need-well-known-ports', ()->
-    done = @.async()
-    command_list = [
-      'mocha'
-      '--reporter tap'
-      '--ui bdd'
-      '--timeout 10000'
-    ]
-    mocha_command = command_list.join(' ')
-    files = _(registered_test_need_well_known_ports_tasks)
-      .map((testtask)->
-        testtask.filepath
-      )
-
-    $ = require('jquery')
-    result_code = null
-    deferred_all = new $.Deferred()
-
-    run_test = (filepath, callback)->
-      require('child_process')
-        .exec(mocha_command + ' ' + filepath, (error, stdout, stderr)->
-          grunt.log.write(stdout)
-          if error
-            result_code = error
-          callback(error)
-        )
-
-    async.series(
-      _(files)
-      .map((filepath)->
-        run_test.bind(null, filepath)
-      ),
-      ()->
-        done(result_code)
-    )
-  )
-
-  # タスクの開始を遅らせる
-  grunt.registerTask('delay-tasks', ()->
-    done = this.async()
-    setTimeout(
-      ()->
-        done()
-      100
-    )
-  )
-
-  grunt.registerTask('coverage', ()->
-    done = @.async()
-    require('child_process')
-      .exec(
-        'rm -rf sources-cov && jscoverage sources sources-cov && echo ok'
-        (error, stdout, stderr)->
-          console.log(stdout, stderr)
-          require('child_process')
-            .exec('rm -rf lib-cov && jscoverage lib lib-cov && echo ok', (error, stdout, stderr)->
-              console.log(stdout, stderr)
-              grunt.task.run('all-tests-coverages')
-              done()
-            )
-      )
-  )
-
-  # テスト用のタスクを登録する
-  register_test_task('test-socket-node', './tests/unit-tests/t005-socket-node-test.js')
-  register_test_task('test-socket-chrome', './tests/unit-tests/t004-socket-chrome-test.js')
-  register_test_task('test-issue-3', './tests/unit-tests/issues/test-3.js')
-  register_test_task('test-storage-node', './tests/unit-tests/t007-storage-node-test.js')
-  register_test_task('test-storage-chrome', './tests/unit-tests/t006-storage-chrome-test.js')
-  register_test_task('test-client', './tests/unit-tests/t001-client-test.js')
-  register_test_task('test-parser', './tests/unit-tests/t003-parser-test.js')
-  register_test_task('test-cookie-manager', './tests/unit-tests/t002-cookie-manager-test.js')
-  register_test_task_need_wellknown_ports('test-http-lib', './tests/unit-tests/test-http-lib.js')
-  register_test_task_need_wellknown_ports('test-issue-4', './tests/unit-tests/issues/test-4.js')
-
-  # 基本的な操作の登録
-  grunt.registerTask('enhancement', ['delay-tasks', 'jsbeautifier', 'doc', 'test'])
-  grunt.registerTask('testing', ['delay-tasks', 'jsbeautifier', 'test'])
-  grunt.registerTask('implement', ['delay-tasks', 'jsbeautifier', 'test'])
-  grunt.registerTask('document', ['delay-tasks', 'jsbeautifier', 'doc'])
-
-  grunt.registerTask('test', ['all-tests'])
-  grunt.registerTask('test-normal', ['all-tests-normal'])
-  grunt.registerTask('test-well-known-ports', ['all-tests-need-well-known-ports'])
-  grunt.registerTask('build', ['jsbeautifier', 'requirejs'])
-  grunt.registerTask('doc', ['jsbeautifier', 'jsdoc'])
-
-  # pluginの登録
-  grunt.loadNpmTasks('grunt-contrib-requirejs')
-  grunt.loadNpmTasks('grunt-contrib-watch')
-  grunt.loadNpmTasks('grunt-jsbeautifier')
-
+  # load npm tasks
+  pkg = grunt.file.readJSON 'package.json'
+  for task of pkg.devDependencies when /^grunt-/.test task
+    grunt.loadNpmTasks task
 

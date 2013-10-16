@@ -15,6 +15,8 @@
     after(function() {
       require('child_process')
         .exec('rm test-cookie-*.db');
+      require('child_process')
+        .exec('rm t002-*.db');
     });
 
     describe('001: #clear', function() {
@@ -414,6 +416,132 @@
                       done();
                     });
 
+                });
+            });
+        });
+      });
+
+    });
+
+    describe('006: #get', function() {
+
+      it('001', function(done) {
+        requirejs([
+          'underscore',
+          'jquery',
+          'cookie-manager'
+        ], function(_, $, CookieManager) {
+          var cookie_manager = new CookieManager({
+            storage: {
+              target: 't002-006-001.db'
+            }
+          });
+
+          cookie_manager.clear()
+            .done(function() {
+              var http_response_list = [
+                'HTTP/1.1 200 OK',
+                'Set-Cookie: user=alice; path=/login; expires=Wed, 22-Jun-2033 09:07:54 GMT',
+              ];
+              http_response_list = _(http_response_list)
+                .map(function(line) {
+                  return line + '\r\n';
+                });
+              var http_response_text = http_response_list.join('');
+              cookie_manager.setCookieHeader('http://test-domain.example.com/login', http_response_text)
+                .done(function() {
+                  var deferreds = [];
+
+                  deferreds.push(cookie_manager.get('http://test-domain.example.com/login')
+                    .done(function(cookie_obj) {
+                      cookie_obj.user.should.be.equal('alice');
+                    }));
+
+                  deferreds.push(cookie_manager.get('http://test-domain.example.com/login/auth')
+                    .done(function(cookie_obj) {
+                      cookie_obj.user.should.be.equal('alice');
+                    }));
+
+                  deferreds.push(cookie_manager.get('http://test-domain.example.com:8080/login')
+                    .done(function(cookie_obj) {
+                      cookie_obj.user.should.be.equal('alice');
+                    }));
+
+                  deferreds.push(cookie_manager.get('http://test-domain.example.com:8080/login/auth')
+                    .done(function(cookie_obj) {
+                      cookie_obj.user.should.be.equal('alice');
+                    }));
+
+                  deferreds.push(cookie_manager.get('http://test-domain.example.com/home')
+                    .done(function(cookie_obj) {
+                      cookie_obj.should.not.have.property('user');
+                    }));
+
+                  deferreds.push(cookie_manager.get('http://test-domain.example.com/login2')
+                    .done(function(cookie_obj) {
+                      cookie_obj.should.not.have.property('user');
+                    }));
+
+                  $.when.apply(null, deferreds)
+                    .done(function() {
+                      done();
+                    });
+
+                });
+            });
+        });
+      });
+
+      it('002', function(done) {
+        requirejs([
+          'underscore',
+          'jquery',
+          'cookie-manager'
+        ], function(_, $, CookieManager) {
+          var cookie_manager = new CookieManager({
+            storage: {
+              target: 't002-006-002.db'
+            },
+            'cookie-manager': {
+              cookie: [{
+                'key': 'user',
+                'value': 'alice',
+                'domain': '.example.com',
+                'path': '/login/'
+              }]
+            }
+          });
+
+          cookie_manager.clear()
+            .done(function() {
+              var deferreds = [];
+              deferreds.push(cookie_manager.get('http://test-domain.example.com/login')
+                .done(function(cookie_obj) {
+                  cookie_obj.user.should.be.equal('alice');
+                }));
+              deferreds.push(cookie_manager.get('http://test-domain.example.com/login/auth')
+                .done(function(cookie_obj) {
+                  cookie_obj.user.should.be.equal('alice');
+                }));
+              deferreds.push(cookie_manager.get('http://test-domain.example.com:8080/login')
+                .done(function(cookie_obj) {
+                  cookie_obj.user.should.be.equal('alice');
+                }));
+              deferreds.push(cookie_manager.get('http://test-domain.example.com:8080/login/auth')
+                .done(function(cookie_obj) {
+                  cookie_obj.user.should.be.equal('alice');
+                }));
+              deferreds.push(cookie_manager.get('http://test-domain.example.com/home')
+                .done(function(cookie_obj) {
+                  cookie_obj.should.not.have.property('user');
+                }));
+              deferreds.push(cookie_manager.get('http://test-domain.example.com/login2')
+                .done(function(cookie_obj) {
+                  cookie_obj.should.not.have.property('user');
+                }));
+              $.when.apply(null, deferreds)
+                .done(function() {
+                  done();
                 });
             });
         });
