@@ -21,3 +21,5 @@ lib-cov/
 sources-cov/
 
 tern/
+
+/test_*
