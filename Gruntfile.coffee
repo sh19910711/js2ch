@@ -79,13 +79,26 @@ module.exports = (grunt)->
   # Mocha
   _.extend(init_config, {
     mochaTest:
-      test:
+      'test-tap':
         options:
+          timeout: 5000
           reporter: 'tap'
           require: [
-            'should',
-          ],
+            'should'
+          ]
           captureFile: 'test_tap_result.txt'
+        src: [
+          './tests/unit-tests/t*-test.js'
+        ]
+      'test-cov':
+        options:
+          timeout: 5000
+          reporter: 'html-cov'
+          quiet: true
+          require: [
+            'should'
+          ]
+          captureFile: 'test_coverage.html'
         src: [
           './tests/unit-tests/t*-test.js'
         ]
@@ -115,29 +128,29 @@ module.exports = (grunt)->
 
   # Run tests
   grunt.registerTask(
-    'test',
+    'test'
     [
-      'mochaTest'
-    ],
+      'mochaTest:test-tap'
+    ]
   )
 
   # Build
   grunt.registerTask(
-    'build',
+    'build'
     [
-      'test',
-      'jsbeautifier',
-      'requirejs',
-    ],
+      'test'
+      'jsbeautifier'
+      'requirejs'
+    ]
   )
 
   # Documentation
   grunt.registerTask(
-    'doc',
+    'doc'
     [
-      'jsbeautifier',
-      'jsdoc',
-    ],
+      'jsbeautifier'
+      'jsdoc'
+    ]
   )
 
   # load npm tasks
