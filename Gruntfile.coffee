@@ -94,7 +94,6 @@ module.exports = (grunt)->
         options:
           timeout: 5000
           reporter: 'html-cov'
-          quiet: true
           require: [
             'should'
           ]

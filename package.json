@@ -19,7 +19,8 @@
     "express": "~3.4.0",
     "grunt-contrib-watch": "~0.5.3",
     "underscore": "~1.5.2",
-    "grunt-mocha-test": "~0.7.0"
+    "grunt-mocha-test": "~0.7.0",
+    "grunt-env": "~0.4.0"
   },
   "scripts": {
     "test": "grunt test"
