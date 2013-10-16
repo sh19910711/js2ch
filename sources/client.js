@@ -219,9 +219,9 @@
               'key': this.thread_id,
               'time': 1,
               'submit': UtilLib.ConvertToSJIS('書き込む'),
-              'FROM': escaped_response.name,
-              'mail': escaped_response.mail,
-              'MESSAGE': escaped_response.body,
+              'FROM': escaped_response.name || '',
+              'mail': escaped_response.mail || '',
+              'MESSAGE': escaped_response.body || '',
             });
 
           callback();
@@ -281,9 +281,9 @@
               'bbs': this.board_id,
               'time': 1,
               'submit': UtilLib.ConvertToSJIS('スレッドを作成する'),
-              'FROM': escaped_response.name,
-              'mail': escaped_response.mail,
-              'MESSAGE': escaped_response.body
+              'FROM': escaped_response.name || '',
+              'mail': escaped_response.mail || '',
+              'MESSAGE': escaped_response.body || ''
             });
 
           callback();
