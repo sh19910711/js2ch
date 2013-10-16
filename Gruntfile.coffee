@@ -85,6 +85,7 @@ module.exports = (grunt)->
           require: [
             'should',
           ],
+          captureFile: 'test_tap_result.txt'
         src: [
           './tests/unit-tests/t*-test.js'
         ]
