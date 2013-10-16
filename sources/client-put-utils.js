@@ -32,7 +32,7 @@ define(
     PutUtils.prototype.check_cookie = function check_cookie_func() {
       var deferred = new $.Deferred();
       if (typeof this.http_response.headers['Set-Cookie'] !== 'undefined') {
-        this.context.cookie_manager.setCookieHeader(url, this.http_response.headers_source)
+        this.context.cookie_manager.setCookieHeader(this.url, this.http_response.headers_source)
           .done(function() {
             deferred.resolve();
           });
@@ -50,6 +50,7 @@ define(
         this.ok_callback(UtilLib.ConvertToUTF8(this.http_response.body));
       }
       else if ('■ 書き込み確認 ■' === title_text) {
+        console.log("確認: ", this.ok_callback, this.fail_callback);
         this.fail_callback({
           type: 'confirm',
           httpResponse: this.http_response,
@@ -147,7 +148,7 @@ define(
     // リクエスト前に送信するCookieを準備する
     PutUtils.prototype.prepare_cookie = function prepare_cookie_func() {
       var promise = this.context.cookie_manager.getCookieHeader(this.url);
-      promise.done(this.after_get_cookie_header);
+      promise.done(this.after_get_cookie_header.bind(this));
       return promise;
     };
 
