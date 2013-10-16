@@ -34,6 +34,7 @@
           'storage': './sources/storage-node',
           'parser': './sources/parser',
           'client': './sources/client',
+          'client-put-utils': './sources/client-put-utils',
           'cookie-manager': './sources/cookie-manager',
           'util-lib': './sources/util-lib',
           'encoding': './lib/encoding',

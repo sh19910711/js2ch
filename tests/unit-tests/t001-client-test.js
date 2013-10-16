@@ -151,11 +151,11 @@
                     deferred.resolve();
                   })
                   .fail(function() {
-                    throw new Error('エラーござる');
+                    throw new Error('エラーござる @ info.confirm.fail');
                   });
               }
               else {
-                throw new Error('エラーござる');
+                throw new Error('エラーござる @ info.type !== confirm');
               }
             });
 
