@@ -7,13 +7,6 @@ install:
   - npm install -g mocha
   - npm install
 script:
-  - grunt test-normal
-  - grunt test-normal
-  - grunt test-normal
-  - grunt test-normal
-  - grunt test-normal
-  - grunt test-normal
-  - grunt test-normal
-  - grunt test-normal
-  - grunt test-normal
-  - grunt test-normal
+  - grunt test
+  - grunt test
+  - grunt test
