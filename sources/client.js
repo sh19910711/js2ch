@@ -277,7 +277,7 @@
           // 送信するデータ
           _(this.http_req_params)
             .extend({
-              'subject': escaped_response.subject,
+              'subject': escaped_response.subject || '',
               'bbs': this.board_id,
               'time': 1,
               'submit': UtilLib.ConvertToSJIS('スレッドを作成する'),
