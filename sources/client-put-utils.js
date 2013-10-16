@@ -50,7 +50,6 @@ define(
         this.ok_callback(UtilLib.ConvertToUTF8(this.http_response.body));
       }
       else if ('■ 書き込み確認 ■' === title_text) {
-        console.log("確認: ", this.ok_callback, this.fail_callback);
         this.fail_callback({
           type: 'confirm',
           httpResponse: this.http_response,

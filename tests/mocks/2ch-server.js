@@ -73,7 +73,13 @@
                 });
             }
             else if (req.body.key === 'test') {
-              var body = '<title>書きこみました。</title>';
+              var body = '<title>書きこみました。</title>' +
+                  '<input type="hidden" name="FROM" value="' + req.body['FROM'] + '">' +
+                  '<input type="hidden" name="mail" value="' + req.body['mail'] + '">' +
+                  '<input type="hidden" name="MESSAGE" value="' + req.body['MESSAGE'] + '">' +
+                  '<input type="hidden" name="bbs" value="' + req.body['bbs'] + '">' +
+                  '<input type="hidden" name="time" value="' + req.body['time'] + '">' +
+                  '<input type="hidden" name="key" value="' + req.body['key'] + '">';
               body = encoding.convert(body, 'SJIS', 'AUTO');
               buffer_lib.convertToString(body)
                 .done(function(str) {
