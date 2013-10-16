@@ -503,14 +503,12 @@
               target: 't002-006-002.db'
             },
             'cookie-manager': {
-              cookie: [
-                {
-                  'key': 'user',
-                  'value': 'alice',
-                  'domain': '.example.com',
-                  'path': '/login/'
-                }
-              ]
+              cookie: [{
+                'key': 'user',
+                'value': 'alice',
+                'domain': '.example.com',
+                'path': '/login/'
+              }]
             }
           });
 

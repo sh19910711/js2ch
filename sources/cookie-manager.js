@@ -108,7 +108,7 @@
             })
             .filter(function(cookie) {
               // storedでないものを残す
-              return ! stored_keys[cookie.key];
+              return !stored_keys[cookie.key];
             });
 
           var res = cookies.concat(mock_cookies);
