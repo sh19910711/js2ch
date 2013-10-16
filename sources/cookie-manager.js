@@ -32,7 +32,7 @@
       this.storage = new Storage((options && options['storage']) || options, this);
 
       // Deferred設定
-      var keys = ['clear', 'getCookieHeader', 'setCookieHeader', 'set'];
+      var keys = ['clear', 'getCookieHeader', 'setCookieHeader', 'set', 'get'];
       _(keys)
         .each(function(key) {
           this[key] = UtilLib.getDeferredFunc(this[key], this, callback_context);
@@ -62,6 +62,64 @@
     /**
      * @description 消去完了後, callback() として呼び出される
      * @callback CookieManager#clear-callback
+     */
+
+
+    proto_extend({
+      /**
+       * @description 与えられたURLに対するCookieのオブジェクトを返す
+       * @memberof CookieManager
+       *
+       * @param {String} url
+       * Cookieを取得するURL
+       * @param {CookieManager#get-callback} callback
+       *
+       */
+      get: function get(url, callback) {
+        var url_obj = $.url(url);
+        var host = url_obj.attr('host');
+        var port = url_obj.attr('port') || 80;
+        var path = url_obj.attr('path') || '/';
+
+        if (!/\/$/.test(path))
+          path += '/';
+
+        this.storage.get('cookies')
+          .done(function(items) {
+
+            // 取得したCookieを取捨選別する
+            var cookies = _(items.cookies)
+              .filter(function(cookie_obj) {
+                // ドメイン名にマッチするCookieを残す
+                var regexp = new RegExp(cookie_obj.domain + '$', 'i');
+                return regexp.test(host);
+              })
+              .filter(function(cookie_obj) {
+                // パスにマッチするCookieを残す
+                var regexp = new RegExp('^' + cookie_obj.path);
+                return regexp.test(path);
+              });
+
+            // TODO: 以下書き換え
+            // ヘッダ用の文字列に変換する
+            var cookie_obj = _(cookies)
+              .reduce(function(prev, cookie) {
+                var obj = {};
+                obj[cookie.key] = cookie.value;
+                _.extend(prev, obj);
+                return prev;
+              }, {});
+
+            callback(cookie_obj);
+          });
+      }
+    });
+
+    /**
+     * @description 取得完了後、callback(cookie_object) として呼び出される
+     * @callback CookieManager#get-callback
+     *
+     * @param {String} cookie_object
      */
 
 
