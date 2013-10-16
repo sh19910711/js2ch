@@ -16,6 +16,7 @@
     "LICENSE.*",
     "tasks",
     "test_result",
+    "/test_*",
     "coverages",
     "lib-cov",
     "sources-cov",
