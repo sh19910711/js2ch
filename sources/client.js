@@ -181,6 +181,7 @@
 
     var put_func = function(self_func, hostname, board_id, thread_id, response, ok_callback, fail_callback) {
       var put_utils = new PutUtils(this);
+
       put_utils.self_func = self_func;
       put_utils.url = UtilLib.GetUrl(hostname, '/test/bbs.cgi?guid=ON');
       put_utils.hostname = hostname;
@@ -196,6 +197,37 @@
           'Referer': UtilLib.GetUrl(hostname, '/' + board_id + '/')
         });
       put_utils.http_req_params = {};
+
+      put_utils.generate_http_params = function(callback) {
+        // 書き込み内容などをSJISに変換する
+        var converted_response = _.clone(this.response);
+        _(converted_response)
+          .each(function(value, key) {
+            converted_response[key] = UtilLib.ConvertToSJIS(value);
+          });
+
+        // 書き込み内容などをパーセントエンコーディングでエスケープする
+        var escaped_response = _.clone(converted_response)
+        _(escaped_response)
+          .each(function(value, key) {
+            escaped_response[key] = UtilLib.EscapeSJIS(value);
+          });
+
+        // 送信するデータ
+        _(this.http_req_params)
+          .extend({
+            'subject': '',
+            'bbs': this.board_id,
+            'key': this.thread_id,
+            'time': 1,
+            'submit': UtilLib.ConvertToSJIS('書き込む'),
+            'FROM': escaped_response.name,
+            'mail': escaped_response.mail,
+            'MESSAGE': escaped_response.body,
+          });
+
+        callback();
+      };
 
       // リクエスト前の準備
       var deferreds = $.when.apply(null, [
