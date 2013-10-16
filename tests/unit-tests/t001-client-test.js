@@ -113,6 +113,71 @@
 
           });
         });
+
+        it('002: 名前欄未定義', function(done) {
+          requirejs([
+            'jquery',
+            'client'
+          ], function($, Client) {
+            var client = new Client({
+              'cookie-manager': {
+                'storage': {
+                  'target': 't001-002-002.db'
+                }
+              },
+              'storage': {
+                'target': 't001-002-002.db'
+              }
+            });
+            var promise = $.when.apply(null, [
+              client.putResponseToThread('localhost:8080', 'news4vip', 'test', {
+                mail: 'test mail',
+                body: 'test body'
+              })
+              .done(function(response) {
+                ret = response.match('name="FROM" value="(.*?)"')[1];
+                ret.should.be.equal('');
+              })
+              .fail(function(response) {}),
+            ]);
+            promise.done(function() {
+              done();
+            });
+          });
+        });
+
+        it('003: メール欄未定義', function(done) {
+          requirejs([
+            'jquery',
+            'client'
+          ], function($, Client) {
+            var client = new Client({
+              'cookie-manager': {
+                'storage': {
+                  'target': 't001-002-003.db'
+                }
+              },
+              'storage': {
+                'target': 't001-002-003.db'
+              }
+            });
+            var promise = $.when.apply(null, [
+              client.putResponseToThread('localhost:8080', 'news4vip', 'test', {
+                name: 'test name',
+                body: 'test body'
+              })
+              .done(function(response) {
+                ret = response.match('name="mail" value="(.*?)"')[1];
+                ret.should.be.equal('');
+              })
+              .fail(function(response) {}),
+            ]);
+            promise.done(function() {
+              done();
+            });
+          });
+        });
+
       });
 
       describe('003: 書き込み系のテスト（confirm）', function() {
@@ -151,11 +216,11 @@
                     deferred.resolve();
                   })
                   .fail(function() {
-                    throw new Error('エラーござる');
+                    throw new Error('エラーござる @ info.confirm.fail');
                   });
               }
               else {
-                throw new Error('エラーござる');
+                throw new Error('エラーござる @ info.type !== confirm');
               }
             });
 
