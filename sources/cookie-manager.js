@@ -27,7 +27,8 @@
      */
     var CookieManager = function(options, callback_context) {
       callback_context = callback_context || this;
-      options = (options && options['cookie-manager']) || options || {};
+      this.options = (options && options['cookie-manager']) || options || {};
+      this.options['cookie'] = this.options['cookie'] || {};
 
       this.storage = new Storage((options && options['storage']) || options, this);
 
@@ -64,6 +65,56 @@
      * @callback CookieManager#clear-callback
      */
 
+    function get_cookies_func(url, callback) {
+      var url_obj = $.url(url);
+      var host = url_obj.attr('host');
+      var port = url_obj.attr('port') || 80;
+      var path = url_obj.attr('path') || '/';
+
+      if (!/\/$/.test(path))
+        path += '/';
+
+      this.storage.get('cookies')
+        .done(function(items) {
+          var stored_keys = {};
+
+          // 取得したCookieを取捨選別する
+          var mock_cookies = _(this.options.cookie)
+            .filter(function(cookie_obj) {
+              // ドメイン名にマッチするCookieを残す
+              var regexp = new RegExp(cookie_obj.domain + '$', 'i');
+              return regexp.test(host);
+            })
+            .filter(function(cookie_obj) {
+              // パスにマッチするCookieを残す
+              var regexp = new RegExp('^' + cookie_obj.path);
+              return regexp.test(path);
+            });
+          _.each(mock_cookies, function(cookie) {
+            stored_keys[cookie.key] = true;
+          })
+
+          // 取得したCookieを取捨選別する
+          var cookies = _(items.cookies)
+            .filter(function(cookie_obj) {
+              // ドメイン名にマッチするCookieを残す
+              var regexp = new RegExp(cookie_obj.domain + '$', 'i');
+              return regexp.test(host);
+            })
+            .filter(function(cookie_obj) {
+              // パスにマッチするCookieを残す
+              var regexp = new RegExp('^' + cookie_obj.path);
+              return regexp.test(path);
+            })
+            .filter(function(cookie) {
+              // storedでないものを残す
+              return ! stored_keys[cookie.key];
+            });
+
+          var res = cookies.concat(mock_cookies);
+          callback(res);
+        });
+    }
 
     proto_extend({
       /**
@@ -76,42 +127,18 @@
        *
        */
       get: function get(url, callback) {
-        var url_obj = $.url(url);
-        var host = url_obj.attr('host');
-        var port = url_obj.attr('port') || 80;
-        var path = url_obj.attr('path') || '/';
+        get_cookies_func.call(this, url, function(cookies) {
+          // オブジェクトに変換する
+          var cookie_obj = _(cookies)
+            .reduce(function(prev, cookie) {
+              var obj = {};
+              obj[cookie.key] = cookie.value;
+              _.extend(prev, obj);
+              return prev;
+            }, {});
 
-        if (!/\/$/.test(path))
-          path += '/';
-
-        this.storage.get('cookies')
-          .done(function(items) {
-
-            // 取得したCookieを取捨選別する
-            var cookies = _(items.cookies)
-              .filter(function(cookie_obj) {
-                // ドメイン名にマッチするCookieを残す
-                var regexp = new RegExp(cookie_obj.domain + '$', 'i');
-                return regexp.test(host);
-              })
-              .filter(function(cookie_obj) {
-                // パスにマッチするCookieを残す
-                var regexp = new RegExp('^' + cookie_obj.path);
-                return regexp.test(path);
-              });
-
-            // TODO: 以下書き換え
-            // ヘッダ用の文字列に変換する
-            var cookie_obj = _(cookies)
-              .reduce(function(prev, cookie) {
-                var obj = {};
-                obj[cookie.key] = cookie.value;
-                _.extend(prev, obj);
-                return prev;
-              }, {});
-
-            callback(cookie_obj);
-          });
+          callback(cookie_obj);
+        });
       }
     });
 
@@ -134,39 +161,16 @@
        *
        */
       getCookieHeader: function getCookieHeader(url, callback) {
-        var url_obj = $.url(url);
-        var host = url_obj.attr('host');
-        var port = url_obj.attr('port') || 80;
-        var path = url_obj.attr('path') || '/';
+        get_cookies_func.call(this, url, function(cookies) {
+          // ヘッダ用の文字列に変換する
+          var http_header_text = _(cookies)
+            .map(function(cookie) {
+              return cookie.key + '=' + cookie.value
+            })
+            .join('; ');
 
-        if (!/\/$/.test(path))
-          path += '/';
-
-        this.storage.get('cookies')
-          .done(function(items) {
-
-            // 取得したCookieを取捨選別する
-            var cookies = _(items.cookies)
-              .filter(function(cookie_obj) {
-                // ドメイン名にマッチするCookieを残す
-                var regexp = new RegExp(cookie_obj.domain + '$', 'i');
-                return regexp.test(host);
-              })
-              .filter(function(cookie_obj) {
-                // パスにマッチするCookieを残す
-                var regexp = new RegExp('^' + cookie_obj.path);
-                return regexp.test(path);
-              });
-
-            // ヘッダ用の文字列に変換する
-            var http_header_text = _(cookies)
-              .map(function(cookie) {
-                return cookie.key + '=' + cookie.value
-              })
-              .join('; ');
-
-            callback('Cookie: ' + http_header_text);
-          });
+          callback('Cookie: ' + http_header_text);
+        });
       }
     });
 
