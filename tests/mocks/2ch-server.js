@@ -5,7 +5,7 @@
 
   module.exports = {
     createServer: function(port) {
-      console.log('2ch mock server start');
+      // console.log('2ch mock server start');
 
       var requirejs = require('requirejs');
       var _ = require('underscore');

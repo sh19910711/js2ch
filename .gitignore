@@ -4,9 +4,11 @@ node_modules
 **/.*
 
 /test-*
+/test_*
 **/*.db
 **/out
 test_result/
 coverages/
 lib-cov/
 sources-cov/
+
