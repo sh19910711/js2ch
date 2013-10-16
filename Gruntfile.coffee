@@ -1,7 +1,55 @@
 module.exports = (grunt)->
-  _ = require 'underscore'
+  _ = grunt.util._
   async = require 'async'
   init_config = {}
+
+  # 
+  # define tasks
+  #
+
+  # jscoverage task
+  grunt.registerMultiTask(
+    'jscoverage'
+    ''
+    ()->
+      done = @.async()
+      opts = @.data
+      grunt.util.spawn(
+        {
+          cmd: "jscoverage"
+          args: [opts.src, opts.dest]
+          opts:
+            stdio: 'inherit'
+        }
+        (error, result)->
+          done()
+      )
+  )
+
+  # jsdoc task
+  grunt.registerTask(
+    'jsdoc',
+    ()->
+      done = @.async()
+      command_list = [
+        'jsdoc'
+        './sources'
+        './lib/js2ch-*'
+      ]
+      command = command_list.join(' ')
+      require('child_process').exec(
+        command
+        (error, stdout, stderr)->
+          grunt.log.write(stdout)
+          grunt.log.write(stderr)
+          done()
+      )
+  )
+
+
+  #
+  # define configs
+  #
 
   # require.js
   _.extend(init_config, {
@@ -93,6 +141,7 @@ module.exports = (grunt)->
       'test-cov':
         options:
           timeout: 5000
+          quiet: true
           reporter: 'html-cov'
           require: [
             'should'
@@ -103,33 +152,52 @@ module.exports = (grunt)->
         ]
   })
 
-  grunt.initConfig init_config
+  # jscoverage
+  _.extend(init_config, {
+    'jscoverage': {
+      'sources':
+        src: "sources"
+        dest: "sources-cov"
+      'lib':
+        src: "lib"
+        dest: "lib-cov"
+    }
+  })
 
-  # jsdocを実行する
-  grunt.registerTask(
-    'jsdoc',
-    ()->
-      done = this.async()
-      command_list = [
-        'jsdoc'
-        './sources'
-        './lib/js2ch-*'
+  # Env
+  _.extend(init_config, {
+    env:
+      'test-cov':
+        COVERAGE: 1
+  })
+
+  # Clean
+  _.extend(init_config, {
+    clean:
+      'test-cov': [
+        'sources-cov'
+        'lib-cov'
       ]
-      command = command_list.join(' ')
-      require('child_process').exec(
-        command
-        (error, stdout, stderr)->
-          grunt.log.write(stdout)
-          grunt.log.write(stderr)
-          done()
-      )
-  )
+  })
+
+  grunt.initConfig init_config
 
   # Run tests
   grunt.registerTask(
     'test'
     [
       'mochaTest:test-tap'
+    ]
+  )
+
+  # Run tests with coverage
+  grunt.registerTask(
+    'test-cov'
+    [
+      'clean:test-cov'
+      'env:test-cov'
+      'jscoverage'
+      'mochaTest:test-cov'
     ]
   )
 
