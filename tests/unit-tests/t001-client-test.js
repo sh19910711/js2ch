@@ -17,6 +17,8 @@
     after(function() {
       require('child_process')
         .exec('rm test-client-*.db');
+      require('child_process')
+        .exec('rm T001-*.db');
       server_8080.close();
     });
 
@@ -376,7 +378,100 @@
             });
         });
       });
-    })
+    });
+
+    describe('008: Check Retry', function() {
+      it('001: Client#putThreadToBoard', function(done) {
+        requirejs([
+          'client'
+        ], function(Client) {
+          var client = new Client({
+            'cookie-manager': {
+              'storage': {
+                'target': 'T001-008-001.db'
+              }
+            },
+            'storage': {
+              'target': 'T001-008-001.db'
+            }
+          });
+          client.putThreadToBoard(
+            'localhost:8080',
+            't001_008_001', {
+              subject: "this is subject",
+              name: "this is name",
+              body: "this is body"
+            }
+          )
+            .fail(
+              function(res) {
+                res.confirm()
+                  .done(
+                    function() {
+                      done();
+                    }
+                );
+              }
+          );
+        });
+      });
+      it('002: Client#putThreadToBoard call twice', function(done) {
+        requirejs([
+          'client',
+          'jquery'
+        ], function(Client, $) {
+          var client = new Client({
+            'cookie-manager': {
+              'storage': {
+                'target': 'T001-008-002.db'
+              }
+            },
+            'storage': {
+              'target': 'T001-008-002.db'
+            }
+          });
+          client
+            .putThreadToBoard(
+              'localhost:8080',
+              't001_008_002', {
+                subject: "this is subject 1",
+                name: "this is name",
+                body: "this is body"
+              }
+          )
+            .done(
+              function(html_text) {
+                $($.parseHTML(html_text))
+                  .find('input[name="subject"]')
+                  .val()
+                  .should.equal("this is subject 1");
+                after_first();
+              }
+          );
+
+          var after_first = function() {
+            client
+              .putThreadToBoard(
+                'localhost:8080',
+                't001_008_002', {
+                  subject: "this is 2",
+                  name: "this is name 2",
+                  body: "this is body 2"
+                }
+            )
+              .done(
+                function(html_text) {
+                  $($.parseHTML(html_text))
+                    .find('input[name="subject"]')
+                    .val()
+                    .should.equal("this is 2");
+                  done();
+                }
+            );
+          };
+        });
+      });
+    });
 
   });
 
