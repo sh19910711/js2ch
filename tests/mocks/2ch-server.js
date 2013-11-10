@@ -44,6 +44,7 @@
           var path = require('path');
           app.use(express.static(__dirname + '/../fixtures/2ch'));
           app.use(express.bodyParser());
+          app.use(express.cookieParser());
 
           app.get('/news4vip/dat/1379534723.dat', function(req, res) {
             var fs = require('fs');
@@ -58,7 +59,74 @@
 
           app.post('/test/bbs.cgi', function(req, res) {
             var querystring = require('querystring');
-            if (req.body.key === 'test2') {
+            if (req.body.bbs === 't001_008_001') {
+              if (req.cookies.after === "confirm") {
+                res.cookie("after", "confirm finish");
+                var body = [
+                  '<html>',
+                  '<head>',
+                  '<title>書きこみました。</title>',
+                  '</head>',
+                  '<body>',
+                  '<form action="../test/bbs.cgi?guid=ON">',
+                  '<input type="hidden" name="subject" value="">',
+                  '<input type="hidden" name="FROM" value="' + req.body['FROM'] + '">',
+                  '<input type="hidden" name="mail" value="' + req.body['mail'] + '">',
+                  '<input type="hidden" name="MESSAGE" value="' + req.body['MESSAGE'] + '">',
+                  '<input type="hidden" name="bbs" value="' + req.body['bbs'] + '">',
+                  '<input type="hidden" name="time" value="' + req.body['time'] + '">',
+                  '<input type="hidden" name="key" value="' + req.body['key'] + '">',
+                  '<input type="hidden" name="yuki" value="akari">',
+                  '<input type="submit" name="submit" value="全てを承諾して書き込む">',
+                  '</form>',
+                  '</body>',
+                  '</html>'
+                ].join('');
+                body = encoding.convert(body, 'SJIS', 'AUTO');
+                buffer_lib.convertToString(body)
+                  .done(function(str) {
+                    buffer_lib.getByteLength(str)
+                      .done(function(len) {
+                        res.setHeader('Content-Type', 'text/html');
+                        res.setHeader('Content-Length', len);
+                        res.end(str);
+                      });
+                  });
+              } else {
+                res.cookie("after", "confirm");
+                var body = [
+                  '<html>',
+                  '<head>',
+                  '<title>■ 書き込み確認 ■</title>',
+                  '</head>',
+                  '<body>',
+                  '<form action="../test/bbs.cgi?guid=ON">',
+                  '<input type="hidden" name="subject" value="">',
+                  '<input type="hidden" name="FROM" value="' + req.body['FROM'] + '">',
+                  '<input type="hidden" name="mail" value="' + req.body['mail'] + '">',
+                  '<input type="hidden" name="MESSAGE" value="' + req.body['MESSAGE'] + '">',
+                  '<input type="hidden" name="bbs" value="' + req.body['bbs'] + '">',
+                  '<input type="hidden" name="time" value="' + req.body['time'] + '">',
+                  '<input type="hidden" name="key" value="' + req.body['key'] + '">',
+                  '<input type="hidden" name="yuki" value="akari">',
+                  '<input type="submit" name="submit" value="全てを承諾して書き込む">',
+                  '</form>',
+                  '</body>',
+                  '</html>'
+                ].join('');
+                body = encoding.convert(body, 'SJIS', 'AUTO');
+                buffer_lib.convertToString(body)
+                  .done(function(str) {
+                    buffer_lib.getByteLength(str)
+                      .done(function(len) {
+                        res.setHeader('Content-Type', 'text/html');
+                        res.setHeader('Content-Length', len);
+                        res.end(str);
+                      });
+                  });
+              }
+            }
+            else if (req.body.key === 'test2') {
               var body = '<title>書きこみました。</title>';
               body += '<body>' + querystring.unescape(req.body.MESSAGE) + '</body>';
               body = encoding.convert(body, 'SJIS', 'AUTO');
