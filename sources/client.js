@@ -228,8 +228,7 @@
         put_func.call(
           this,
           this.putResponseToThread,
-          generate_http_params,
-          ["hostname", "board_id", "thread_id", "response"],
+          generate_http_params, ["hostname", "board_id", "thread_id", "response"],
           hostname,
           board_id,
           thread_id,
@@ -297,8 +296,7 @@
         put_func.call(
           this,
           this.putThreadToBoard,
-          generate_http_params,
-          ["hostname", "board_id", "response"],
+          generate_http_params, ["hostname", "board_id", "response"],
           hostname,
           board_id,
           '',

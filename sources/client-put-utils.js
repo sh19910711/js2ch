@@ -73,9 +73,10 @@ define(
         var after_storage_set = function after_storage_set_func() {
           // Example: self_func = putThreadToBoard
           var self_func_args = [];
-          _(this.args_keys).each(function(args_key) {
-            self_func_args.push(this[args_key]);
-          }, this);
+          _(this.args_keys)
+            .each(function(args_key) {
+              self_func_args.push(this[args_key]);
+            }, this);
           this.self_func.apply(this.context, self_func_args)
             .done(promise.resolve)
             .fail(promise.reject);
@@ -83,7 +84,8 @@ define(
         var http_req_iterator = function(key) {
           if (typeof new_form_params[key] === 'undefined')
             delete new_form_params[key];
-          else if (key === 'FROM' || key === 'MESSAGE' || key === 'mail' || key === 'time')
+          // 必要なパラメータ
+          else if (key === 'FROM' || key === 'MESSAGE' || key === 'mail' || key === 'time' || key === 'subject')
             delete new_form_params[key];
           else if (this.http_req_params[key] === new_form_params[key])
             delete new_form_params[key];

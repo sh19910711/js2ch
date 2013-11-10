@@ -405,13 +405,70 @@
           )
             .fail(
               function(res) {
-                res.confirm().done(
-                  function() {
-                    done();
-                  }
+                res.confirm()
+                  .done(
+                    function() {
+                      done();
+                    }
                 );
               }
           );
+        });
+      });
+      it('002: Client#putThreadToBoard call twice', function(done) {
+        requirejs([
+          'client',
+          'jquery'
+        ], function(Client, $) {
+          var client = new Client({
+            'cookie-manager': {
+              'storage': {
+                'target': 'T001-008-002.db'
+              }
+            },
+            'storage': {
+              'target': 'T001-008-002.db'
+            }
+          });
+          client
+            .putThreadToBoard(
+              'localhost:8080',
+              't001_008_002', {
+                subject: "this is subject 1",
+                name: "this is name",
+                body: "this is body"
+              }
+          )
+            .done(
+              function(html_text) {
+                $($.parseHTML(html_text))
+                  .find('input[name="subject"]')
+                  .val()
+                  .should.equal("this is subject 1");
+                after_first();
+              }
+          );
+
+          var after_first = function() {
+            client
+              .putThreadToBoard(
+                'localhost:8080',
+                't001_008_002', {
+                  subject: "this is 2",
+                  name: "this is name 2",
+                  body: "this is body 2"
+                }
+            )
+              .done(
+                function(html_text) {
+                  $($.parseHTML(html_text))
+                    .find('input[name="subject"]')
+                    .val()
+                    .should.equal("this is 2");
+                  done();
+                }
+            );
+          };
         });
       });
     });
