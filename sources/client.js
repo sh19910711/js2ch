@@ -194,8 +194,6 @@
        * 書き込み完了後 callback(Object) として呼び出される
        */
       putResponseToThread: function putResponseToThread(hostname, board_id, thread_id, response, ok_callback, fail_callback) {
-        var args = Array.prototype.slice.call(arguments);
-
         var generate_http_params = function(callback) {
           // 書き込み内容などをSJISに変換する
           var converted_response = _.clone(this.response);
@@ -227,9 +225,18 @@
           callback();
         };
 
-        args.unshift(generate_http_params);
-        args.unshift(this.putResponseToThread);
-        put_func.apply(this, args);
+        put_func.call(
+          this,
+          this.putResponseToThread,
+          generate_http_params,
+          ["hostname", "board_id", "thread_id", "response"],
+          hostname,
+          board_id,
+          thread_id,
+          response,
+          ok_callback,
+          fail_callback
+        );
       }
     });
 
@@ -257,8 +264,6 @@
        * 書き込み完了後 callback(Object) として呼び出される
        */
       putThreadToBoard: function putThreadToBoard(hostname, board_id, response, ok_callback, fail_callback) {
-        var args = Array.prototype.slice.call(arguments);
-
         var generate_http_params = function(callback) {
           // 書き込み内容などをSJISに変換する
           var converted_response = _.clone(this.response);
@@ -289,12 +294,11 @@
           callback();
         };
 
-        args.unshift(generate_http_params);
-        args.unshift(this.putThreadToBoard);
         put_func.call(
           this,
           this.putThreadToBoard,
           generate_http_params,
+          ["hostname", "board_id", "response"],
           hostname,
           board_id,
           '',
@@ -314,9 +318,10 @@
      */
 
 
-    var put_func = function(self_func, generate_http_params_func, hostname, board_id, thread_id, response, ok_callback, fail_callback) {
+    var put_func = function(self_func, generate_http_params_func, args_keys, hostname, board_id, thread_id, response, ok_callback, fail_callback) {
       var put_utils = new PutUtils(this);
 
+      put_utils.args_keys = args_keys;
       put_utils.self_func = self_func;
       put_utils.url = UtilLib.GetUrl(hostname, '/test/bbs.cgi?guid=ON');
       put_utils.hostname = hostname;

@@ -71,7 +71,12 @@ define(
       var after_storage_get = function(items) {
         // ストレージに設定できたら再書き込みを行う
         var after_storage_set = function after_storage_set_func() {
-          this.self_func.call(this.context, this.hostname, this.board_id, this.thread_id, this.response)
+          // Example: self_func = putThreadToBoard
+          var self_func_args = [];
+          _(this.args_keys).each(function(args_key) {
+            self_func_args.push(this[args_key]);
+          }, this);
+          this.self_func.apply(this.context, self_func_args)
             .done(promise.resolve)
             .fail(promise.reject);
         };
